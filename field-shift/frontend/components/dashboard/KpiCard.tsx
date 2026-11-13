@@ -1,0 +1,1 @@
+export function KpiCard({ label, value }: { label: string; value: string }) { return <section className="rounded-xl border bg-white p-4"><p className="text-sm text-gray-500">{label}</p><p className="mt-1 text-2xl font-semibold">{value}</p></section>; }

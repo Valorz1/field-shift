@@ -1,0 +1,1 @@
+export function StrategyCard({ title, summary }: { title: string; summary: string }) { return <article className="rounded-xl border bg-white p-5"><h2 className="font-semibold">{title}</h2><p className="mt-2 text-sm text-gray-600">{summary}</p></article>; }

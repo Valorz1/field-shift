@@ -1,0 +1,1 @@
+export default function SessionPage() { return <main className="p-8"><h1 className="text-2xl font-semibold">Farm session</h1><p className="mt-2 text-gray-600">Temporary session details live in browser memory only.</p></main>; }
