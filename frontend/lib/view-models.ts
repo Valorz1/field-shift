@@ -1,5 +1,3 @@
-import type { Strategy } from "./types";
-
 export type DataLabel =
   | "NASA POWER"
   | "GPM IMERG"
@@ -13,16 +11,47 @@ export type DataLabel =
 
 export type ConnectionStatus = "connected" | "available" | "loading" | "unavailable";
 
+export type Level = "low" | "medium" | "high";
+
+export type StrategyId = "baseline" | "water_efficient" | "soil_restoration";
+
 export type StrategyKind = "baseline" | "climate-adaptive" | "soil-restoration";
 
-export type StrategyView = Omit<Strategy, "sources"> & {
-  sources: DataLabel[];
-  kind: StrategyKind;
-  position: 1 | 2 | 3;
-  rotation: readonly [string, string, string];
+export type RotationStep = {
+  year: 1 | 2 | 3;
+  crop: string;
+  role: string;
+  alternatives?: string[];
 };
 
-export type KpiKind = "temperature" | "precipitation" | "soil-moisture" | "risk";
+export type EvidenceSource = { id: string; citation: string; url: string };
+
+export type Evidence =
+  | { type: "climate_data"; statement: string; label: string; source: string }
+  | { type: "agronomy_rule"; rule_id: string; statement: string; sources: EvidenceSource[] };
+
+export type Strategy = {
+  id: StrategyId;
+  title: string;
+  rotation: RotationStep[];
+  why: string;
+  evidence: Evidence[];
+  benefits: string[];
+  risks: string[];
+  gaps: string[];
+  water_need: string;
+  complexity: Level;
+  confidence: Level;
+  kind: StrategyKind;
+  position: 1 | 2 | 3;
+  summary: string;
+  rotation_crops: string[];
+  sources: DataLabel[];
+};
+
+export type Status = "fine" | "watch" | "act";
+
+export type KpiKind = "temperature" | "rain" | "soil-wetness" | "risk";
 
 export type KpiView = {
   kind: KpiKind;
@@ -30,7 +59,6 @@ export type KpiView = {
   value: string;
   unit?: string;
   source: DataLabel;
-  change: string;
-  changeTone: "neutral" | "warning";
-  footnote: string;
+  status?: Status;
+  meaning: string;
 };
