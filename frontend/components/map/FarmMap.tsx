@@ -5,11 +5,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { ErrorMessage } from "@/components/ui/states/ErrorMessage";
-import { climateSites } from "@/lib/data/climate";
 import { formatCoordinates } from "@/lib/format";
 import { updateSession, useSession } from "@/lib/session-store";
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+const UK_CENTRE: [number, number] = [-2.6, 54.2];
 
 export function FarmMap() {
   const container = useRef<HTMLDivElement>(null);
@@ -20,15 +20,15 @@ export function FarmMap() {
 
   useEffect(() => {
     if (!TOKEN || !container.current) return;
-    const [{ latitude: lat, longitude: lng }] = climateSites;
     try {
       map.current = new mapboxgl.Map({
         accessToken: TOKEN,
         container: container.current,
         // Vector style: satellite tiles answer 429 (rate limit) for our token.
         style: "mapbox://styles/mapbox/outdoors-v12",
-        center: [lng, lat],
-        zoom: 3,
+        // Opens on the UK, where the crop advice is written for. A pin anywhere in the world still works.
+        center: UK_CENTRE,
+        zoom: 4.6,
       });
     } catch {
       setFailed(true); // no WebGL in this browser

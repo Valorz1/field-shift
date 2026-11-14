@@ -59,7 +59,7 @@ export function RecentWeather({ site }: { site: ClimateSite }) {
   // No Fine / Act now tag here: 30 days of weather swing a lot, so the colours stay for the 5-year picture.
   const change = data.rain.change_pct;
   return (
-    <Card className="space-y-4">
+    <Card className="fs-rise space-y-4">
       <div>
         {title}
         <p className="text-sm text-caption">

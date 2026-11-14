@@ -6,7 +6,7 @@ import { useSession } from "./session-store";
 import { useLoaded } from "./use-loaded";
 
 // What each demo farm grows (the backend's own defaults).
-const DEMO_CROPS: Record<string, string> = { norfolk: "wheat", nevada: "alfalfa" };
+export const DEMO_CROPS: Record<string, string> = { norfolk: "wheat", nevada: "alfalfa" };
 
 // One request per place and crop, shared by the dashboard cards and the strategy cards.
 export function useStrategies(site: Place) {

@@ -3,6 +3,7 @@
 import { CalendarDays, Droplets, Layers, Satellite, Sprout } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { KpiCard } from "@/components/dashboard/KpiCard";
+import { Page } from "@/components/layout/Page";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { WithSite } from "@/components/layout/WithSite";
@@ -28,12 +29,11 @@ function Soil({ site }: { site: ClimateSite }) {
   const soil = soilPercents(site);
   const kpi = kpisFor(site, { crop: "" }).find((k) => k.kind === "soil-wetness")!;
   return (
-    <div className="space-y-8">
+    <Page>
       <PageIntro
         icon={Layers}
-        title="Soil"
+        title="Soil Intelligence"
         lead={soil ? soilMeaning(soil) : "NASA POWER has no soil wetness for this place."}
-        site={site.id}
       />
 
       <section aria-labelledby="soil-now" className="space-y-4">
@@ -99,16 +99,6 @@ function Soil({ site }: { site: ClimateSite }) {
         )}
         <Card className="flex flex-col gap-3">
           <h3 className="flex items-center gap-2 font-display text-lg font-bold text-forest">
-            <Satellite aria-hidden="true" className="size-5" strokeWidth={1.8} />
-            Coming next: NASA SMAP satellite
-          </h3>
-          <p className="text-base text-caption">
-            These numbers come from a NASA weather model. NASA&apos;s SMAP satellite measures soil moisture from space.
-            We have asked NASA for SMAP data for both example farms, to check these numbers against it.
-          </p>
-        </Card>
-        <Card className="flex flex-col gap-3">
-          <h3 className="flex items-center gap-2 font-display text-lg font-bold text-forest">
             <Sprout aria-hidden="true" className="size-5" strokeWidth={1.8} />
             Help your soil
           </h3>
@@ -121,7 +111,7 @@ function Soil({ site }: { site: ClimateSite }) {
           </div>
         </Card>
       </div>
-    </div>
+    </Page>
   );
 }
 

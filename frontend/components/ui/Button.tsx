@@ -11,7 +11,7 @@ const variants: Record<Variant, string> = {
 };
 
 const base =
-  "inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-control px-4 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60";
+  "fs-press inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-control px-4 text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60";
 
 export const buttonClasses = (variant: Variant = "primary", className?: string) =>
   cx(base, variants[variant], className);

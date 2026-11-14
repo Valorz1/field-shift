@@ -20,12 +20,12 @@ const tiles: Record<Status | "none", string> = {
   none: "bg-water-tint text-water-ink",
 };
 
-export function KpiCard({ kpi }: { kpi: KpiView }) {
+export function KpiCard({ kpi, index = 0 }: { kpi: KpiView; index?: number }) {
   const muted = kpi.source === "Missing" || kpi.waiting;
   const Icon = icons[kpi.kind];
 
   return (
-    <Card as="article" className="flex flex-col gap-3">
+    <Card as="article" className="fs-rise fs-lift flex flex-col gap-3" style={{ animationDelay: `${index * 70}ms` }}>
       <div className="flex items-start gap-3">
         <span className={cx("grid size-11 shrink-0 place-items-center rounded-xl", tiles[kpi.status ?? "none"])}>
           <Icon aria-hidden="true" className="size-6" strokeWidth={1.8} />

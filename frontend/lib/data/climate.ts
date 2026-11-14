@@ -64,6 +64,11 @@ export const pinPlace = (latitude: number, longitude: number): Place => ({
   longitude: Number(longitude.toFixed(2)),
 });
 
+// A rough box around Great Britain and Northern Ireland. Good enough to say "this looks like the UK";
+// it also catches a strip of Ireland and the French coast, so the wording stays soft.
+export const isInUk = (place: Place) =>
+  place.latitude >= 49.8 && place.latitude <= 60.9 && place.longitude >= -8.7 && place.longitude <= 1.8;
+
 export const isPin = (place: Place) => place.id.startsWith("pin:");
 
 export const getPlace = (id?: string | null): Place => climateSites.find((site) => site.id === id) ?? climateSites[0];

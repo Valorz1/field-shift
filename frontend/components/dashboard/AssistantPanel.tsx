@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { SourceBadge } from "@/components/ui/SourceBadge";
 import { sendChat } from "@/lib/api";
 import { type Place, isPin } from "@/lib/data/climate";
+import { farmHref } from "@/lib/navigation";
 import { DEFAULT_AI_LEVEL, useSession } from "@/lib/session-store";
 import type { ChatFarm } from "@/lib/types";
 
@@ -50,8 +51,8 @@ export function AssistantPanel({ site, crop }: { site: Place; crop: string }) {
       <p className="text-base text-caption">
         The AI helper explains the NASA figures and the 3 plans in a line or two. It does not make the plans. AI level{" "}
         {level}:{" "}
-        <Link href="/session" className="underline underline-offset-2 hover:text-forest">
-          change it on the Session page
+        <Link href={farmHref("/settings", site)} className="underline underline-offset-2 hover:text-forest">
+          change it in Settings
         </Link>
         .
       </p>

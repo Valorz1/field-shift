@@ -1,22 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-forest: #163d32;
+  --color-forest: #173f32;
+  --color-forest-deep: #12332a;
   --color-primary: #2f7653;
   --color-primary-hover: #26623f;
   --color-fresh: #77a86b;
-  --color-page: #f7f8f3;
+  --color-page: #f5f5ef;
   --color-earth: #9a7656;
   --color-beige: #d8c9a9;
-  --color-sage: #a8bba6;
+  --color-sage: #789477;
+  --color-gold: #d9b879;
+  --color-gold-tint: #f5ecd9;
   --color-water: #3e82b7;
-  --color-ink: #202b28;
+  --color-ink: #29332d;
   --color-caption: #4f5b55;
   --color-success: #39865b;
   --color-warning: #d69b3b;
   --color-danger: #c65b4f;
   --color-neutral: #7c8982;
-  --color-line: #e3e6dc;
+  --color-line: #e2e3d8;
 
   --color-green-ink: #245c40;
   --color-green-tint: #e7f0e8;
@@ -53,5 +56,226 @@
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+}
+
+/* Motion: short, calm entrances and press feedback. Off for anyone who asks for less motion. */
+@keyframes fs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer utilities {
+  .fs-rise {
+    animation: fs-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .fs-lift {
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+  .fs-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px -14px rgb(22 61 50 / 0.28);
+  }
+  .fs-press:active {
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-rise {
+    animation: none;
+  }
+  .fs-lift,
+  .fs-lift:hover,
+  .fs-press:active {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- Application shell ---------- */
+
+/* Sidebar width. "auto" follows the screen: a narrow rail on tablets, full width on desktops. */
+.fs-shell {
+  --fs-sb: 248px;
+  --fs-open: 1;
+  --fs-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fs-shell[data-nav="closed"] {
+  --fs-sb: 68px;
+  --fs-open: 0;
+}
+@media (max-width: 1279px) {
+  .fs-shell[data-nav="auto"] {
+    --fs-sb: 68px;
+    --fs-open: 0;
+  }
+}
+
+.fs-sidebar {
+  width: var(--fs-sb);
+  flex: none;
+  transition: width 240ms var(--fs-ease);
+}
+/* Labels fade with the sidebar. They stay in the page for screen readers when the rail is narrow. */
+.fs-nav-label {
+  opacity: var(--fs-open);
+  white-space: nowrap;
+  transition: opacity 160ms ease;
+}
+.fs-nav-rule {
+  opacity: calc(1 - var(--fs-open));
+  transition: opacity 160ms ease;
+}
+/* The name of a page, shown beside its icon when the rail is narrow. */
+.fs-tip {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 10px);
+  z-index: 40;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--color-ink);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+.fs-nav-link:hover + .fs-tip,
+.fs-nav-link:focus-visible + .fs-tip {
+  opacity: calc(1 - var(--fs-open));
+  transform: translate(0, -50%);
+}
+/* The marker that slides to the page you are on. */
+.fs-nav-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  border-radius: var(--radius-control);
+  background: rgb(255 255 255 / 0.1);
+  opacity: 0;
+  pointer-events: none;
+}
+.fs-nav-indicator::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--color-gold);
+}
+.fs-nav-indicator[data-ready="true"] {
+  opacity: 1;
+  transition:
+    transform 260ms var(--fs-ease),
+    height 260ms var(--fs-ease),
+    opacity 160ms ease;
+}
+@media (max-height: 620px) {
+  .fs-sidebar-inner {
+    overflow-y: auto;
+  }
+}
+
+/* Menus under the top bar. */
+.fs-pop {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    visibility 0s linear 140ms;
+}
+.fs-pop[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+/* Phone menu: slides in from the left over a dimmed page. */
+.fs-drawer {
+  position: fixed;
+  inset: 0 auto 0 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: min(86vw, 320px);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  background: var(--color-forest);
+  color: var(--color-on-forest);
+  transform: translateX(-100%);
+  transition:
+    transform 260ms var(--fs-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    overlay 260ms allow-discrete,
+    display 260ms allow-discrete;
+}
+.fs-drawer[open] {
+  transform: none;
+}
+.fs-drawer::backdrop {
+  background: rgb(18 28 23 / 0);
+  transition:
+    background 260ms ease,
+    overlay 260ms allow-discrete,
+    display 260ms allow-discrete;
+}
+.fs-drawer[open]::backdrop {
+  background: rgb(18 28 23 / 0.5);
+}
+@starting-style {
+  .fs-drawer[open] {
+    transform: translateX(-100%);
+  }
+  .fs-drawer[open]::backdrop {
+    background: rgb(18 28 23 / 0);
+  }
+}
+
+/* Each page fades in when you move to it. */
+@keyframes fs-page-in {
+  from {
+    opacity: 0;
+  }
+}
+.fs-page {
+  animation: fs-page-in 220ms ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-sidebar,
+  .fs-nav-label,
+  .fs-nav-rule,
+  .fs-tip,
+  .fs-nav-indicator[data-ready="true"],
+  .fs-pop,
+  .fs-drawer,
+  .fs-drawer::backdrop {
+    transition: none;
+  }
+  .fs-page {
+    animation: none;
   }
 }

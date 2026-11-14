@@ -8,7 +8,7 @@ import { SiteSwitcher } from "./SiteSwitcher";
 // The green banner at the top of the dashboard: which field, and the one-sentence answer.
 export function DashboardHero({ site }: { site: ClimateSite }) {
   return (
-    <header className="relative overflow-hidden rounded-card bg-forest text-white">
+    <header className="fs-rise relative overflow-hidden rounded-card bg-forest text-white">
       <FieldIllustration className="absolute inset-0 size-full" />
       <div
         aria-hidden="true"
