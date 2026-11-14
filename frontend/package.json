@@ -6,10 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "data:power": "node scripts/build-power-summary.mts"
+    "lint": "next lint"
   },
   "dependencies": {
+    "chart.js": "^4.6.1",
     "lucide-react": "^1.73.0",
     "next": "^15.2.0",
     "react": "^19.0.0",
@@ -17,9 +17,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
-    "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.0",
     "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0"
+    "@types/react": "^19.0.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.29",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
   }
 }

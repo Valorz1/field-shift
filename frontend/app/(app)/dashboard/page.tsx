@@ -1,18 +1,20 @@
+"use client";
+
+import { HistoryCharts } from "@/components/charts/HistoryCharts";
 import { RainfallChart } from "@/components/charts/RainfallChart";
 import { TemperatureChart } from "@/components/charts/TemperatureChart";
 import { InsightCard } from "@/components/dashboard/InsightCard";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { SiteSwitcher } from "@/components/dashboard/SiteSwitcher";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { WithSite } from "@/components/layout/WithSite";
 import { StrategyCard } from "@/components/strategies/StrategyCard";
 import { Disclaimer } from "@/components/ui/Disclaimer";
 import { seasonInsights, statusRuleText, usualYears, yearSummary } from "@/lib/climate-facts";
-import { type ClimateSite, getSite } from "@/lib/data/climate";
+import type { ClimateSite } from "@/lib/data/climate";
 import { formatCoordinates, formatYears } from "@/lib/format";
 import { kpisFor } from "@/lib/kpis";
 import { strategiesAreIllustrative, strategiesFor } from "@/lib/strategies";
-
-type DashboardProps = { searchParams: Promise<{ site?: string }> };
 
 function Footnote({ site }: { site: ClimateSite }) {
   const { annual, source, year } = site;
@@ -23,8 +25,8 @@ function Footnote({ site }: { site: ClimateSite }) {
       </h3>
       <ul className="space-y-1.5">
         <li>
-          {site.name}, {site.region}: {formatCoordinates(site.latitude, site.longitude)}, {site.elevationM} m above sea
-          level.
+          {site.name}, {site.region}: {formatCoordinates(site.latitude, site.longitude)}
+          {site.elevationM !== undefined && `, ${site.elevationM} m above sea level`}.
         </li>
         <li>
           Jan–Dec {year}: average temperature {annual.temperatureC.toFixed(1)} °C (usual{" "}
@@ -36,16 +38,14 @@ function Footnote({ site }: { site: ClimateSite }) {
         ))}
         <li>Grey cards have no data yet. Grey is not a status.</li>
         <li>
-          Source: NASA POWER monthly data, {formatYears(source.firstYear, source.lastYear)}, API {source.apiVersion}.
+          Source: NASA POWER monthly data, {formatYears(source.firstYear, source.lastYear)}.
         </li>
       </ul>
     </aside>
   );
 }
 
-export default async function DashboardPage({ searchParams }: DashboardProps) {
-  const site = getSite((await searchParams).site);
-
+function Dashboard({ site }: { site: ClimateSite }) {
   return (
     <div className="space-y-8">
       <PageHeader title="Good day" lead={yearSummary(site)}>
@@ -87,6 +87,7 @@ export default async function DashboardPage({ searchParams }: DashboardProps) {
           <TemperatureChart site={site} />
           <RainfallChart site={site} />
         </div>
+        <HistoryCharts site={site} />
         <Footnote site={site} />
       </section>
 
@@ -103,4 +104,8 @@ export default async function DashboardPage({ searchParams }: DashboardProps) {
       </section>
     </div>
   );
+}
+
+export default function DashboardPage() {
+  return <WithSite showStates render={(site) => <Dashboard site={site} />} />;
 }
