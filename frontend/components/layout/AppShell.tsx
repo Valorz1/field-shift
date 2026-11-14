@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useMemo, useState } from "react";
-import { clearSession } from "@/lib/session-store";
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import { clearSession } from "../../lib/session-store";
 
 type IconName = "grid" | "chart" | "droplet" | "sprout" | "layers" | "calendar" | "settings" | "chevron" | "menu" | "bell" | "map" | "sun" | "cloud" | "leaf" | "close" | "more" | "arrow" | "check";
 
