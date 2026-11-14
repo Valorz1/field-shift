@@ -43,3 +43,8 @@ export type RecentWeather = {
   source: string;
   usual: string;
 };
+
+// Chat API. schemas.py has no model for these: they mirror ChatFarm, ChatRequest and the reply in backend/app/routers/chat.py.
+export type ChatFarm = { demo: string; crop?: string } | { latitude: number; longitude: number; crop: string };
+export type ChatRequest = { message: string; level: 1 | 2 | 3; farm: ChatFarm };
+export type ChatResponse = { reply: string; level: number; label: string; model: string; note: string };
