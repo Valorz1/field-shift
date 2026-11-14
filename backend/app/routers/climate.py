@@ -1,6 +1,57 @@
-from fastapi import APIRouter
+"""Climate routes: NASA POWER monthly data for the frontend.
+
+GET  /climate/demo/{name}  -> saved data for a demo farm (fast, works offline):
+                              NASA POWER rows, plus GPM IMERG rows when available
+POST /climate/             -> live NASA POWER data for any lat/lon (slower)
+"""
+import csv
+from functools import lru_cache
+from pathlib import Path
+
+from fastapi import APIRouter, HTTPException
+
 from app.schemas import LocationRequest
+from app.services.nasa_power import fetch_monthly, to_rows
+
 router = APIRouter()
+
+# backend/app/routers/climate.py -> repo root is 3 folders up
+DATA_DIR = Path(__file__).resolve().parents[3] / "data" / "raw"
+DEMO_FARMS = {"norfolk", "nevada"}
+
+
+@router.get("/demo/{name}")
+def demo_climate(name: str):
+    if name not in DEMO_FARMS:
+        raise HTTPException(404, f"Unknown demo farm. Use one of: {sorted(DEMO_FARMS)}")
+    path = DATA_DIR / f"power_{name}_monthly.csv"
+    if not path.exists():
+        raise HTTPException(404, f"Data file missing: {path.name}")
+    rows = _read_rows(path)
+    sources = ["NASA POWER"]
+    # Satellite rain from GPM IMERG, when it has been downloaded for this farm.
+    imerg = DATA_DIR / f"imerg_{name}_monthly.csv"
+    if imerg.exists():
+        rows += _read_rows(imerg)
+        sources.append("GPM IMERG")
+    return {"farm": name, "source": " + ".join(sources), "sources": sources, "rows": rows}
+
+
+def _read_rows(path: Path) -> list[dict]:
+    with path.open(encoding="utf-8") as f:
+        return [{**r, "value": float(r["value"])} for r in csv.DictReader(f)]
+
+
 @router.post("/")
-def climate(payload: LocationRequest):
-    return {"status": "not_configured", "message": "Connect NASA POWER / GPM IMERG services.", "location": payload.model_dump()}
+def live_climate(payload: LocationRequest):
+    try:
+        rows = _live_rows(round(payload.latitude, 2), round(payload.longitude, 2))
+    except Exception as exc:  # network or NASA error
+        raise HTTPException(502, f"Could not reach NASA POWER: {exc}") from exc
+    return {"latitude": payload.latitude, "longitude": payload.longitude,
+            "source": "NASA POWER", "rows": rows}
+
+
+@lru_cache(maxsize=64)
+def _live_rows(lat: float, lon: float) -> list[dict]:
+    return to_rows(fetch_monthly(lat, lon))
