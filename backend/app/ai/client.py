@@ -23,8 +23,8 @@ def chat(messages: list[dict], max_tokens: int = 160, timeout: float = 120) -> s
     content = _content(data)
     if not content and data.get("done_reason") == "length":
         # Ran out of room before answering: try once more with more room.
-        body["options"]["num_predict"] = max_tokens * 4
-        content = _content(_post(body, timeout))
+        roomier = {**body, "options": {**body["options"], "num_predict": max_tokens * 4}}
+        content = _content(_post(roomier, timeout))
     return content
 
 
