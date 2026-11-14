@@ -1,19 +1,23 @@
-import { House, Layers, type LucideIcon, SlidersHorizontal, SlidersVertical, Sprout, Thermometer } from "lucide-react";
+import { House, Layers, type LucideIcon, SlidersHorizontal, Sprout, Thermometer } from "lucide-react";
 
 export type NavItem = {
   href: string;
   label: string;
-  shortLabel?: string;
+  shortLabel: string;
   icon: LucideIcon;
+  // Pages about one farm keep the farm that is open (?site=...) when you move between them.
+  keepsFarm: boolean;
 };
 
 export const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Overview", shortLabel: "Home", icon: House },
-  { href: "/climate", label: "Climate Intelligence", shortLabel: "Climate", icon: Thermometer },
-  { href: "/soil", label: "Soil Monitoring", shortLabel: "Soil", icon: Layers },
-  { href: "/strategies", label: "Crop Strategies", shortLabel: "Strategies", icon: Sprout },
-  { href: "/compare", label: "Compare Strategies", icon: SlidersVertical },
-  { href: "/session", label: "Session Configuration", shortLabel: "Session", icon: SlidersHorizontal },
+  { href: "/dashboard", label: "Overview", shortLabel: "Home", icon: House, keepsFarm: true },
+  { href: "/climate", label: "Climate", shortLabel: "Climate", icon: Thermometer, keepsFarm: true },
+  { href: "/soil", label: "Soil", shortLabel: "Soil", icon: Layers, keepsFarm: true },
+  { href: "/strategies", label: "Crop plans", shortLabel: "Plans", icon: Sprout, keepsFarm: true },
+  { href: "/session", label: "Session and AI", shortLabel: "Session", icon: SlidersHorizontal, keepsFarm: false },
 ];
 
-export const isActivePath = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
+export const navKey = (item: NavItem) => item.href;
+
+export const isActivePath = (pathname: string, item: NavItem) =>
+  pathname === item.href || pathname.startsWith(`${item.href}/`);

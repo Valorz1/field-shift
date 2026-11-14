@@ -29,3 +29,17 @@ export type StrategiesResponse = {
   strategies: Strategy[];
   disclaimer: string;
 };
+
+// GET /climate/recent: the last 30 days from NASA POWER daily data (backend/app/services/recent_weather.py).
+export type RecentWeather = {
+  latitude: number;
+  longitude: number;
+  period: { start: string; end: string; days: number };
+  rain: { recent_mm: number; usual_mm: number; change_pct: number | null };
+  temperature: { recent_c: number; usual_c: number; change_c: number };
+  frost_nights: number;
+  hottest: { date: string; max_c: number };
+  coldest: { date: string; min_c: number };
+  source: string;
+  usual: string;
+};

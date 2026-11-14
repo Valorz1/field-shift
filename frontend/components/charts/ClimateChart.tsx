@@ -88,7 +88,8 @@ function Legend({ mark, year }: Pick<ClimateChartProps, "mark" | "year">) {
 
 function DataTable({ title, points, unit, digits, year, usualYears }: ClimateChartProps) {
   return (
-    <table className="sr-only">
+    <div className="sr-only">
+    <table>
       <caption>{title}</caption>
       <thead>
         <tr>
@@ -117,6 +118,7 @@ function DataTable({ title, points, unit, digits, year, usualYears }: ClimateCha
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
 

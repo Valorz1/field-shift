@@ -87,13 +87,17 @@ export type SeasonInsight = { name: string; span: string; status: Status; text: 
 const total = (months: MonthSummary[], pick: (month: MonthSummary) => number) =>
   months.reduce((sum, month) => sum + pick(month), 0);
 
+const seasonRain = (site: ClimateSite, season: (typeof SEASONS)[number]) => {
+  const months = site.months.filter((m) => (season.months as readonly number[]).includes(m.month));
+  const rain = Math.round(total(months, (m) => m.rainfallMm));
+  const usual = Math.round(total(months, (m) => m.baselineRainfallMm));
+  const percent = roundPercent((rain / usual - 1) * 100);
+  return { rain, usual, percent, status: rainStatus(percent) };
+};
+
 export const seasonInsights = (site: ClimateSite): SeasonInsight[] =>
   SEASONS.map((season) => {
-    const months = site.months.filter((m) => (season.months as readonly number[]).includes(m.month));
-    const rain = Math.round(total(months, (m) => m.rainfallMm));
-    const usual = Math.round(total(months, (m) => m.baselineRainfallMm));
-    const percent = roundPercent((rain / usual - 1) * 100);
-    const status = rainStatus(percent);
+    const { rain, usual, percent, status } = seasonRain(site, season);
     const figures = `(${rain} mm vs ${usual} mm usual)`;
     const direction = percent < 0 ? "drier" : "wetter";
     const strength = status === "fine" ? "a little " : status === "act" || percent > 0 ? "much " : "";
@@ -117,6 +121,18 @@ export const yearSummary = (site: ClimateSite) => {
   if (t === 0) return `${start} about as warm as usual and ${rain} than usual.`;
   if (r === 0) return `${start} ${warmth(t)} than usual, with about the usual amount of rain.`;
   return `${start} ${warmth(t)} and ${rain} than usual.`;
+};
+
+// The headline leads with summer rain when summers changed more than the whole year did:
+// in Norfolk the year was only 2% drier, but summers were about 30% drier.
+export const headline = (site: ClimateSite) => {
+  const summer = seasonRain(site, SEASONS[1]);
+  if (summer.status === "fine" || summer.status === rainStatus(rainChange(site))) return yearSummary(site);
+  const t = temperatureChange(site);
+  const summers = `summers were about ${Math.abs(summer.percent)}% ${summer.percent < 0 ? "drier" : "wetter"}`;
+  return t === 0
+    ? `In ${site.year} your field was about as warm as usual, but ${summers} than usual.`
+    : `In ${site.year} your field was ${warmth(t)}, and ${summers} than usual.`;
 };
 
 const percentWet = (fraction: number) => Math.round(fraction * 100);

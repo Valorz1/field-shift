@@ -1,1 +1,6 @@
-export default function ComparePage() { return <div><h1 className="text-2xl font-semibold">Compare strategies</h1><p className="mt-2 text-gray-600">Side-by-side comparisons will appear here.</p></div>; }
+import { redirect } from "next/navigation";
+
+// Comparing the plans is part of the Crop plans page.
+export default function Page() {
+  redirect("/strategies");
+}

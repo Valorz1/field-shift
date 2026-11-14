@@ -83,7 +83,7 @@ export const kpisFor = (site: ClimateSite, risk: RiskState): KpiView[] => {
     },
     {
       kind: "rain",
-      label: `Rain in ${site.year} vs usual`,
+      label: `Rain over the whole year, ${site.year} vs usual`,
       value: formatSigned(r, 0),
       unit: "%",
       source: "Calculated",

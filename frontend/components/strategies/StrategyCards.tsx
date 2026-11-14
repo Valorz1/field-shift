@@ -70,7 +70,7 @@ export function StrategyCards({ site }: { site: Place }) {
           </p>
           <div className="grid gap-4 xl:grid-cols-3">
             {data.strategies.map((strategy) => (
-              <StrategyCard key={strategy.id} strategy={strategy} risk={data.risk} />
+              <StrategyCard key={strategy.id} strategy={strategy} />
             ))}
           </div>
         </>

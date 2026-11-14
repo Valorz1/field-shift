@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { EndSessionButton } from "@/components/session/EndSessionButton";
 import { cx } from "@/lib/cx";
-import { isActivePath, navItems } from "@/lib/navigation";
+import { isActivePath, navItems, navKey } from "@/lib/navigation";
 import { Logo } from "./Logo";
+import { NavLink } from "./NavLink";
 import { SessionCard } from "./SessionCard";
 import { WithSite } from "./WithSite";
 
@@ -18,13 +18,14 @@ export function Sidebar() {
         <Logo className="px-2" />
         <nav aria-label="Main">
           <ul className="space-y-1">
-            {navItems.map(({ href, label, icon: Icon }) => {
-              const active = isActivePath(pathname, href);
+            {navItems.map((item) => {
+              const { label, icon: Icon } = item;
+              const active = isActivePath(pathname, item);
               return (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    aria-current={active ? "page" : undefined}
+                <li key={navKey(item)}>
+                  <NavLink
+                    item={item}
+                    current={active}
                     className={cx(
                       "flex min-h-12 items-center gap-3 rounded-control px-3 text-base transition-colors focus-visible:outline-white",
                       active
@@ -34,7 +35,7 @@ export function Sidebar() {
                   >
                     <Icon aria-hidden="true" className="size-5 shrink-0" strokeWidth={1.6} />
                     {label}
-                  </Link>
+                  </NavLink>
                 </li>
               );
             })}

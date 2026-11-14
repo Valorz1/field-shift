@@ -3,15 +3,17 @@
 GET  /climate/demo/{name}  -> saved data for a demo farm (fast, works offline):
                               NASA POWER rows, plus GPM IMERG rows when available
 POST /climate/             -> live NASA POWER data for any lat/lon (slower)
+GET  /climate/recent       -> the last 30 days from NASA POWER daily data vs the usual weather
 """
 import csv
 from functools import lru_cache
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from app.schemas import LocationRequest
 from app.services.nasa_power import fetch_monthly, to_rows
+from app.services.recent_weather import fetch_daily, monthly_baseline, recent_window, summarise_recent
 
 router = APIRouter()
 
@@ -55,3 +57,23 @@ def live_climate(payload: LocationRequest):
 @lru_cache(maxsize=64)
 def _live_rows(lat: float, lon: float) -> list[dict]:
     return to_rows(fetch_monthly(lat, lon))
+
+@router.get("/recent")
+def recent_weather(latitude: float = Query(ge=-90, le=90), longitude: float = Query(ge=-180, le=180),
+                   farm: str | None = None):
+    """Last 30 days on the field. farm = a demo farm name, to use its saved monthly data as the usual."""
+    lat, lon = round(latitude, 2), round(longitude, 2)
+    try:
+        if farm in DEMO_FARMS and (DATA_DIR / f"power_{farm}_monthly.csv").exists():
+            history = _read_rows(DATA_DIR / f"power_{farm}_monthly.csv")
+        else:
+            history = _live_rows(lat, lon)
+        start, end = recent_window()
+        raw = fetch_daily(lat, lon, start, end)
+    except Exception as exc:  # network or NASA error
+        raise HTTPException(502, f"Could not reach NASA POWER: {exc}") from exc
+    try:
+        summary = summarise_recent(raw, monthly_baseline(history))
+    except ValueError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    return {"latitude": latitude, "longitude": longitude, **summary}
