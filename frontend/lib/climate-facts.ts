@@ -111,7 +111,7 @@ export const yearSummary = (site: ClimateSite) => {
   const t = temperatureChange(site);
   const r = rainChange(site);
   const rain = `${Math.abs(r)}% ${r > 0 ? "wetter" : "drier"}`;
-  const start = `Your ${site.year} was`;
+  const start = `In ${site.year} your field was`;
   if (t === 0 && r === 0) return `${start} about as warm and as wet as usual.`;
   if (t === 0) return `${start} about as warm as usual and ${rain} than usual.`;
   if (r === 0) return `${start} ${warmth(t)} than usual, with about the usual amount of rain.`;

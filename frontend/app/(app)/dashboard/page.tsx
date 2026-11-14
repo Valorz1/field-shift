@@ -28,8 +28,8 @@ function Footnote({ site }: { site: ClimateSite }) {
           {site.elevationM !== undefined && `, ${site.elevationM} m above sea level`}.
         </li>
         <li>
-          Jan–Dec {year}: average temperature {annual.temperatureC.toFixed(1)} °C (usual{" "}
-          {annual.baselineTemperatureC.toFixed(1)} °C), total rain {Math.round(annual.rainfallMm)} mm (usual{" "}
+          {year} average: temperature {annual.temperatureC.toFixed(1)} °C (usual{" "}
+          {annual.baselineTemperatureC.toFixed(1)} °C), rain in a year {Math.round(annual.rainfallMm)} mm (usual{" "}
           {Math.round(annual.baselineRainfallMm)} mm).
         </li>
         {statusRuleText().map((rule) => (
