@@ -1,4 +1,4 @@
-import type { DemoClimateResponse, LiveClimateResponse, RecentWeather, StrategiesResponse } from "./types";
+import type { ChatRequest, ChatResponse, DemoClimateResponse, LiveClimateResponse, RecentWeather, StrategiesResponse } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 // The backend waits up to 120 s for NASA on the first call for a new place.
@@ -47,3 +47,5 @@ export const getRecentWeather = (latitude: number, longitude: number, farm?: str
   request<RecentWeather>(
     `/climate/recent?latitude=${latitude}&longitude=${longitude}${farm ? `&farm=${encodeURIComponent(farm)}` : ""}`,
   );
+
+export const sendChat = (body: ChatRequest) => request<ChatResponse>("/chat/", post(body));

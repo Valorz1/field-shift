@@ -3,7 +3,8 @@
 import { HistoryCharts } from "@/components/charts/HistoryCharts";
 import { RainfallChart } from "@/components/charts/RainfallChart";
 import { TemperatureChart } from "@/components/charts/TemperatureChart";
-import { CalendarRange, ChevronDown, Sprout, Sun } from "lucide-react";
+import { CalendarRange, ChevronDown, MessageCircle, Sprout, Sun } from "lucide-react";
+import { AssistantPanel } from "@/components/dashboard/AssistantPanel";
 import { InsightCard } from "@/components/dashboard/InsightCard";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
@@ -77,6 +78,13 @@ function Dashboard({ site }: { site: ClimateSite }) {
           3 plans for the next 3 years
         </SectionTitle>
         <StrategyCards site={site} />
+      </section>
+
+      <section id="assistant" aria-labelledby="assistant-heading" className="scroll-mt-24 space-y-4">
+        <SectionTitle id="assistant-heading" icon={MessageCircle}>
+          Ask about your field
+        </SectionTitle>
+        <AssistantPanel site={site} crop={crop} />
       </section>
     </div>
   );
