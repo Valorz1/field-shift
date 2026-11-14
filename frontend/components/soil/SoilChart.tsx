@@ -20,7 +20,7 @@ export function SoilChart({ site }: { site: ClimateSite }) {
       points={site.soilMonths.map((m) => ({ value: pct(m.recent), usual: pct(m.usual), low: pct(m.low), high: pct(m.high) }))}
       year={site.year}
       usualYears={usualYears(site)}
-      source="GWETROOT"
+      source="NASA POWER monthly GWETROOT"
       note="From the NASA POWER MERRA-2 model, not from a satellite."
     />
   );

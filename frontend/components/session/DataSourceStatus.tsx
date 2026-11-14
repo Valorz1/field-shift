@@ -5,7 +5,7 @@ import type { DataLabel } from "@/lib/view-models";
 const SOURCES: { source: DataLabel; text: string }[] = [
   { source: "NASA POWER", text: "Temperature, rain and soil wetness for any spot on Earth, monthly since 2001." },
   { source: "GPM IMERG", text: "Satellite rain for the two example farms, to check the NASA POWER rain." },
-  { source: "NASA SMAP", text: "Satellite soil moisture. Coming next: not used in the plans yet." },
+  { source: "NASA SMAP", text: "Satellite soil moisture, 2016–2025, for the Norfolk example farm. Used as a check on the soil numbers, not in the plans." },
   { source: "AI", text: "Gemma 4, running on this computer. It explains the plans in 1 or 2 lines. It does not make them." },
 ];
 

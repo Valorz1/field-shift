@@ -38,6 +38,13 @@ export type ClimateSite = Place & {
   soil?: { recent: number; baseline?: number };
   // Soil wetness for each calendar month (0–1): the recent average, and the usual average, lowest and highest.
   soilMonths?: { month: number; recent: number; usual: number; low: number; high: number }[];
+  // NASA SMAP satellite soil moisture (top ~5 cm, cm3/cm3), when it has been downloaded for this farm.
+  // SMAP only starts in 2015, so it compares 2021-2025 with 2016-2020, not with 2001-2020.
+  smap?: {
+    months: { month: number; recent: number; usual: number; low: number; high: number }[];
+    summer: { earlier: number; recent: number };
+    days: number;
+  };
   // Every month the API returned, for the history charts. satelliteRain is empty when the API has no IMERG rows.
   history: { temperature: ClimateRow[]; rain: ClimateRow[]; satelliteRain: ClimateRow[] };
 };
@@ -114,6 +121,36 @@ function soilByMonth(series: ClimateRow[]): ClimateSite["soilMonths"] {
   return months.every(Boolean) ? (months as NonNullable<ClimateSite["soilMonths"]>) : undefined;
 }
 
+const SMAP_EARLIER = { start: 2016, end: 2020 };
+
+function smapSummary(series: ClimateRow[], dayRows: ClimateRow[]): ClimateSite["smap"] {
+  if (!series.length) return undefined;
+  const value = new Map(series.map((row) => [row.date, row.value]));
+  const pick = (period: Period, months: readonly number[]) =>
+    months.flatMap((month) =>
+      Array.from({ length: period.end - period.start + 1 }, (_, i) => value.get(key(period.start + i, month))),
+    ).filter((v): v is number => v !== undefined);
+  const months = MONTHS.map((month) => {
+    const recent = pick(RECENT, [month]);
+    const earlier = pick(SMAP_EARLIER, [month]);
+    if (!recent.length || !earlier.length) return undefined;
+    return {
+      month,
+      recent: round(mean(recent), 3),
+      usual: round(mean(earlier), 3),
+      low: round(Math.min(...earlier), 3),
+      high: round(Math.max(...earlier), 3),
+    };
+  });
+  if (!months.every(Boolean)) return undefined;
+  const summer = [6, 7, 8] as const;
+  return {
+    months: months as NonNullable<ClimateSite["smap"]>["months"],
+    summer: { earlier: round(mean(pick(SMAP_EARLIER, summer)), 3), recent: round(mean(pick(RECENT, summer)), 3) },
+    days: Math.round(dayRows.reduce((sum, row) => sum + row.value, 0)),
+  };
+}
+
 export function summarise(place: Place, rows: ClimateRow[]): ClimateSite {
   const only = (parameter: string) => rows.filter((row) => row.parameter === parameter);
   const history = { temperature: only(TEMPERATURE), rain: only(RAIN_TOTAL), satelliteRain: only(SATELLITE_RAIN_TOTAL) };
@@ -175,6 +212,7 @@ export function summarise(place: Place, rows: ClimateRow[]): ClimateSite {
     },
     soil: soilWetness(only(SOIL_WETNESS)),
     soilMonths: soilByMonth(only(SOIL_WETNESS)),
+    smap: smapSummary(only("SMAP_SOIL_MOISTURE_AM"), only("SMAP_DAYS")),
     history,
   };
 }

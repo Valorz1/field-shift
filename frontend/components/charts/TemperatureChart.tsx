@@ -21,7 +21,7 @@ export function TemperatureChart({ site }: { site: ClimateSite }) {
       }))}
       year={site.year}
       usualYears={usualYears(site)}
-      source={site.source.temperature.parameter}
+      source={`NASA POWER monthly ${site.source.temperature.parameter}`}
     />
   );
 }

@@ -1,7 +1,7 @@
 """Climate routes: NASA POWER monthly data for the frontend.
 
 GET  /climate/demo/{name}  -> saved data for a demo farm (fast, works offline):
-                              NASA POWER rows, plus GPM IMERG rows when available
+                              NASA POWER rows, plus GPM IMERG and NASA SMAP rows when available
 POST /climate/             -> live NASA POWER data for any lat/lon (slower)
 GET  /climate/recent       -> the last 30 days from NASA POWER daily data vs the usual weather
 """
@@ -36,6 +36,11 @@ def demo_climate(name: str):
     if imerg.exists():
         rows += _read_rows(imerg)
         sources.append("GPM IMERG")
+    # Satellite soil moisture from NASA SMAP, when it has been downloaded for this farm.
+    smap = DATA_DIR / f"smap_{name}_monthly.csv"
+    if smap.exists():
+        rows += _read_rows(smap)
+        sources.append("NASA SMAP")
     return {"farm": name, "source": " + ".join(sources), "sources": sources, "rows": rows}
 
 

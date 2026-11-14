@@ -241,7 +241,7 @@ export function ClimateChart(props: ClimateChartProps) {
       </svg>
       <DataTable {...props} />
       <p className="text-sm text-caption">
-        <strong className="font-semibold text-ink">Data source:</strong> NASA POWER monthly {source}.{" "}
+        <strong className="font-semibold text-ink">Data source:</strong> {source}.{" "}
         <strong className="font-semibold text-ink">Note:</strong> the shaded band is the lowest–highest value for that
         month in {usualYears}.{note && ` ${note}`}
       </p>

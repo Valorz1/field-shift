@@ -6,6 +6,7 @@ import { KpiCard } from "@/components/dashboard/KpiCard";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { WithSite } from "@/components/layout/WithSite";
+import { SmapCheck } from "@/components/soil/SmapCheck";
 import { SoilChart } from "@/components/soil/SoilChart";
 import { ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -74,7 +75,28 @@ function Soil({ site }: { site: ClimateSite }) {
         </div>
       </section>
 
+      {site.smap && (
+        <section aria-labelledby="soil-satellite" className="space-y-4">
+          <SectionTitle id="soil-satellite" icon={Satellite}>
+            Checked from space
+          </SectionTitle>
+          <SmapCheck site={site} />
+        </section>
+      )}
+
       <div className="grid gap-4 lg:grid-cols-2">
+        {!site.smap && (
+          <Card className="flex flex-col gap-3">
+            <h3 className="flex items-center gap-2 font-display text-lg font-bold text-forest">
+              <Satellite aria-hidden="true" className="size-5" strokeWidth={1.8} />
+              Coming next: NASA SMAP satellite
+            </h3>
+            <p className="text-base text-caption">
+              These numbers come from a NASA weather model. NASA&apos;s SMAP satellite measures soil moisture from
+              space. We have asked NASA for SMAP data for this farm, to check these numbers against it.
+            </p>
+          </Card>
+        )}
         <Card className="flex flex-col gap-3">
           <h3 className="flex items-center gap-2 font-display text-lg font-bold text-forest">
             <Satellite aria-hidden="true" className="size-5" strokeWidth={1.8} />
