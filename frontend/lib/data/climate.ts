@@ -42,6 +42,17 @@ export const climateSites: Place[] = [
   { id: "nevada", name: "Western Nevada", region: "USA", latitude: 39.47, longitude: -118.78, elevationM: 1269 },
 ];
 
+// A place the farmer pinned on the map. Two decimals (about 1 km) matches what the backend sends to NASA.
+export const pinPlace = (latitude: number, longitude: number): Place => ({
+  id: `pin:${latitude.toFixed(2)},${longitude.toFixed(2)}`,
+  name: "Your field",
+  region: "pinned on the map",
+  latitude: Number(latitude.toFixed(2)),
+  longitude: Number(longitude.toFixed(2)),
+});
+
+export const isPin = (place: Place) => place.id.startsWith("pin:");
+
 export const getPlace = (id?: string | null): Place => climateSites.find((site) => site.id === id) ?? climateSites[0];
 
 const BASELINE = { start: 2001, end: 2020 };
