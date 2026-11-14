@@ -1,4 +1,4 @@
-import type { DemoClimateResponse, LiveClimateResponse } from "./types";
+import type { DemoClimateResponse, LiveClimateResponse, StrategiesResponse } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 // The backend waits up to 120 s for NASA on the first call for a new place.
@@ -35,3 +35,8 @@ const post = (body: unknown): RequestInit => ({
 
 export const getLiveClimate = (latitude: number, longitude: number) =>
   request<LiveClimateResponse>("/climate/", post({ latitude, longitude }));
+
+export const getDemoStrategies = (farm: string) => request<StrategiesResponse>(`/strategies/demo/${farm}`);
+
+export const getLiveStrategies = (latitude: number, longitude: number, crop: string) =>
+  request<StrategiesResponse>("/strategies/", post({ latitude, longitude, crop }));

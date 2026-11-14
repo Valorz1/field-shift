@@ -117,26 +117,3 @@ export const yearSummary = (site: ClimateSite) => {
   if (r === 0) return `${start} ${warmth(t)} than usual, with about the usual amount of rain.`;
   return `${start} ${warmth(t)} and ${rain} than usual.`;
 };
-
-const countMonths = (site: ClimateSite, pick: (month: MonthSummary) => [number, number]) => {
-  const pairs = site.months.map(pick);
-  return {
-    above: pairs.filter(([value, usual]) => value > usual).length,
-    below: pairs.filter(([value, usual]) => value < usual).length,
-  };
-};
-
-export const climateEvidence = (site: ClimateSite): string[] => {
-  const t = temperatureChange(site);
-  const r = rainChange(site);
-  const warmMonths = countMonths(site, (m) => [m.temperatureC, m.baselineTemperatureC]).above;
-  const dryMonths = countMonths(site, (m) => [m.rainfallMm, m.baselineRainfallMm]).below;
-  return [
-    t === 0 ? `${site.year} was about as warm as usual.` : `${site.year} was ${warmth(t)} than usual.`,
-    r === 0
-      ? `${site.year} had about the usual amount of rain.`
-      : `${site.year} had ${Math.abs(r)}% ${r > 0 ? "more" : "less"} rain than usual.`,
-    `${warmMonths} of 12 months in ${site.year} were warmer than usual for that month.`,
-    `${dryMonths} of 12 months in ${site.year} had less rain than usual for that month.`,
-  ];
-};

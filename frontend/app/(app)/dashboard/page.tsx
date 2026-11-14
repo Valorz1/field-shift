@@ -9,13 +9,11 @@ import { SiteSwitcher } from "@/components/dashboard/SiteSwitcher";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { WithSite } from "@/components/layout/WithSite";
 import { FarmMap } from "@/components/map/FarmMap";
-import { StrategyCard } from "@/components/strategies/StrategyCard";
-import { Disclaimer } from "@/components/ui/Disclaimer";
+import { StrategyCards } from "@/components/strategies/StrategyCards";
 import { seasonInsights, statusRuleText, usualYears, yearSummary } from "@/lib/climate-facts";
 import type { ClimateSite } from "@/lib/data/climate";
 import { formatCoordinates, formatYears } from "@/lib/format";
 import { kpisFor } from "@/lib/kpis";
-import { strategiesAreIllustrative, strategiesFor } from "@/lib/strategies";
 
 function Footnote({ site }: { site: ClimateSite }) {
   const { annual, source, year } = site;
@@ -96,12 +94,7 @@ function Dashboard({ site }: { site: ClimateSite }) {
         <h2 id="strategies-heading" className="font-display text-xl font-bold text-forest">
           Three ways to plan the next 3 years
         </h2>
-        <div className="grid gap-4 xl:grid-cols-3">
-          {strategiesFor(site).map((strategy) => (
-            <StrategyCard key={strategy.id} strategy={strategy} illustrative={strategiesAreIllustrative} />
-          ))}
-        </div>
-        <Disclaimer />
+        <StrategyCards site={site} />
       </section>
     </div>
   );
