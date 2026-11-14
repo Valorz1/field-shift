@@ -22,7 +22,7 @@ export function RainfallChart({ site }: { site: ClimateSite }) {
       }))}
       year={site.year}
       usualYears={usualYears(site)}
-      source={`${site.source.precipitation.parameter} (rain), API ${site.source.apiVersion}`}
+      source={`${site.source.precipitation.parameter} (rain)`}
       note="Monthly rain is the daily rate multiplied by the days in the month."
     />
   );

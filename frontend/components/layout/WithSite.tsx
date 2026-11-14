@@ -1,19 +1,27 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
-import { type ClimateSite, getSite } from "@/lib/data/climate";
+import { ErrorMessage } from "@/components/ui/states/ErrorMessage";
+import { LoadingSkeleton } from "@/components/ui/states/LoadingSkeleton";
+import type { ClimateSite } from "@/lib/data/climate";
+import { useClimateSite } from "@/lib/use-climate-site";
 
-type Render = (site: ClimateSite) => ReactNode;
+type Props = { render: (site: ClimateSite) => ReactNode; showStates?: boolean };
 
-function SelectedSite({ render }: { render: Render }) {
-  return render(getSite(useSearchParams().get("site")));
+const loading = <LoadingSkeleton label="Loading NASA climate data" lines={6} />;
+
+function SelectedSite({ render, showStates }: Props) {
+  const { site, error, retry } = useClimateSite();
+  if (site) return render(site);
+  if (!showStates) return null;
+  return error ? <ErrorMessage message={error} onRetry={retry} /> : loading;
 }
 
-export function WithSite({ render }: { render: Render }) {
+// showStates: the page shows the loading and error states; the sidebar and top bar stay empty until data arrives.
+export function WithSite(props: Props) {
   return (
-    <Suspense fallback={render(getSite())}>
-      <SelectedSite render={render} />
+    <Suspense fallback={props.showStates ? loading : null}>
+      <SelectedSite {...props} />
     </Suspense>
   );
 }
