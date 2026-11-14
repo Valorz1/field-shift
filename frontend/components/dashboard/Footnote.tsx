@@ -24,8 +24,10 @@ export function Footnote({ site }: { site: ClimateSite }) {
         ))}
         <li>Grey cards have no data yet. Grey is not a status.</li>
         <li>
-          Soil wetness is how wet the root zone was, from the NASA POWER MERRA-2 model, not from a satellite. NASA SMAP
-          satellite soil data is still coming.
+          Soil wetness is how wet the root zone was, from the NASA POWER MERRA-2 model, not from a satellite.
+          {site.smap
+            ? " The Soil page checks it against the NASA SMAP satellite."
+            : " NASA SMAP satellite soil data is still coming for this farm."}
         </li>
         <li>Source: NASA POWER monthly data, {formatYears(source.firstYear, source.lastYear)}.</li>
       </ul>

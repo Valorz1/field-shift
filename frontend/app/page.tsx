@@ -20,7 +20,7 @@ const STEPS = [
 const DATA = [
   { name: "NASA POWER", what: "Temperature, rain and soil wetness", text: "Monthly since 2001, for any spot on Earth.", tone: "bg-forest" },
   { name: "GPM IMERG", what: "Satellite rain", text: "A second NASA source to check the rain numbers.", tone: "bg-water-ink" },
-  { name: "NASA SMAP", what: "Satellite soil moisture", text: "Coming next, as a check on the soil numbers.", tone: "bg-earth-ink" },
+  { name: "NASA SMAP", what: "Satellite soil moisture", text: "Checks the soil numbers from space, for the Norfolk example farm.", tone: "bg-earth-ink" },
 ];
 
 export default function Home() {
