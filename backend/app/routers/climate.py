@@ -1,6 +1,7 @@
 """Climate routes: NASA POWER monthly data for the frontend.
 
-GET  /climate/demo/{name}  -> saved data for a demo farm (fast, works offline)
+GET  /climate/demo/{name}  -> saved data for a demo farm (fast, works offline):
+                              NASA POWER rows, plus GPM IMERG rows when available
 POST /climate/             -> live NASA POWER data for any lat/lon (slower)
 """
 import csv
@@ -26,9 +27,19 @@ def demo_climate(name: str):
     path = DATA_DIR / f"power_{name}_monthly.csv"
     if not path.exists():
         raise HTTPException(404, f"Data file missing: {path.name}")
+    rows = _read_rows(path)
+    sources = ["NASA POWER"]
+    # Satellite rain from GPM IMERG, when it has been downloaded for this farm.
+    imerg = DATA_DIR / f"imerg_{name}_monthly.csv"
+    if imerg.exists():
+        rows += _read_rows(imerg)
+        sources.append("GPM IMERG")
+    return {"farm": name, "source": " + ".join(sources), "sources": sources, "rows": rows}
+
+
+def _read_rows(path: Path) -> list[dict]:
     with path.open(encoding="utf-8") as f:
-        rows = [{**r, "value": float(r["value"])} for r in csv.DictReader(f)]
-    return {"farm": name, "source": "NASA POWER", "rows": rows}
+        return [{**r, "value": float(r["value"])} for r in csv.DictReader(f)]
 
 
 @router.post("/")

@@ -23,3 +23,21 @@ def test_unknown_demo_farm_is_404():
 def test_cors_allows_frontend():
     response = client.get("/health", headers={"Origin": "http://localhost:3000"})
     assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
+
+
+def test_demo_farm_adds_imerg_rows_when_available(tmp_path, monkeypatch):
+    (tmp_path / "power_nevada_monthly.csv").write_text(
+        "date,parameter,value,unit,source,label\n2025-01,T2M,1.0,C,NASA POWER,nasa\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "imerg_nevada_monthly.csv").write_text(
+        "date,parameter,value,unit,source,label\n"
+        "2025-01,IMERG_PRECIP_MONTH_TOTAL,12.3,mm,GPM IMERG,calculated\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(climate, "DATA_DIR", tmp_path)
+    body = client.get("/climate/demo/nevada").json()
+    assert body["sources"] == ["NASA POWER", "GPM IMERG"]
+    imerg = [r for r in body["rows"] if r["parameter"] == "IMERG_PRECIP_MONTH_TOTAL"]
+    assert imerg == [{"date": "2025-01", "parameter": "IMERG_PRECIP_MONTH_TOTAL", "value": 12.3,
+                      "unit": "mm", "source": "GPM IMERG", "label": "calculated"}]
