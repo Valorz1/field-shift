@@ -24,7 +24,11 @@ BASE_URL = "https://power.larc.nasa.gov/api/temporal/monthly/point"
 # T2M: air temperature at 2 m          T2M_MAX / T2M_MIN: max / min temperature
 # PRECTOTCORR: bias-corrected precipitation
 # RH2M: relative humidity at 2 m       ALLSKY_SFC_SW_DWN: solar radiation at the surface
-DEFAULT_PARAMETERS = ["T2M", "T2M_MAX", "T2M_MIN", "PRECTOTCORR", "RH2M", "ALLSKY_SFC_SW_DWN"]
+# GWETTOP: surface soil wetness        GWETROOT: root-zone soil wetness (top ~1 m)
+#   Both run from 0 (dry) to 1 (saturated). They come from NASA's MERRA-2 model,
+#   not from the SMAP satellite.
+DEFAULT_PARAMETERS = ["T2M", "T2M_MAX", "T2M_MIN", "PRECTOTCORR", "RH2M", "ALLSKY_SFC_SW_DWN",
+                      "GWETTOP", "GWETROOT"]
 DEFAULT_START, DEFAULT_END = 2001, 2025
 
 
