@@ -23,7 +23,7 @@ export function TopBar() {
               </div>
               <div className="rounded-control border border-line px-3 py-2">
                 <dt className="sr-only">Year shown</dt>
-                <dd className="font-medium">Jan – Dec {site.year}</dd>
+                <dd className="font-medium">{site.year} average</dd>
               </div>
               <div className="rounded-control border border-line px-3 py-2">
                 <dt className="sr-only">Usual</dt>

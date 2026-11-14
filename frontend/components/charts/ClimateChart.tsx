@@ -12,7 +12,7 @@ type ClimateChartProps = {
   tickStep: number;
   fromZero?: boolean;
   points: MonthPoint[];
-  year: number;
+  year: string;
   usualYears: string;
   source: string;
   note?: string;
