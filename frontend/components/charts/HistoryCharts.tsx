@@ -95,7 +95,7 @@ export function HistoryCharts({ site }: { site: ClimateSite }) {
         series={[
           { name: "Rain", rows: rain, type: "bar", color: "water" },
           ...(satelliteRain.length
-            ? [{ name: "Rain seen by satellite", rows: satelliteRain, type: "line" as const, color: "earth" }]
+            ? [{ name: "Rain seen by satellite", rows: satelliteRain, type: "line" as const, color: "earth-ink" }]
             : []),
         ]}
       />
