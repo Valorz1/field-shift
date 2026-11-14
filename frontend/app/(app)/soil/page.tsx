@@ -1,1 +1,6 @@
-export default function SoilPage() { return <div><h1 className="text-2xl font-semibold">Soil</h1><p className="mt-2 text-gray-600">Soil moisture and related indicators will appear here.</p></div>; }
+import { redirect } from "next/navigation";
+
+// Everything for this page is on the dashboard, so the old address jumps to that section.
+export default function Page() {
+  redirect("/dashboard#soil");
+}

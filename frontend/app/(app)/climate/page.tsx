@@ -1,1 +1,6 @@
-export default function ClimatePage() { return <div><h1 className="text-2xl font-semibold">Climate</h1><p className="mt-2 text-gray-600">Climate indicators and anomalies will appear here.</p></div>; }
+import { redirect } from "next/navigation";
+
+// Everything for this page is on the dashboard, so the old address jumps to that section.
+export default function Page() {
+  redirect("/dashboard#climate");
+}

@@ -23,10 +23,7 @@ export function KpiCard({ kpi }: { kpi: KpiView }) {
         {kpi.unit && <span className="ml-1 font-sans text-xl font-semibold text-ink">{kpi.unit}</span>}
       </p>
       {kpi.status && <StatusTag status={kpi.status} className="self-start" />}
-      <p className="text-base text-ink">
-        <span className="font-semibold">What this means: </span>
-        {kpi.meaning}
-      </p>
+      <p className="text-base text-caption">{kpi.meaning}</p>
     </Card>
   );
 }

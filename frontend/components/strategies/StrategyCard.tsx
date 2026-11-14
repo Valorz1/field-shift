@@ -1,16 +1,20 @@
 import { ChevronDown } from "lucide-react";
-import { ButtonLink } from "@/components/ui/Button";
 import { SourceBadge } from "@/components/ui/SourceBadge";
-import { StatusTag } from "@/components/ui/StatusTag";
-import { riskLevelText, riskStatus } from "@/lib/climate-facts";
 import { cx } from "@/lib/cx";
-import type { Risk } from "@/lib/types";
 import type { Evidence, Level, Strategy, StrategyKind } from "@/lib/view-models";
 
-const kindLabels: Record<StrategyKind, string> = {
-  baseline: "What you do now",
-  "climate-adaptive": "Uses less water",
-  "soil-restoration": "Builds up the soil",
+// "Uses less water" only when the rules back it up: the water need then starts with "Lower".
+// In a cool climate like Norfolk the rules give no water figures, so the plan is about suiting the climate.
+const kindLabel = (strategy: Strategy) => {
+  if (strategy.kind === "baseline") return "What you do now";
+  if (strategy.kind === "soil-restoration") return "Builds up the soil";
+  return strategy.water_need.startsWith("Lower") ? "Uses less water" : "Crops suited to your climate";
+};
+
+const kindBorders: Record<StrategyKind, string> = {
+  baseline: "border-t-fresh",
+  "climate-adaptive": "border-t-water",
+  "soil-restoration": "border-t-earth",
 };
 
 const changeLabels: Record<Level, string> = {
@@ -26,15 +30,6 @@ const confidenceLabels: Record<Level, string> = {
   medium: "Medium confidence",
   high: "High confidence",
 };
-
-function OptionBadge({ position, illustrative }: { position: number; illustrative: boolean }) {
-  return (
-    <p className="self-start rounded-full bg-forest px-3 py-1 text-base font-semibold text-white">
-      Option {position}
-      {illustrative && <span className="sr-only">: a sample plan, not yet worked out for your farm</span>}
-    </p>
-  );
-}
 
 function LevelMeter({ level }: { level: Level }) {
   return (
@@ -96,45 +91,30 @@ function EvidenceItem({ evidence }: { evidence: Evidence }) {
   );
 }
 
-// The field's climate risk from the strategies API: the same for every plan, which each responds to.
-function FieldRisk({ risk }: { risk: Risk }) {
-  const status = riskStatus(risk.level);
-  return (
-    <div className="flex flex-wrap items-center gap-2 pt-1">
-      <p className="font-semibold text-caption">
-        Climate risk: <span className="text-ink">{status ? riskLevelText(risk.level) : "not known"}</span>
-      </p>
-      {status && <StatusTag status={status} />}
-    </div>
-  );
-}
+type StrategyCardProps = { strategy: Strategy; illustrative?: boolean };
 
-type StrategyCardProps = { strategy: Strategy; risk: Risk; illustrative?: boolean };
-
-export function StrategyCard({ strategy, risk, illustrative = false }: StrategyCardProps) {
+export function StrategyCard({ strategy, illustrative = false }: StrategyCardProps) {
   const titleId = `strategy-${strategy.id}-title`;
 
   return (
     <article
       aria-labelledby={titleId}
-      className="flex flex-col gap-5 rounded-card border border-line bg-white p-4 text-base sm:p-5"
+      className={cx(
+        "flex flex-col gap-5 rounded-card border border-t-[6px] border-line bg-white p-4 text-base sm:p-5",
+        kindBorders[strategy.kind],
+      )}
     >
-      <OptionBadge position={strategy.position} illustrative={illustrative} />
-
       <div className="space-y-1">
-        <p className="text-sm font-medium text-caption">
-          Option {strategy.position} of 3 · {kindLabels[strategy.kind]}
+        <p className="text-sm font-semibold text-caption">
+          Option {strategy.position} · {kindLabel(strategy)}
+          {illustrative && <span className="sr-only">: a sample plan, not yet worked out for your farm</span>}
         </p>
         <h3 id={titleId} className="font-display text-xl font-bold text-forest">
           {strategy.title}
         </h3>
-        <FieldRisk risk={risk} />
       </div>
 
-      <div className="space-y-1">
-        <p className="text-base font-semibold text-caption">What this means for your field</p>
-        <p className="text-ink">{strategy.why}</p>
-      </div>
+      <p className="text-ink">{strategy.why}</p>
 
       <div className="space-y-1">
         <h4 className="text-base font-semibold text-caption">Your next 3 years</h4>
@@ -200,14 +180,6 @@ export function StrategyCard({ strategy, risk, illustrative = false }: StrategyC
         </div>
       </details>
 
-      <ButtonLink
-        href={`/strategies/${strategy.id}`}
-        variant="secondary"
-        className="mt-auto w-full"
-        aria-label={`See the full plan for option ${strategy.position}: ${strategy.title}`}
-      >
-        See the full plan
-      </ButtonLink>
     </article>
   );
 }
