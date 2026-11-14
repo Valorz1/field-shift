@@ -8,7 +8,7 @@ import type { NavItem } from "@/lib/navigation";
 type Props = { item: NavItem; className: string; current: boolean; children: ReactNode };
 
 const target = (item: NavItem, site: string | null) =>
-  `${item.href}${item.href === "/dashboard" && site ? `?site=${encodeURIComponent(site)}` : ""}${item.section ? `#${item.section}` : ""}`;
+  `${item.href}${item.keepsFarm && site ? `?site=${encodeURIComponent(site)}` : ""}`;
 
 function WithFarm({ item, className, current, children }: Props) {
   const site = useSearchParams().get("site");
@@ -19,7 +19,7 @@ function WithFarm({ item, className, current, children }: Props) {
   );
 }
 
-// Keeps the open demo farm when jumping between sections. useSearchParams needs a Suspense boundary.
+// Keeps the open demo farm when moving between pages. useSearchParams needs a Suspense boundary.
 export function NavLink(props: Props) {
   return (
     <Suspense

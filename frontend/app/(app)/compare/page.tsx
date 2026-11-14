@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-// Everything for this page is on the dashboard, so the old address jumps to that section.
+// Comparing the plans is part of the Crop plans page.
 export default function Page() {
-  redirect("/dashboard#plans");
+  redirect("/strategies");
 }

@@ -1,5 +1,5 @@
-import { Lock } from "lucide-react";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { Lock, SlidersHorizontal } from "lucide-react";
+import { PageIntro } from "@/components/layout/PageIntro";
 import { AiLevelSelector } from "@/components/session/AiLevelSelector";
 import { DataSourceStatus } from "@/components/session/DataSourceStatus";
 import { EndSessionButton } from "@/components/session/EndSessionButton";
@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/Card";
 export default function SessionPage() {
   return (
     <div className="space-y-6">
-      <PageHeader
+      <PageIntro
+        icon={SlidersHorizontal}
         title="Session and AI"
         lead="You decide how much the AI helps. Nothing about your farm is saved."
       />

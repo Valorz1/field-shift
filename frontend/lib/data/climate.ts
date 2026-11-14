@@ -36,6 +36,8 @@ export type ClimateSite = Place & {
   };
   // Root-zone soil wetness as a fraction (0–1), averaged like temperature. Absent when NASA POWER has no recent GWETROOT.
   soil?: { recent: number; baseline?: number };
+  // Soil wetness for each calendar month (0–1): the recent average, and the usual average, lowest and highest.
+  soilMonths?: { month: number; recent: number; usual: number; low: number; high: number }[];
   // Every month the API returned, for the history charts. satelliteRain is empty when the API has no IMERG rows.
   history: { temperature: ClimateRow[]; rain: ClimateRow[]; satelliteRain: ClimateRow[] };
 };
@@ -89,6 +91,27 @@ function soilWetness(series: ClimateRow[]): ClimateSite["soil"] {
   if (recent === undefined) return undefined;
   const baseline = periodMean(series, BASELINE);
   return { recent: round(recent, 4), ...(baseline !== undefined && { baseline: round(baseline, 4) }) };
+}
+
+function soilByMonth(series: ClimateRow[]): ClimateSite["soilMonths"] {
+  const value = new Map(series.map((row) => [row.date, row.value]));
+  const pick = (period: Period, month: number) =>
+    Array.from({ length: period.end - period.start + 1 }, (_, i) => value.get(key(period.start + i, month))).filter(
+      (v): v is number => v !== undefined,
+    );
+  const months = MONTHS.map((month) => {
+    const recent = pick(RECENT, month);
+    const usual = pick(BASELINE, month);
+    if (!recent.length || !usual.length) return undefined;
+    return {
+      month,
+      recent: round(mean(recent), 3),
+      usual: round(mean(usual), 3),
+      low: round(Math.min(...usual), 3),
+      high: round(Math.max(...usual), 3),
+    };
+  });
+  return months.every(Boolean) ? (months as NonNullable<ClimateSite["soilMonths"]>) : undefined;
 }
 
 export function summarise(place: Place, rows: ClimateRow[]): ClimateSite {
@@ -151,6 +174,7 @@ export function summarise(place: Place, rows: ClimateRow[]): ClimateSite {
       rainfallChangePct: round(((rainfallMm - baselineRainfallMm) / baselineRainfallMm) * 100, 2),
     },
     soil: soilWetness(only(SOIL_WETNESS)),
+    soilMonths: soilByMonth(only(SOIL_WETNESS)),
     history,
   };
 }

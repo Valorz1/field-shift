@@ -5,21 +5,19 @@ export type NavItem = {
   label: string;
   shortLabel: string;
   icon: LucideIcon;
-  // Sections of the dashboard keep the farm that is open (?site=...); other pages don't need it.
-  section?: string;
+  // Pages about one farm keep the farm that is open (?site=...) when you move between them.
+  keepsFarm: boolean;
 };
 
-// Everything a farmer needs is on the dashboard, so Climate, Soil and Plans jump to its sections.
 export const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Overview", shortLabel: "Home", icon: House },
-  { href: "/dashboard", section: "climate", label: "Climate", shortLabel: "Climate", icon: Thermometer },
-  { href: "/dashboard", section: "soil", label: "Soil", shortLabel: "Soil", icon: Layers },
-  { href: "/dashboard", section: "plans", label: "Crop plans", shortLabel: "Plans", icon: Sprout },
-  { href: "/session", label: "Session and AI", shortLabel: "Session", icon: SlidersHorizontal },
+  { href: "/dashboard", label: "Overview", shortLabel: "Home", icon: House, keepsFarm: true },
+  { href: "/climate", label: "Climate", shortLabel: "Climate", icon: Thermometer, keepsFarm: true },
+  { href: "/soil", label: "Soil", shortLabel: "Soil", icon: Layers, keepsFarm: true },
+  { href: "/strategies", label: "Crop plans", shortLabel: "Plans", icon: Sprout, keepsFarm: true },
+  { href: "/session", label: "Session and AI", shortLabel: "Session", icon: SlidersHorizontal, keepsFarm: false },
 ];
 
-export const navKey = (item: NavItem) => `${item.href}#${item.section ?? ""}`;
+export const navKey = (item: NavItem) => item.href;
 
-// Only whole pages are marked as the current page; a jump to a section is not a page of its own.
 export const isActivePath = (pathname: string, item: NavItem) =>
-  !item.section && (pathname === item.href || pathname.startsWith(`${item.href}/`));
+  pathname === item.href || pathname.startsWith(`${item.href}/`);
