@@ -51,10 +51,7 @@ export function StrategyCard({ strategy }: { strategy: StrategyView }) {
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between gap-2">
-          <h4 className="text-xs font-semibold text-ink">Proposed rotation</h4>
-          <SourceBadge source="Sample data" />
-        </div>
+        <h4 className="text-xs font-semibold text-ink">Proposed rotation</h4>
         <ol className="grid grid-cols-3 gap-2">
           {strategy.rotation.map((crop, index) => (
             <li key={index} className={cx("rounded-inner px-3 py-2", accent.year)}>
