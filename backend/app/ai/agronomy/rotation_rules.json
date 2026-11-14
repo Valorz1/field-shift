@@ -1,4 +1,86 @@
 {
-  "notice": "Illustrative starter only; replace with cited, locally validated rotation guidance.",
-  "items": []
+  "version": 1,
+  "note": "Qualitative agronomy rules only: no yields, prices or water volumes are stated. Every rule lists the source(s) it comes from. Sources were checked on 2026-11-14; re-check wording before publishing.",
+  "sources": {
+    "fao_sorghum": {
+      "citation": "FAO Land & Water, Crop information: Sorghum",
+      "url": "https://www.fao.org/land-water/databases-and-software/crop-information/sorghum/ar",
+      "supports": "Sorghum is described as relatively more drought-resistant than many other crops, e.g. maize."
+    },
+    "hadebe_sorghum": {
+      "citation": "Hadebe, Modi & Mabhaudhi. Drought Tolerance and Water Use of Cereal Crops: A Focus on Sorghum as a Food Security Crop in Sub-Saharan Africa (record in FAO AGRIS)",
+      "url": "https://agris.fao.org/search/en/records/65de5ec80f3e94b9e5ce7c5e",
+      "supports": "Sorghum has high and stable water-use efficiency and drought and heat tolerance; suggested for water-scarce arid and semi-arid zones."
+    },
+    "un_millets": {
+      "citation": "UN News, Millets prove tasty solution to climate and food security challenges",
+      "url": "https://news.un.org/en/node/1092492",
+      "supports": "Millets can grow under drought and non-irrigated conditions and have a low water footprint compared with wheat, rice or maize."
+    },
+    "preventionweb_drought_crops": {
+      "citation": "PreventionWeb news article on drought-tolerant crops and methods (lists cowpea and chickpea). Author, title and date were not captured in the source check: add them before publishing",
+      "url": "https://www.preventionweb.net/news/view/52232",
+      "supports": "Cowpea and chickpea are described as drought-tolerant grain legumes."
+    },
+    "sare_building_soils": {
+      "citation": "SARE, Building Soils for Better Crops, Ch. 10 Cover Crops (Magdoff & van Es)",
+      "url": "https://www.sare.org/publications/building-soils-for-better-crops/cover-crops",
+      "supports": "Legume cover crops (e.g. hairy vetch, red clover) fix nitrogen with Rhizobium bacteria; cover crops enhance soil health in several ways."
+    },
+    "sare_mcp_fertility": {
+      "citation": "SARE, Managing Cover Crops Profitably, Building Soil Fertility (Sarrantonio)",
+      "url": "https://sare.org/publications/managing-cover-crops-profitably/building-soil-fertility",
+      "supports": "Cover crops catch nutrients before they leach; legumes add nitrogen to the soil."
+    },
+    "nrcs_340": {
+      "citation": "USDA NRCS, Conservation Practice Standard: Cover Crop (Code 340)",
+      "url": "https://www.nrcs.usda.gov/sites/default/files/2022-09/Cover_Crop_340_CPS.pdf",
+      "supports": "Cover crops are grasses, legumes and forbs planted for seasonal vegetative cover to protect and improve soil; the standard also covers planning termination to prepare the field for the next crop and to optimise soil moisture."
+    }
+  },
+  "lower_water_rules": [
+    {
+      "id": "WE-1",
+      "statement": "Sorghum is a drought-resistant cereal that can replace or alternate with a more water-demanding cereal.",
+      "applies_to": ["maize", "corn", "wheat", "barley", "oats"],
+      "alternatives": ["sorghum"],
+      "source_ids": ["fao_sorghum", "hadebe_sorghum"]
+    },
+    {
+      "id": "WE-2",
+      "statement": "Millets tolerate drought and have a low water footprint compared with wheat and maize.",
+      "applies_to": ["maize", "corn", "wheat"],
+      "alternatives": ["millet"],
+      "source_ids": ["un_millets"]
+    },
+    {
+      "id": "WE-3",
+      "statement": "Cowpea and chickpea are drought-tolerant grain legumes that can be added to a rotation.",
+      "applies_to": ["*"],
+      "alternatives": ["chickpea", "cowpea"],
+      "source_ids": ["preventionweb_drought_crops"]
+    }
+  ],
+  "soil_restoration_rules": [
+    {
+      "id": "SR-1",
+      "statement": "Legume cover crops fix atmospheric nitrogen and add it to the soil, which can reduce later nitrogen fertiliser needs.",
+      "applies_to": ["*"],
+      "cover_crops": ["hairy vetch", "red clover"],
+      "source_ids": ["sare_building_soils", "sare_mcp_fertility"]
+    },
+    {
+      "id": "SR-2",
+      "statement": "Cover crops protect and improve soil during periods when cropland would otherwise be bare.",
+      "applies_to": ["*"],
+      "source_ids": ["nrcs_340"]
+    },
+    {
+      "id": "SR-3",
+      "statement": "Cover crop termination should be planned to prepare the field for the next crop and to manage soil moisture.",
+      "applies_to": ["*"],
+      "kind": "caution",
+      "source_ids": ["nrcs_340"]
+    }
+  ]
 }
