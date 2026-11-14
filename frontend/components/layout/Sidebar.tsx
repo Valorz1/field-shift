@@ -26,7 +26,7 @@ export function Sidebar() {
                     href={href}
                     aria-current={active ? "page" : undefined}
                     className={cx(
-                      "flex min-h-11 items-center gap-3 rounded-control px-3 text-sm transition-colors focus-visible:outline-white",
+                      "flex min-h-12 items-center gap-3 rounded-control px-3 text-base transition-colors focus-visible:outline-white",
                       active
                         ? "bg-primary font-semibold text-white"
                         : "text-on-forest hover:bg-white/8 hover:text-white",
@@ -42,7 +42,7 @@ export function Sidebar() {
         </nav>
         <div className="mt-auto space-y-4">
           <WithSite render={(site) => <SessionCard site={site} />} />
-          <p className="text-xs leading-relaxed text-on-forest-muted">
+          <p className="text-sm leading-relaxed text-on-forest-muted">
             Session only. Nothing is stored after you finish. Free, no hidden fees. Built by team Valor Astra.
           </p>
           <EndSessionButton className="w-full" />

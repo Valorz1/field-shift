@@ -8,7 +8,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className="min-h-dvh lg:grid lg:grid-cols-[264px_minmax(0,1fr)]">
       <a
         href="#main-content"
-        className="sr-only z-30 rounded-control bg-white px-4 py-3 font-semibold text-forest focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        className="sr-only z-30 min-h-12 items-center rounded-control bg-white px-4 font-semibold focus:inline-flex text-forest focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
         Skip to main content
       </a>
@@ -17,7 +17,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <TopBar />
         <main
           id="main-content"
-          className="mx-auto w-full max-w-[1120px] flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-10 lg:pt-8 lg:pb-12"
+          className="mx-auto w-full max-w-[1120px] flex-1 px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-10 lg:pt-8 lg:pb-12"
         >
           {children}
         </main>

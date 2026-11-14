@@ -24,7 +24,7 @@ export function MobileNav() {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cx(
-                  "flex min-h-14 flex-col items-center justify-center gap-1 text-xs",
+                  "flex min-h-14 flex-col items-center justify-center gap-1 text-sm",
                   active ? "font-semibold text-primary" : "text-caption hover:text-forest",
                 )}
               >

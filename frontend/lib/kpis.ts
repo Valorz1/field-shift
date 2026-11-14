@@ -1,51 +1,43 @@
+import { rainChange, rainMeaning, rainStatus, temperatureChange, temperatureMeaning, temperatureStatus } from "./climate-facts";
 import type { ClimateSite } from "./data/climate";
-import { formatSigned, formatYears } from "./format";
+import { formatSigned } from "./format";
 import type { KpiView } from "./view-models";
 
-export const kpisFor = ({ year, baseline, annual, source }: ClimateSite): KpiView[] => {
-  const baselineYears = formatYears(baseline.start, baseline.end);
-  const rainfallChange = Math.round(Math.abs(annual.rainfallChangePct));
+export const kpisFor = (site: ClimateSite): KpiView[] => {
+  const t = temperatureChange(site);
+  const r = rainChange(site);
   return [
     {
       kind: "temperature",
-      label: "Average Temperature",
-      value: annual.temperatureC.toFixed(1),
+      label: `Temperature in ${site.year} vs usual`,
+      value: formatSigned(t),
       unit: "°C",
       source: "Calculated",
-      change: `${formatSigned(annual.temperatureChangeC)} °C against the ${baselineYears} average of ${annual.baselineTemperatureC.toFixed(1)} °C`,
-      changeTone: annual.temperatureChangeC >= 0.5 ? "warning" : "neutral",
-      footnote: `Jan – Dec ${year} · mean of NASA POWER monthly ${source.temperature.parameter}`,
+      status: temperatureStatus(t),
+      meaning: temperatureMeaning(t),
     },
     {
-      kind: "precipitation",
-      label: "Total Precipitation",
-      value: String(Math.round(annual.rainfallMm)),
-      unit: "mm",
+      kind: "rain",
+      label: `Rain in ${site.year} vs usual`,
+      value: formatSigned(r, 0),
+      unit: "%",
       source: "Calculated",
-      change:
-        rainfallChange < 2
-          ? `About the same as the ${baselineYears} average of ${Math.round(annual.baselineRainfallMm)} mm`
-          : `${rainfallChange}% ${annual.rainfallChangePct > 0 ? "above" : "below"} the ${baselineYears} average of ${Math.round(annual.baselineRainfallMm)} mm`,
-      changeTone: rainfallChange >= 10 ? "warning" : "neutral",
-      footnote: `Jan – Dec ${year} · sum of NASA POWER monthly ${source.precipitation.parameter} · GPM IMERG not connected yet`,
+      status: rainStatus(r),
+      meaning: rainMeaning(r),
     },
     {
-      kind: "soil-moisture",
-      label: "Soil Moisture",
+      kind: "soil-wetness",
+      label: "Soil wetness",
       value: "No data",
       source: "Missing",
-      change: "Not connected yet",
-      changeTone: "neutral",
-      footnote: "Will come from NASA SMAP L3",
+      meaning: "Not connected yet. It will come from NASA SMAP.",
     },
     {
       kind: "risk",
-      label: "Environmental Risk",
+      label: "Climate risk",
       value: "No data",
       source: "Missing",
-      change: "Not calculated yet",
-      changeTone: "neutral",
-      footnote: "Needs the team's risk model and soil moisture data",
+      meaning: "Not worked out yet. It needs soil wetness data first.",
     },
   ];
 };

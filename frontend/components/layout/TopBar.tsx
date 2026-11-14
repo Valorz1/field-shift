@@ -26,13 +26,13 @@ export function TopBar() {
                 <dd className="font-medium">Jan – Dec {site.year}</dd>
               </div>
               <div className="rounded-control border border-line px-3 py-2">
-                <dt className="sr-only">Baseline</dt>
-                <dd className="font-medium">Baseline {formatYears(site.baseline.start, site.baseline.end)}</dd>
+                <dt className="sr-only">Usual</dt>
+                <dd className="font-medium">Usual: {formatYears(site.baseline.start, site.baseline.end)}</dd>
               </div>
             </dl>
           )}
         />
-        <p className="inline-flex items-center gap-2 rounded-full bg-green-tint px-3 py-1.5 text-xs font-medium text-green-ink">
+        <p className="inline-flex items-center gap-2 rounded-full bg-green-tint px-3 py-1.5 text-sm font-medium text-green-ink">
           <Lock aria-hidden="true" className="size-4" strokeWidth={1.6} />
           Session only · cleared when you finish
         </p>

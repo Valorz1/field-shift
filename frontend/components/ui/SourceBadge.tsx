@@ -10,14 +10,14 @@ const tones: Record<DataLabel, string> = {
   AI: "border border-neutral-ink bg-white text-neutral-ink",
   "General agronomy": "bg-earth-tint text-earth-ink",
   "Sample data": "bg-warning-tint text-warning-ink",
-  Missing: "bg-danger-tint text-danger-ink",
+  Missing: "border border-dashed border-neutral-ink bg-neutral-tint text-neutral-ink",
 };
 
 export function SourceBadge({ source, className }: { source: DataLabel; className?: string }) {
   return (
     <span
       className={cx(
-        "inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+        "inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-sm font-medium whitespace-nowrap",
         tones[source],
         className,
       )}
