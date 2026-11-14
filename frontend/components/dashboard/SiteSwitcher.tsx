@@ -15,8 +15,8 @@ export function SiteSwitcher({ current }: { current: string }) {
             <li key={site.id}>
               <Link
                 href={{ query: { site: site.id } }}
-                // choosing a demo farm drops the pinned place
-                onClick={() => updateSession({ latitude: undefined, longitude: undefined })}
+                // choosing a demo farm drops the pinned place and goes back to that farm's own crop
+                onClick={() => updateSession({ latitude: undefined, longitude: undefined, crop: undefined })}
                 aria-current={active ? "page" : undefined}
                 className={cx(
                   "-mb-px flex min-h-12 min-w-12 items-center justify-center border-b-2 px-3 text-lg transition-colors",

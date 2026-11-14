@@ -36,7 +36,8 @@ const post = (body: unknown): RequestInit => ({
 export const getLiveClimate = (latitude: number, longitude: number) =>
   request<LiveClimateResponse>("/climate/", post({ latitude, longitude }));
 
-export const getDemoStrategies = (farm: string) => request<StrategiesResponse>(`/strategies/demo/${farm}`);
+export const getDemoStrategies = (farm: string, crop: string) =>
+  request<StrategiesResponse>(`/strategies/demo/${farm}?crop=${encodeURIComponent(crop)}`);
 
 export const getLiveStrategies = (latitude: number, longitude: number, crop: string) =>
   request<StrategiesResponse>("/strategies/", post({ latitude, longitude, crop }));
