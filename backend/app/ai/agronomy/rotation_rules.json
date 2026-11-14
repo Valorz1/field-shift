@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "note": "Qualitative agronomy rules only: no yields, prices or water volumes are stated. Every rule lists the source(s) it comes from. Sources were checked on 2026-11-14; re-check wording before publishing.",
+  "version": 2,
+  "note": "Qualitative agronomy rules only: no yields, prices or water volumes are stated. Every rule lists the source(s) it comes from. 'climates' says where a rule is used: 'cool' rules only in places under the cool-climate threshold, 'warm' rules everywhere else (a 'warm' tag means no source was found supporting the rule for cool places; the threshold itself is set in code, see docs/methodology.md). Sources were checked on 2026-11-14; re-check wording before publishing.",
   "sources": {
     "fao_sorghum": {
       "citation": "FAO Land & Water, Crop information: Sorghum",
@@ -36,6 +36,41 @@
       "citation": "USDA NRCS, Conservation Practice Standard: Cover Crop (Code 340)",
       "url": "https://www.nrcs.usda.gov/sites/default/files/2022-09/Cover_Crop_340_CPS.pdf",
       "supports": "Cover crops are grasses, legumes and forbs planted for seasonal vegetative cover to protect and improve soil; the standard also covers planning termination to prepare the field for the next crop and to optimise soil moisture."
+    },
+    "fao_nri_sorghum": {
+      "citation": "Natural Resources Institute; edited by D. Mejia and B. Lewis (FAO AGSI). SORGHUM: Post-harvest Operations. FAO Post-harvest Compendium",
+      "url": "https://www.fao.org/fileadmin/user_upload/inpho/docs/Post_Harvest_Compendium_-_SORGHUM.pdf",
+      "supports": "Grain sorghums are generally grown in regions which are too dry or too hot for successful maize production; sorghum is a main food grain in the semi-arid tropics."
+    },
+    "defra_landuse_2026": {
+      "citation": "Defra, Agricultural land use in England at 1 June 2026 (official statistics, updated 24 September 2026)",
+      "url": "https://www.gov.uk/government/statistics/agricultural-land-use-in-england/agricultural-land-use-in-england-at-1-june-2026",
+      "supports": "Wheat, winter barley, spring barley, oats, oilseed rape and field beans are reported as arable crops grown in England."
+    },
+    "ahdb_harvest_2026": {
+      "citation": "AHDB, Final harvest report confirms cereal yields are below historic averages across the UK (press release, 25 September 2026)",
+      "url": "https://ahdb.org.uk/news/final-harvest-report-confirms-cereal-yields-are-below-historic-averages-across-the-uk",
+      "supports": "In a season shaped by limited rainfall from spring onwards, oilseed rape was the standout performer, spring barley was one of the most challenging crops and oats were below average."
+    },
+    "ahdb_crop_ratings_2026": {
+      "citation": "AHDB, Crop ratings slip after dry spring, but harvest hope remains (29 June 2026)",
+      "url": "https://ahdb.org.uk/news/crop-ratings-slip-after-dry-spring-but-harvest-hope-remains",
+      "supports": "Dry conditions through April and May took a toll on crop development, particularly for spring crops; spring crops faced the greatest challenges, with establishment affected by dry seedbeds."
+    },
+    "nmsu_a129": {
+      "citation": "Flynn, R. and Idowu, J. Nitrogen Fixation by Legumes. New Mexico State University Cooperative Extension, Guide A-129 (revised June 2015)",
+      "url": "https://pubs.nmsu.edu/_a/A129.pdf",
+      "supports": "Alfalfa, sweet clover, true clovers, vetches, beans, peanuts, soybeans, cowpeas and fava beans are named as nitrogen-fixing legumes."
+    },
+    "foodfoundation_beans_2026": {
+      "citation": "The Food Foundation, Unlocking the potential of bean, pulse and legume cultivation in the UK (briefing, July 2026)",
+      "url": "https://foodfoundation.org.uk/sites/default/files/2026-06/UK%20Bean%20production%20briefing%20FINAL_3.pdf",
+      "supports": "Faba beans are otherwise known as field beans or broad beans; UK pulse production is dominated by faba beans and peas; pulses include lentils, peas, chickpeas, dry beans and faba beans; clover and sainfoin are named as legumes."
+    },
+    "sare_mccp_cereal_rye": {
+      "citation": "SARE, Managing Cover Crops Profitably, 3rd edition (2007), Nonlegume Cover Crops: Cereal Rye",
+      "url": "https://www.sare.org/publications/managing-cover-crops-profitably/nonlegume-cover-crops/cereal-rye/",
+      "supports": "Rye is the hardiest of cereals and the best cool-season cereal cover for absorbing unused soil nitrogen (a nutrient catch crop)."
     }
   },
   "lower_water_rules": [
@@ -44,21 +79,45 @@
       "statement": "Sorghum is a drought-resistant cereal that can replace or alternate with a more water-demanding cereal.",
       "applies_to": ["maize", "corn", "wheat", "barley", "oats"],
       "alternatives": ["sorghum"],
-      "source_ids": ["fao_sorghum", "hadebe_sorghum"]
+      "source_ids": ["fao_sorghum", "hadebe_sorghum", "fao_nri_sorghum"],
+      "climates": ["warm"],
+      "role": "lower-water crop"
     },
     {
       "id": "WE-2",
       "statement": "Millets tolerate drought and have a low water footprint compared with wheat and maize.",
       "applies_to": ["maize", "corn", "wheat"],
       "alternatives": ["millet"],
-      "source_ids": ["un_millets"]
+      "source_ids": ["un_millets"],
+      "climates": ["warm"],
+      "role": "lower-water crop"
     },
     {
       "id": "WE-3",
       "statement": "Cowpea and chickpea are drought-tolerant grain legumes that can be added to a rotation.",
       "applies_to": ["*"],
       "alternatives": ["chickpea", "cowpea"],
-      "source_ids": ["preventionweb_drought_crops"]
+      "source_ids": ["preventionweb_drought_crops"],
+      "climates": ["warm"],
+      "role": "lower-water crop"
+    },
+    {
+      "id": "CL-1",
+      "statement": "Oilseed rape, field beans, oats, spring barley and winter wheat are established arable crops in England, so they suit a cool-climate rotation.",
+      "applies_to": ["*"],
+      "climates": ["cool"],
+      "role": "cool-climate crop",
+      "alternatives": ["oilseed rape", "field beans", "oats", "spring barley", "winter wheat"],
+      "order_note": "Oilseed rape is listed first because it did best in the dry 2026 season; spring-sown crops are listed last because they struggled most (CL-2).",
+      "source_ids": ["defra_landuse_2026", "ahdb_harvest_2026"]
+    },
+    {
+      "id": "CL-2",
+      "kind": "caution",
+      "statement": "In the dry 2026 UK season spring crops faced the greatest challenges: spring barley was one of the most difficult crops and oats were below average, while oilseed rape did best.",
+      "applies_to": ["*"],
+      "climates": ["cool"],
+      "source_ids": ["ahdb_harvest_2026", "ahdb_crop_ratings_2026"]
     }
   ],
   "soil_restoration_rules": [
@@ -67,7 +126,8 @@
       "statement": "Legume cover crops fix atmospheric nitrogen and add it to the soil, which can reduce later nitrogen fertiliser needs.",
       "applies_to": ["*"],
       "cover_crops": ["hairy vetch", "red clover"],
-      "source_ids": ["sare_building_soils", "sare_mcp_fertility"]
+      "source_ids": ["sare_building_soils", "sare_mcp_fertility"],
+      "for_crops": "non_legume"
     },
     {
       "id": "SR-2",
@@ -81,6 +141,38 @@
       "applies_to": ["*"],
       "kind": "caution",
       "source_ids": ["nrcs_340"]
+    },
+    {
+      "id": "SR-4",
+      "statement": "Cereal rye is a very winter-hardy non-legume cover crop that takes up leftover soil nitrogen (a catch crop), so it suits a field that already grows a legume.",
+      "applies_to": ["*"],
+      "for_crops": "legume",
+      "cover_crops": ["cereal rye"],
+      "source_ids": ["sare_mccp_cereal_rye", "sare_building_soils"]
     }
-  ]
+  ],
+  "legumes": {
+    "note": "Crops treated as legumes. If the farm's current crop is on this list, the engine does not suggest adding a legume cover crop.",
+    "crops": ["alfalfa", "clover", "red clover", "white clover", "crimson clover", "sweet clover", "sainfoin", "vetch", "hairy vetch", "beans", "field beans", "broad beans", "soybean", "soybeans", "peanut", "peanuts", "cowpea", "cowpeas", "peas", "field peas", "chickpea", "chickpeas", "lentil", "lentils"],
+    "source_ids": ["nmsu_a129", "sare_building_soils", "foodfoundation_beans_2026"]
+  },
+  "crop_aliases": {
+    "note": "Names treated as the same crop, so a farm is not told to switch to the crop it already grows.",
+    "aliases": {
+      "winter wheat": "wheat",
+      "spring wheat": "wheat",
+      "winter barley": "barley",
+      "spring barley": "barley",
+      "winter oats": "oats",
+      "spring oats": "oats",
+      "corn": "maize",
+      "faba beans": "field beans",
+      "faba bean": "field beans",
+      "fava beans": "field beans",
+      "fava bean": "field beans",
+      "broad beans": "field beans",
+      "winter oilseed rape": "oilseed rape"
+    },
+    "source_ids": ["defra_landuse_2026", "foodfoundation_beans_2026"]
+  }
 }

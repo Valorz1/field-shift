@@ -60,8 +60,36 @@ Always three, in this order: `baseline`, `water_efficient`, `soil_restoration`. 
 | Strategy | Rotation | Priority rule |
 |---|---|---|
 | baseline | current crop in years 1–3 | Reference case; no priority |
-| water_efficient | current crop in year 1, then lower-water crops from the rules | risk **high** and drier → "Strongly worth a look"; risk moderate or high otherwise → "Worth a look"; risk low → "Optional" |
-| soil_restoration | current crop, a legume cover crop in year 2, current crop | Always "Worth a look", based on soil benefits cited in the rules, not on the climate risk level |
+| water_efficient | current crop in year 1, then crops for the place's climate zone from the rules (see "Climate filter") | risk **high** and drier → "Strongly worth a look"; risk moderate or high otherwise → "Worth a look"; risk low → "Optional" |
+| soil_restoration | current crop, a cover crop in year 2, current crop. A legume cover crop, unless the current crop is already a legume (see "Legume check") | Always "Worth a look", based on soil benefits cited in the rules, not on the climate risk level |
+
+### Climate filter (cool vs warm places)
+
+| Rule | Threshold |
+|---|---|
+| Cool place | baseline (2001–2020) average temperature **< 12 °C** |
+| Warm place | baseline average temperature **≥ 12 °C** |
+
+- The threshold is the constant `COOL_CLIMATE_THRESHOLD_C` in `strategy_engine.py`. Like the risk thresholds, it is a simple screening threshold chosen by the team, not a value from a published standard. A value of exactly 12.00 °C counts as warm. This is covered by tests.
+- It uses the **baseline** temperature (the long-term climate of the place), not the recent one.
+- Each lower-water rule has `climates`: `["cool"]` or `["warm"]`. In a cool place only `cool` rules are used; in a warm place only `warm` rules are used. A `warm` tag does not mean the crop cannot grow in a cool place. It means no source was found that supports suggesting it there, so it is left out.
+- Cool-place crops (rule CL-1): oilseed rape, field beans, oats, spring barley, winter wheat. These are established arable crops in England (Defra land-use statistics, 2026). Oilseed rape is listed first because it did best in the dry 2026 UK season, and spring-sown crops are listed last because they struggled most (AHDB, 2026; rule CL-2, which is also added to the strategy's `risks`).
+- Warm-place crops are unchanged: sorghum, millet, chickpea, cowpea (rules WE-1 to WE-3).
+- The cool-climate sources say where these crops are grown, not how much water they use. So in a cool place the strategy title says "add crops suited to a cool climate", not "lower-water crops", and `water_need` says the water use was not compared.
+- The zone and the reason (the baseline temperature against 12 °C) are in the strategy's `climate_zone` field and its `evidence`.
+
+Real data: Norfolk's baseline is 10.08 °C, so it counts as cool. Nevada's is 13.21 °C, so it counts as warm. Nevada is only about 1 °C above the threshold, and one yearly average cannot show cold winters or the length of the growing season.
+
+### Legume check
+
+- `rotation_rules.json` → `legumes` lists crops treated as legumes (alfalfa, clovers, vetches, beans including field/faba beans, soybean, peanut, cowpea, peas, chickpea, lentil, sainfoin), with sources.
+- If the current crop is a legume, soil_restoration does **not** suggest adding a legume. It suggests a non-legume cover crop, cereal rye (rule SR-4), and the "legumes add nitrogen" rule (SR-1) is not used.
+- water_efficient is not changed by this check: grain legumes there (chickpea, cowpea) are rotation crops, not a "add a legume for nitrogen" step.
+- Crops not on the list are treated as non-legumes.
+
+### Same crop, different name
+
+`rotation_rules.json` → `crop_aliases` treats names such as "winter wheat" and "wheat", "spring barley" and "barley", or "faba beans" and "field beans" as one crop. A farm is never offered the crop it already grows under another name.
 
 ### Output fields
 
@@ -85,7 +113,7 @@ Crop ideas come only from `rotation_rules.json`. Each rule lists the sources it 
 
 ### Confidence
 
-- `medium` when at least one rule names the farm's current crop.
+- `medium` when at least one rule names the farm's current crop (in `applies_to` or in its crop list, counting alternative names).
 - `low` when only general rules (`applies_to: "*"`) match, for example for a crop that has no specific rule.
 - It is never `high`, because no yield, soil, price or local trial data is used.
 
@@ -93,7 +121,7 @@ Crop ideas come only from `rotation_rules.json`. Each rule lists the sources it 
 
 - No yield, price, soil or irrigation data.
 - Local sowing windows, markets and equipment are not checked.
-- Rule sources are general references (FAO, SARE, NRCS, UN, news articles), not trials at the farm's location.
+- Rule sources are general references (FAO, SARE, NRCS, UN, Defra, AHDB, NMSU, the Food Foundation, news articles), not trials at the farm's location. The AHDB evidence comes from one dry season (2026).
 
 ## 5. Things to check in the data
 
