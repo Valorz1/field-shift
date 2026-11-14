@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "data:power": "node scripts/build-power-summary.mts"
   },
   "dependencies": {
     "lucide-react": "^1.73.0",
