@@ -5,7 +5,7 @@ import { cx } from "@/lib/cx";
 import type { KpiView } from "@/lib/view-models";
 
 export function KpiCard({ kpi }: { kpi: KpiView }) {
-  const missing = kpi.source === "Missing";
+  const muted = kpi.source === "Missing" || kpi.waiting;
 
   return (
     <Card as="article" className="flex flex-col gap-3">
@@ -16,7 +16,7 @@ export function KpiCard({ kpi }: { kpi: KpiView }) {
       <p
         className={cx(
           "font-display leading-none font-extrabold tabular-nums",
-          missing ? "text-2xl text-neutral-ink" : "text-[40px] text-forest",
+          muted ? "text-2xl text-neutral-ink" : "text-[40px] text-forest",
         )}
       >
         {kpi.value}

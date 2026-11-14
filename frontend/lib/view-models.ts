@@ -1,5 +1,6 @@
 export type DataLabel =
   | "NASA POWER"
+  | "NASA POWER (MERRA-2 model)"
   | "GPM IMERG"
   | "NASA SMAP"
   | "Calculated"
@@ -63,4 +64,6 @@ export type KpiView = {
   source: DataLabel;
   status?: Status;
   meaning: string;
+  // Shown in grey while the figure is still on its way, like a missing one but without the Missing badge.
+  waiting?: boolean;
 };

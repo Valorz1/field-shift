@@ -3,6 +3,7 @@ import type { DataLabel } from "@/lib/view-models";
 
 const tones: Record<DataLabel, string> = {
   "NASA POWER": "bg-water-tint text-water-ink",
+  "NASA POWER (MERRA-2 model)": "bg-water-tint text-water-ink",
   "GPM IMERG": "bg-water-tint text-water-ink",
   "NASA SMAP": "bg-water-tint text-water-ink",
   Calculated: "bg-neutral-tint text-neutral-ink",
@@ -17,7 +18,7 @@ export function SourceBadge({ source, className }: { source: DataLabel; classNam
   return (
     <span
       className={cx(
-        "inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-sm font-medium whitespace-nowrap",
+        "inline-flex max-w-full items-center rounded-full px-2.5 py-0.5 text-sm leading-snug font-medium",
         tones[source],
         className,
       )}

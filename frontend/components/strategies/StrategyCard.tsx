@@ -1,7 +1,10 @@
 import { ChevronDown } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { SourceBadge } from "@/components/ui/SourceBadge";
+import { StatusTag } from "@/components/ui/StatusTag";
+import { riskLevelText, riskStatus } from "@/lib/climate-facts";
 import { cx } from "@/lib/cx";
+import type { Risk } from "@/lib/types";
 import type { Evidence, Level, Strategy, StrategyKind } from "@/lib/view-models";
 
 const kindLabels: Record<StrategyKind, string> = {
@@ -93,9 +96,22 @@ function EvidenceItem({ evidence }: { evidence: Evidence }) {
   );
 }
 
-type StrategyCardProps = { strategy: Strategy; illustrative?: boolean };
+// The field's climate risk from the strategies API: the same for every plan, which each responds to.
+function FieldRisk({ risk }: { risk: Risk }) {
+  const status = riskStatus(risk.level);
+  return (
+    <div className="flex flex-wrap items-center gap-2 pt-1">
+      <p className="font-semibold text-caption">
+        Climate risk: <span className="text-ink">{status ? riskLevelText(risk.level) : "not known"}</span>
+      </p>
+      {status && <StatusTag status={status} />}
+    </div>
+  );
+}
 
-export function StrategyCard({ strategy, illustrative = false }: StrategyCardProps) {
+type StrategyCardProps = { strategy: Strategy; risk: Risk; illustrative?: boolean };
+
+export function StrategyCard({ strategy, risk, illustrative = false }: StrategyCardProps) {
   const titleId = `strategy-${strategy.id}-title`;
 
   return (
@@ -112,6 +128,7 @@ export function StrategyCard({ strategy, illustrative = false }: StrategyCardPro
         <h3 id={titleId} className="font-display text-xl font-bold text-forest">
           {strategy.title}
         </h3>
+        <FieldRisk risk={risk} />
       </div>
 
       <div className="space-y-1">

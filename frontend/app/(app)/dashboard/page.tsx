@@ -14,6 +14,7 @@ import { seasonInsights, statusRuleText, usualYears, yearSummary } from "@/lib/c
 import type { ClimateSite } from "@/lib/data/climate";
 import { formatCoordinates, formatYears } from "@/lib/format";
 import { kpisFor } from "@/lib/kpis";
+import { useStrategies } from "@/lib/use-strategies";
 
 function Footnote({ site }: { site: ClimateSite }) {
   const { annual, source, year } = site;
@@ -37,6 +38,10 @@ function Footnote({ site }: { site: ClimateSite }) {
         ))}
         <li>Grey cards have no data yet. Grey is not a status.</li>
         <li>
+          Soil wetness is how wet the root zone was, from the NASA POWER MERRA-2 model, not from a satellite. NASA SMAP
+          satellite soil data is still coming.
+        </li>
+        <li>
           Source: NASA POWER monthly data, {formatYears(source.firstYear, source.lastYear)}.
         </li>
       </ul>
@@ -45,6 +50,7 @@ function Footnote({ site }: { site: ClimateSite }) {
 }
 
 function Dashboard({ site }: { site: ClimateSite }) {
+  const { crop, data, error } = useStrategies(site);
   return (
     <div className="space-y-8">
       <PageHeader title="Good day" lead={yearSummary(site)}>
@@ -61,7 +67,7 @@ function Dashboard({ site }: { site: ClimateSite }) {
           What {site.year} looked like on your field
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {kpisFor(site).map((kpi) => (
+          {kpisFor(site, { crop, risk: data?.risk, error }).map((kpi) => (
             <KpiCard key={kpi.kind} kpi={kpi} />
           ))}
         </div>

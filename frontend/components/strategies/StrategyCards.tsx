@@ -5,34 +5,26 @@ import { Disclaimer } from "@/components/ui/Disclaimer";
 import { EmptyState } from "@/components/ui/states/EmptyState";
 import { ErrorMessage } from "@/components/ui/states/ErrorMessage";
 import { LoadingSkeleton } from "@/components/ui/states/LoadingSkeleton";
-import { getDemoStrategies, getLiveStrategies } from "@/lib/api";
-import { type Place, isPin } from "@/lib/data/climate";
-import { updateSession, useSession } from "@/lib/session-store";
+import { riskLevelText, riskReason } from "@/lib/climate-facts";
+import type { Place } from "@/lib/data/climate";
+import { updateSession } from "@/lib/session-store";
 import type { Risk } from "@/lib/types";
-import { useLoaded } from "@/lib/use-loaded";
+import { useStrategies } from "@/lib/use-strategies";
 import { StrategyCard } from "./StrategyCard";
 
 // Crops the strategy engine has rules for. Any other name still works, with general rules only.
 const CROPS = ["wheat", "barley", "oilseed rape", "field beans", "oats", "maize", "alfalfa", "sorghum"];
-// What each demo farm grows (the backend's own defaults).
-const DEMO_CROPS: Record<string, string> = { norfolk: "wheat", nevada: "alfalfa" };
 const OTHER = "other";
 const control = "min-h-12 rounded-control border border-line bg-white px-3 text-base font-normal text-ink";
 
-const riskText = ({ level, drivers }: Risk) => {
-  const reasons = [drivers.warming.triggered && "warmer", drivers.drying.triggered && "drier"].filter(Boolean);
-  return `Climate risk: ${level}${reasons.length ? ` (recent years were ${reasons.join(" and ")})` : ""}.`;
-};
+const riskText = (risk: Risk) =>
+  risk.level === "unknown"
+    ? "Climate risk: not known."
+    : `Climate risk: ${riskLevelText(risk.level)}. ${riskReason(risk)}`;
 
 export function StrategyCards({ site }: { site: Place }) {
-  // Session crop: undefined = not chosen yet, "" = "Other" chosen but nothing typed yet.
-  const chosen = useSession().crop;
-  const crop = (chosen ?? DEMO_CROPS[site.id] ?? "").trim();
+  const { chosen, crop, data, error, retry } = useStrategies(site);
   const other = chosen !== undefined && !CROPS.includes(chosen);
-  const pin = isPin(site);
-  const { data, error, retry } = useLoaded(crop ? `strategies:${site.id}:${crop}` : null, () =>
-    pin ? getLiveStrategies(site.latitude, site.longitude, crop) : getDemoStrategies(site.id, crop),
-  );
 
   return (
     <>
@@ -78,7 +70,7 @@ export function StrategyCards({ site }: { site: Place }) {
           </p>
           <div className="grid gap-4 xl:grid-cols-3">
             {data.strategies.map((strategy) => (
-              <StrategyCard key={strategy.id} strategy={strategy} />
+              <StrategyCard key={strategy.id} strategy={strategy} risk={data.risk} />
             ))}
           </div>
         </>

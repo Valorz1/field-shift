@@ -34,6 +34,8 @@ export type ClimateSite = Place & {
     temperatureChangeC: number;
     rainfallChangePct: number;
   };
+  // Root-zone soil wetness as a fraction (0–1), averaged like temperature. Absent when NASA POWER has no recent GWETROOT.
+  soil?: { recent: number; baseline?: number };
   // Every month the API returned, for the history charts. satelliteRain is empty when the API has no IMERG rows.
   history: { temperature: ClimateRow[]; rain: ClimateRow[]; satelliteRain: ClimateRow[] };
 };
@@ -62,11 +64,32 @@ const RECENT = { start: 2021, end: 2025 };
 const TEMPERATURE = "T2M";
 const RAIN_TOTAL = "PRECTOTCORR_MONTH_TOTAL";
 const SATELLITE_RAIN_TOTAL = "IMERG_PRECIP_MONTH_TOTAL";
+const SOIL_WETNESS = "GWETROOT";
 const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1);
 
 const round = (value: number, digits: number) => Number(value.toFixed(digits));
 const mean = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
 const key = (year: number, month: number) => `${year}-${String(month).padStart(2, "0")}`;
+
+type Period = { start: number; end: number };
+
+// Mean of the yearly averages over the years in the period that have all 12 months; undefined when there are none.
+function periodMean(series: ClimateRow[], { start, end }: Period) {
+  const byYear = new Map<number, number[]>();
+  for (const row of series) {
+    const year = Number(row.date.slice(0, 4));
+    if (year >= start && year <= end) byYear.set(year, [...(byYear.get(year) ?? []), row.value]);
+  }
+  const yearly = [...byYear.values()].filter((values) => values.length === MONTHS.length).map(mean);
+  return yearly.length ? mean(yearly) : undefined;
+}
+
+function soilWetness(series: ClimateRow[]): ClimateSite["soil"] {
+  const recent = periodMean(series, RECENT);
+  if (recent === undefined) return undefined;
+  const baseline = periodMean(series, BASELINE);
+  return { recent: round(recent, 4), ...(baseline !== undefined && { baseline: round(baseline, 4) }) };
+}
 
 export function summarise(place: Place, rows: ClimateRow[]): ClimateSite {
   const only = (parameter: string) => rows.filter((row) => row.parameter === parameter);
@@ -78,8 +101,7 @@ export function summarise(place: Place, rows: ClimateRow[]): ClimateSite {
   // The API leaves out months NASA has no value for, so a year counts only when all 12 months are there.
   const complete = (year: number) => MONTHS.every((m) => temperature.has(key(year, m)) && rain.has(key(year, m)));
   const years = [...new Set([...temperature.keys()].map((date) => Number(date.slice(0, 4))))].sort((a, b) => a - b);
-  const fullYearsIn = ({ start, end }: { start: number; end: number }) =>
-    years.filter((year) => year >= start && year <= end && complete(year));
+  const fullYearsIn = ({ start, end }: Period) => years.filter((year) => year >= start && year <= end && complete(year));
   const baselineYears = fullYearsIn(BASELINE);
   const recentYears = fullYearsIn(RECENT);
   if (!baselineYears.length || !recentYears.length) throw new Error("NASA POWER has too little data for this place.");
@@ -128,6 +150,7 @@ export function summarise(place: Place, rows: ClimateRow[]): ClimateSite {
       temperatureChangeC: round(temperatureC - baselineTemperatureC, 2),
       rainfallChangePct: round(((rainfallMm - baselineRainfallMm) / baselineRainfallMm) * 100, 2),
     },
+    soil: soilWetness(only(SOIL_WETNESS)),
     history,
   };
 }

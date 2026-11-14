@@ -1,5 +1,6 @@
 import type { ClimateSite, MonthSummary } from "./data/climate";
 import { formatSigned, formatYears } from "./format";
+import type { Risk, RiskCategory } from "./types";
 import type { Status } from "./view-models";
 
 export const usualYears = ({ baseline }: ClimateSite) => formatYears(baseline.start, baseline.end);
@@ -116,4 +117,36 @@ export const yearSummary = (site: ClimateSite) => {
   if (t === 0) return `${start} about as warm as usual and ${rain} than usual.`;
   if (r === 0) return `${start} ${warmth(t)} than usual, with about the usual amount of rain.`;
   return `${start} ${warmth(t)} and ${rain} than usual.`;
+};
+
+const percentWet = (fraction: number) => Math.round(fraction * 100);
+
+// Whole percents, so "drier" or "wetter" is only said when the figures shown differ.
+export const soilPercents = ({ soil }: ClimateSite) =>
+  soil && { recent: percentWet(soil.recent), usual: soil.baseline === undefined ? undefined : percentWet(soil.baseline) };
+
+export const soilMeaning = ({ recent, usual }: { recent: number; usual?: number }) => {
+  const start = `The top metre of soil was ${recent}% wet`;
+  if (usual === undefined) return `${start}, on average.`;
+  if (recent === usual) return `${start}, about as wet as usual.`;
+  return `${start}, a little ${recent < usual ? "drier" : "wetter"} than usual (usual ${usual}% wet).`;
+};
+
+// Display only: the strategy engine decides the level; this just picks the matching tag.
+const riskStatuses: Record<RiskCategory, Status | undefined> = {
+  low: "fine",
+  moderate: "watch",
+  high: "act",
+  unknown: undefined,
+};
+
+export const riskStatus = (level: RiskCategory) => riskStatuses[level];
+
+export const riskLevelText = (level: RiskCategory) => level[0].toUpperCase() + level.slice(1);
+
+export const riskReason = ({ drivers }: Risk) => {
+  const changes = [drivers.warming.triggered && "warmer", drivers.drying.triggered && "drier"].filter(Boolean);
+  return changes.length
+    ? `Recent years were ${changes.join(" and ")} than usual.`
+    : "Recent years were not much warmer or drier than usual.";
 };
