@@ -34,14 +34,3 @@ export type KpiView = {
   changeTone: "neutral" | "warning";
   footnote: string;
 };
-
-export type FarmSummary = {
-  name: string;
-  locationLabel: string;
-  coordinates: string;
-  areaHectares: number;
-  crop: string;
-  irrigation: string;
-  period: string;
-  historyRange: string;
-};

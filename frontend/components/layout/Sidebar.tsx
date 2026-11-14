@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { EndSessionButton } from "@/components/session/EndSessionButton";
 import { cx } from "@/lib/cx";
 import { isActivePath, navItems } from "@/lib/navigation";
-import type { FarmSummary } from "@/lib/view-models";
 import { Logo } from "./Logo";
 import { SessionCard } from "./SessionCard";
+import { WithSite } from "./WithSite";
 
-export function Sidebar({ farm }: { farm: FarmSummary }) {
+export function Sidebar() {
   const pathname = usePathname();
 
   return (
@@ -41,7 +41,7 @@ export function Sidebar({ farm }: { farm: FarmSummary }) {
           </ul>
         </nav>
         <div className="mt-auto space-y-4">
-          <SessionCard farm={farm} />
+          <WithSite render={(site) => <SessionCard site={site} />} />
           <p className="text-xs leading-relaxed text-on-forest-muted">
             Session only. Nothing is stored after you finish. Free, no hidden fees. Built by team Valor Astra.
           </p>

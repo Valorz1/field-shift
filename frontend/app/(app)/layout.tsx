@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
-import { demoFarm } from "@/lib/sample-data";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
@@ -13,9 +12,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       >
         Skip to main content
       </a>
-      <Sidebar farm={demoFarm} />
+      <Sidebar />
       <div className="flex min-w-0 flex-col">
-        <TopBar farm={demoFarm} />
+        <TopBar />
         <main
           id="main-content"
           className="mx-auto w-full max-w-[1120px] flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-10 lg:pt-8 lg:pb-12"
