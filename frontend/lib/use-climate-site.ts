@@ -2,18 +2,20 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getDemoClimate } from "./api";
-import { type ClimateSite, getPlace, summarise } from "./data/climate";
+import { getDemoClimate, getLiveClimate } from "./api";
+import { type ClimateSite, type Place, getPlace, isPin, pinPlace, summarise } from "./data/climate";
+import { useSession } from "./session-store";
 
 // One request per place per page load, shared by the sidebar, top bar and dashboard. Memory only.
 const cache = new Map<string, Promise<ClimateSite>>();
 
-function loadSite(id: string) {
-  let site = cache.get(id);
+function loadSite(place: Place) {
+  let site = cache.get(place.id);
   if (!site) {
-    site = getDemoClimate(id).then(({ rows }) => summarise(getPlace(id), rows));
-    site.catch(() => cache.delete(id)); // a failed request can be tried again
-    cache.set(id, site);
+    const climate = isPin(place) ? getLiveClimate(place.latitude, place.longitude) : getDemoClimate(place.id);
+    site = climate.then(({ rows }) => summarise(place, rows));
+    site.catch(() => cache.delete(place.id)); // a failed request can be tried again
+    cache.set(place.id, site);
   }
   return site;
 }
@@ -21,23 +23,30 @@ function loadSite(id: string) {
 type Loaded = { id: string; site?: ClimateSite; error?: string };
 
 export function useClimateSite() {
-  const { id } = getPlace(useSearchParams().get("site"));
+  const { latitude, longitude } = useSession();
+  const demo = getPlace(useSearchParams().get("site"));
+  // A dropped pin wins over the demo farm in the address bar.
+  const place = latitude !== undefined && longitude !== undefined ? pinPlace(latitude, longitude) : demo;
+  const { id } = place;
   const [loaded, setLoaded] = useState<Loaded>({ id });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let stale = false;
-    loadSite(id).then(
+    loadSite(place).then(
       (site) => stale || setLoaded({ id, site }),
       (error: Error) => stale || setLoaded({ id, error: error.message }),
     );
     return () => {
       stale = true;
     };
+    // place is rebuilt on every render; id says when it really changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, attempt]);
 
   const current = loaded.id === id ? loaded : { id };
   return {
+    place,
     site: current.site,
     error: current.error,
     retry: () => {

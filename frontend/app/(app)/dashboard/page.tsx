@@ -8,6 +8,7 @@ import { KpiCard } from "@/components/dashboard/KpiCard";
 import { SiteSwitcher } from "@/components/dashboard/SiteSwitcher";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { WithSite } from "@/components/layout/WithSite";
+import { FarmMap } from "@/components/map/FarmMap";
 import { StrategyCard } from "@/components/strategies/StrategyCard";
 import { Disclaimer } from "@/components/ui/Disclaimer";
 import { seasonInsights, statusRuleText, usualYears, yearSummary } from "@/lib/climate-facts";
@@ -107,5 +108,10 @@ function Dashboard({ site }: { site: ClimateSite }) {
 }
 
 export default function DashboardPage() {
-  return <WithSite showStates render={(site) => <Dashboard site={site} />} />;
+  return (
+    <div className="space-y-8">
+      <FarmMap />
+      <WithSite showStates render={(site) => <Dashboard site={site} />} />
+    </div>
+  );
 }

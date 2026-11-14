@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { cx } from "@/lib/cx";
 import { climateSites } from "@/lib/data/climate";
+import { updateSession } from "@/lib/session-store";
 
 export function SiteSwitcher({ current }: { current: string }) {
   return (
@@ -12,6 +15,8 @@ export function SiteSwitcher({ current }: { current: string }) {
             <li key={site.id}>
               <Link
                 href={{ query: { site: site.id } }}
+                // choosing a demo farm drops the pinned place
+                onClick={() => updateSession({ latitude: undefined, longitude: undefined })}
                 aria-current={active ? "page" : undefined}
                 className={cx(
                   "-mb-px flex min-h-12 min-w-12 items-center justify-center border-b-2 px-3 text-lg transition-colors",
