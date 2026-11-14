@@ -88,13 +88,21 @@ function summarise(site: (typeof SITES)[number]) {
     },
     year: latest,
     baseline: { start: baseline.start, end: baseline.end },
-    months: MONTHS.map((month) => ({
-      month,
-      temperatureC: monthlyTemperature(latest, month),
-      rainfallMm: round(monthlyRainfall(latest, month), 1),
-      baselineTemperatureC: round(mean(baselineYears.map((year) => monthlyTemperature(year, month))), 2),
-      baselineRainfallMm: round(mean(baselineYears.map((year) => monthlyRainfall(year, month))), 1),
-    })),
+    months: MONTHS.map((month) => {
+      const temperatures = baselineYears.map((year) => monthlyTemperature(year, month));
+      const rainfall = baselineYears.map((year) => monthlyRainfall(year, month));
+      return {
+        month,
+        temperatureC: monthlyTemperature(latest, month),
+        rainfallMm: round(monthlyRainfall(latest, month), 1),
+        baselineTemperatureC: round(mean(temperatures), 2),
+        baselineTemperatureMinC: round(Math.min(...temperatures), 2),
+        baselineTemperatureMaxC: round(Math.max(...temperatures), 2),
+        baselineRainfallMm: round(mean(rainfall), 1),
+        baselineRainfallMinMm: round(Math.min(...rainfall), 1),
+        baselineRainfallMaxMm: round(Math.max(...rainfall), 1),
+      };
+    }),
     annual: {
       temperatureC: round(temperatureC, 2),
       rainfallMm: round(rainfallMm, 1),
