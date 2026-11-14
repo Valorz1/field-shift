@@ -62,12 +62,58 @@ def _rule_evidence(rules: dict, rule: dict) -> dict[str, Any]:
     }
 
 
-def _matches(rule: dict, crop: str) -> bool:
-    return crop in rule["applies_to"] or "*" in rule["applies_to"]
+def _canonical(rules: dict, crop: str) -> str:
+    """Map names of the same crop to one name, e.g. 'winter wheat' -> 'wheat'."""
+    return rules.get("crop_aliases", {}).get("aliases", {}).get(crop, crop)
 
 
-def _crop_specific(rule: dict, crop: str) -> bool:
-    return crop in rule["applies_to"]
+def _same_crop(rules: dict, a: str, b: str) -> bool:
+    return _canonical(rules, a) == _canonical(rules, b)
+
+
+def _is_legume(rules: dict, crop: str) -> bool:
+    legumes = set(rules.get("legumes", {}).get("crops", []))
+    return crop in legumes or _canonical(rules, crop) in legumes
+
+
+def _matches(rule: dict, crop: str, rules: dict | None = None, zone: str | None = None) -> bool:
+    if zone is not None and zone not in rule.get("climates", ["cool", "warm"]):
+        return False
+    if "*" in rule["applies_to"]:
+        return True
+    return crop in rule["applies_to"] or (rules is not None and _canonical(rules, crop) in rule["applies_to"])
+
+
+def _crop_specific(rule: dict, crop: str, rules: dict | None = None) -> bool:
+    """True when the rule (or its source) names the farm's crop."""
+    named = set(rule["applies_to"]) | set(rule.get("alternatives", []))
+    if crop in named:
+        return True
+    return rules is not None and any(_same_crop(rules, crop, n) for n in named if n != "*")
+
+
+# --------------------------------------------------------------------------
+# Climate zone (threshold documented in docs/methodology.md, section 4)
+# --------------------------------------------------------------------------
+# Team screening threshold, not taken from a published standard.
+COOL_CLIMATE_THRESHOLD_C = 12.0
+
+
+def _climate_zone(climate: dict) -> tuple[str, dict]:
+    """'cool' when the baseline (2001-2020) average temperature is under 12 C, else 'warm'."""
+    t = climate["temperature"]["baseline"]
+    zone = "cool" if t["value"] < COOL_CLIMATE_THRESHOLD_C else "warm"
+    word = "under" if zone == "cool" else "at or above"
+    evidence = {
+        "type": "climate_data",
+        "statement": (
+            f"Baseline ({climate['periods']['baseline']}) average temperature {t['value']:.2f} {t['unit']} is {word} "
+            f"the {COOL_CLIMATE_THRESHOLD_C:g} °C cool-climate threshold, so {zone}-climate crop rules are used."
+        ),
+        "label": t["label"],
+        "source": t["source"],
+    }
+    return zone, evidence
 
 
 # --------------------------------------------------------------------------
@@ -166,62 +212,83 @@ def _water_efficient(crop_key: str, crop: str, climate: dict, risk: dict, rules:
         priority = "Optional"
         reason = "risk is low, so there is no climate trigger"
 
-    used_rules = [r for r in rules["lower_water_rules"] if _matches(r, crop_key)]
+    zone, zone_evidence = _climate_zone(climate)
+    used_rules = [r for r in rules["lower_water_rules"] if _matches(r, crop_key, rules, zone)]
+    crop_rules = [r for r in used_rules if r.get("kind") != "caution"]
+    caution_rules = [r for r in used_rules if r.get("kind") == "caution"]
+
     alternatives: list[str] = []
-    for rule in used_rules:
+    roles: dict[str, str] = {}
+    for rule in crop_rules:
         for alt in rule["alternatives"]:
-            if alt != crop_key and alt not in alternatives:
+            if not _same_crop(rules, alt, crop_key) and alt not in alternatives:
                 alternatives.append(alt)
+                roles[alt] = rule.get("role", "lower-water crop")
+
+    # Only claim "lower water" when a rule that says so was used.
+    lower_water = any(r.get("role", "lower-water crop") == "lower-water crop" for r in crop_rules)
+    kind_of_crop = "lower-water crops" if lower_water else "crops suited to a cool climate"
 
     gaps = list(COMMON_GAPS)
-    if not any(_crop_specific(r, crop_key) for r in used_rules):
-        gaps.append(f"No crop-specific rule for '{crop}'; only general lower-water options were used.")
+    if not any(_crop_specific(r, crop_key, rules) for r in crop_rules):
+        gaps.append(f"No crop-specific rule for '{crop}'; only general options were used.")
+    if not lower_water:
+        gaps.append("The cool-climate rules give no water-use comparison between these crops.")
 
     if alternatives:
         year2, year3 = alternatives[0], alternatives[1] if len(alternatives) > 1 else crop
         rotation = _rotation(
             [crop, year2, year3],
-            ["current crop", "lower-water crop", "lower-water crop" if year3 != crop else "current crop"],
+            ["current crop", roles[year2], roles.get(year3, "current crop")],
             extra={2: {"alternatives": alternatives}},
         )
         why = (
-            f"{priority}: {reason}. Keep {crop} and bring lower-water crops into the rotation "
+            f"{priority}: {reason}. Keep {crop} and bring {kind_of_crop} into the rotation "
             f"({', '.join(alternatives)})."
         )
-        water_need = "Lower than growing the current crop every year, in the years the lower-water crop is grown."
+        water_need = (
+            "Lower than growing the current crop every year, in the years the lower-water crop is grown."
+            if lower_water
+            else "Not compared: the rules give no water-use figures for these crops."
+        )
     else:
         rotation = _rotation([crop] * ROTATION_YEARS, ["current crop"] * ROTATION_YEARS)
-        why = f"{priority}: {reason}. The rules list no lower-water alternative for {crop}."
+        why = f"{priority}: {reason}. The rules list no alternative for {crop} in a {zone} climate."
         water_need = "Unchanged (no alternative found in the rules)."
-        gaps.append(f"The rules contain no lower-water alternative for '{crop}'.")
+        gaps.append(f"The rules contain no {zone}-climate alternative for '{crop}'.")
 
-    risks = [
-        "A new crop needs its own sowing window, equipment and market; none of these were checked.",
-        "Lower-water crops are less water-demanding, but the rules give no yield comparison.",
-    ]
-    confidence = "medium" if any(_crop_specific(r, crop_key) for r in used_rules) else "low"
+    risks = ["A new crop needs its own sowing window, equipment and market; none of these were checked."]
+    if lower_water:
+        risks.append("Lower-water crops are less water-demanding, but the rules give no yield comparison.")
+    risks += [r["statement"] for r in caution_rules]
+    confidence = "medium" if any(_crop_specific(r, crop_key, rules) for r in crop_rules) else "low"
 
     return {
         "id": "water_efficient",
-        "title": "Keep the current crop, add lower-water crops",
+        "title": f"Keep the current crop, add {kind_of_crop}",
         "rotation": rotation,
         "why": why,
-        "evidence": _climate_evidence(climate, risk) + [_rule_evidence(rules, r) for r in used_rules],
+        "evidence": _climate_evidence(climate, risk) + [zone_evidence] + [_rule_evidence(rules, r) for r in used_rules],
         "benefits": ["Spreads exposure to dry years across more than one crop."] if alternatives else [],
         "risks": risks,
         "gaps": gaps,
         "water_need": water_need,
         "complexity": "medium",
         "confidence": confidence,
+        "climate_zone": zone,
     }
 
 
-def _soil_restoration(crop: str, climate: dict, risk: dict, rules: dict) -> dict[str, Any]:
+def _soil_restoration(crop_key: str, crop: str, climate: dict, risk: dict, rules: dict) -> dict[str, Any]:
     drier = risk["drivers"]["drying"]["triggered"]
-    used = rules["soil_restoration_rules"]
+    legume = _is_legume(rules, crop_key)
+    wanted = "legume" if legume else "non_legume"
+    # Rules marked for_crops apply only to legume / non-legume current crops.
+    used = [r for r in rules["soil_restoration_rules"] if r.get("for_crops", wanted) == wanted]
     benefit_rules = [r for r in used if r.get("kind") != "caution"]
     caution_rules = [r for r in used if r.get("kind") == "caution"]
     cover_crops = next(c for r in used for c in [r.get("cover_crops")] if c)
+    cover_text = " or ".join(cover_crops)
 
     risks = [
         "Cover crops use soil water and need good termination timing.",
@@ -230,26 +297,50 @@ def _soil_restoration(crop: str, climate: dict, risk: dict, rules: dict) -> dict
     if drier:
         risks.append("The climate data shows drier conditions, so soil-water use by the cover crop deserves extra care.")
 
-    return {
-        "id": "soil_restoration",
-        "title": "Add legumes and cover crops",
-        "rotation": _rotation(
-            [crop, f"legume cover crop ({cover_crops[0]} or {cover_crops[1]})", crop],
-            ["current crop", "legume cover crop", "current crop"],
-            extra={2: {"alternatives": cover_crops}},
-        ),
-        "why": (
+    if legume:
+        title = "Add a non-legume cover crop"
+        role = "non-legume cover crop"
+        why = (
+            f"Worth a look: {crop} is already a legume, so instead of adding another legume, a non-legume "
+            f"cover crop ({cover_text}) protects the soil and takes up leftover nitrogen between {crop} crops. "
+            "This option is based on soil benefits, not on the climate risk level."
+        )
+        extra_gaps = ["The nitrogen left by the current legume crop was not measured."]
+    else:
+        title = "Add legumes and cover crops"
+        role = "legume cover crop"
+        why = (
             f"Worth a look: legume cover crops add nitrogen and protect the soil between {crop} crops. "
             "This option is based on soil benefits, not on the climate risk level."
+        )
+        extra_gaps = []
+
+    evidence = _climate_evidence(climate, risk) + [_rule_evidence(rules, r) for r in used]
+    if legume:
+        evidence.append({
+            "type": "agronomy_rule",
+            "rule_id": "legumes",
+            "statement": f"{crop} is on the legume list, so no legume cover crop is suggested.",
+            "sources": _sources(rules, rules["legumes"]["source_ids"]),
+        })
+
+    return {
+        "id": "soil_restoration",
+        "title": title,
+        "rotation": _rotation(
+            [crop, f"{role} ({cover_text})", crop],
+            ["current crop", role, "current crop"],
+            extra={2: {"alternatives": cover_crops}},
         ),
-        "evidence": _climate_evidence(climate, risk) + [_rule_evidence(rules, r) for r in used],
+        "why": why,
+        "evidence": evidence,
         "benefits": [r["statement"] for r in benefit_rules],
         "risks": risks + [r["statement"] for r in caution_rules],
-        "gaps": list(COMMON_GAPS)
-        + ["If the current crop is already a legume, the nitrogen benefit may differ; not assessed."],
+        "gaps": list(COMMON_GAPS) + extra_gaps,
         "water_need": "Current crop plus the cover crop's soil-water use; no volume available.",
         "complexity": "medium",
         "confidence": "medium",
+        "current_crop_is_legume": legume,
     }
 
 
@@ -268,7 +359,7 @@ def build_strategies(
     strategies = [
         _baseline(crop, climate, risk),
         _water_efficient(crop_key, crop, climate, risk, rules),
-        _soil_restoration(crop, climate, risk, rules),
+        _soil_restoration(crop_key, crop, climate, risk, rules),
     ]
     return [_with_frontend_fields(s, i) for i, s in enumerate(strategies, start=1)]
 
