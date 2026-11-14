@@ -1,0 +1,254 @@
+[
+  {
+    "id": "norfolk",
+    "name": "Norfolk",
+    "region": "England, UK",
+    "latitude": 52.65,
+    "longitude": 0.9,
+    "elevationM": 32,
+    "source": {
+      "title": "NASA/POWER Source Native Resolution Monthly and Annual",
+      "apiVersion": "v2.10.0",
+      "inputs": [
+        "SYN1DEG",
+        "MERRA2",
+        "POWER"
+      ],
+      "firstYear": 2001,
+      "lastYear": 2025,
+      "temperature": {
+        "parameter": "T2M",
+        "name": "Temperature at 2 Meters"
+      },
+      "precipitation": {
+        "parameter": "PRECTOTCORR",
+        "name": "Precipitation Corrected"
+      }
+    },
+    "year": 2025,
+    "baseline": {
+      "start": 2001,
+      "end": 2020
+    },
+    "months": [
+      {
+        "month": 1,
+        "temperatureC": 2.89,
+        "rainfallMm": 57.4,
+        "baselineTemperatureC": 3.89,
+        "baselineRainfallMm": 59.2
+      },
+      {
+        "month": 2,
+        "temperatureC": 4.37,
+        "rainfallMm": 44.2,
+        "baselineTemperatureC": 4.13,
+        "baselineRainfallMm": 51.1
+      },
+      {
+        "month": 3,
+        "temperatureC": 6.79,
+        "rainfallMm": 8.4,
+        "baselineTemperatureC": 5.91,
+        "baselineRainfallMm": 49.4
+      },
+      {
+        "month": 4,
+        "temperatureC": 10.16,
+        "rainfallMm": 16.2,
+        "baselineTemperatureC": 8.73,
+        "baselineRainfallMm": 39.2
+      },
+      {
+        "month": 5,
+        "temperatureC": 12.85,
+        "rainfallMm": 26.7,
+        "baselineTemperatureC": 12.02,
+        "baselineRainfallMm": 57.3
+      },
+      {
+        "month": 6,
+        "temperatureC": 17.7,
+        "rainfallMm": 23.4,
+        "baselineTemperatureC": 15.06,
+        "baselineRainfallMm": 68.8
+      },
+      {
+        "month": 7,
+        "temperatureC": 18.63,
+        "rainfallMm": 59.5,
+        "baselineTemperatureC": 17.21,
+        "baselineRainfallMm": 67.6
+      },
+      {
+        "month": 8,
+        "temperatureC": 17.95,
+        "rainfallMm": 21.7,
+        "baselineTemperatureC": 16.97,
+        "baselineRainfallMm": 69.1
+      },
+      {
+        "month": 9,
+        "temperatureC": 14.87,
+        "rainfallMm": 41.4,
+        "baselineTemperatureC": 14.36,
+        "baselineRainfallMm": 47.7
+      },
+      {
+        "month": 10,
+        "temperatureC": 11.27,
+        "rainfallMm": 66,
+        "baselineTemperatureC": 11.05,
+        "baselineRainfallMm": 68.6
+      },
+      {
+        "month": 11,
+        "temperatureC": 8.27,
+        "rainfallMm": 108.9,
+        "baselineTemperatureC": 7.12,
+        "baselineRainfallMm": 64.9
+      },
+      {
+        "month": 12,
+        "temperatureC": 6.62,
+        "rainfallMm": 69.1,
+        "baselineTemperatureC": 4.54,
+        "baselineRainfallMm": 63.2
+      }
+    ],
+    "annual": {
+      "temperatureC": 11.03,
+      "rainfallMm": 542.9,
+      "baselineTemperatureC": 10.08,
+      "baselineRainfallMm": 706,
+      "temperatureChangeC": 0.95,
+      "rainfallChangePct": -23.1
+    }
+  },
+  {
+    "id": "nevada",
+    "name": "Western Nevada",
+    "region": "USA",
+    "latitude": 39.47,
+    "longitude": -118.78,
+    "elevationM": 1269,
+    "source": {
+      "title": "NASA/POWER Source Native Resolution Monthly and Annual",
+      "apiVersion": "v2.10.0",
+      "inputs": [
+        "SYN1DEG",
+        "MERRA2",
+        "POWER"
+      ],
+      "firstYear": 2001,
+      "lastYear": 2025,
+      "temperature": {
+        "parameter": "T2M",
+        "name": "Temperature at 2 Meters"
+      },
+      "precipitation": {
+        "parameter": "PRECTOTCORR",
+        "name": "Precipitation Corrected"
+      }
+    },
+    "year": 2025,
+    "baseline": {
+      "start": 2001,
+      "end": 2020
+    },
+    "months": [
+      {
+        "month": 1,
+        "temperatureC": 1.96,
+        "rainfallMm": 5.9,
+        "baselineTemperatureC": 1.9,
+        "baselineRainfallMm": 23.1
+      },
+      {
+        "month": 2,
+        "temperatureC": 5.58,
+        "rainfallMm": 31.4,
+        "baselineTemperatureC": 3.84,
+        "baselineRainfallMm": 21.2
+      },
+      {
+        "month": 3,
+        "temperatureC": 7.98,
+        "rainfallMm": 15.8,
+        "baselineTemperatureC": 7.78,
+        "baselineRainfallMm": 16.4
+      },
+      {
+        "month": 4,
+        "temperatureC": 12.5,
+        "rainfallMm": 12.6,
+        "baselineTemperatureC": 11.1,
+        "baselineRainfallMm": 13.5
+      },
+      {
+        "month": 5,
+        "temperatureC": 18.36,
+        "rainfallMm": 8.4,
+        "baselineTemperatureC": 16.58,
+        "baselineRainfallMm": 16.1
+      },
+      {
+        "month": 6,
+        "temperatureC": 24.87,
+        "rainfallMm": 1.8,
+        "baselineTemperatureC": 22.32,
+        "baselineRainfallMm": 7.2
+      },
+      {
+        "month": 7,
+        "temperatureC": 27.44,
+        "rainfallMm": 4.3,
+        "baselineTemperatureC": 27.35,
+        "baselineRainfallMm": 7.3
+      },
+      {
+        "month": 8,
+        "temperatureC": 26.44,
+        "rainfallMm": 11.2,
+        "baselineTemperatureC": 25.74,
+        "baselineRainfallMm": 5
+      },
+      {
+        "month": 9,
+        "temperatureC": 22.19,
+        "rainfallMm": 6,
+        "baselineTemperatureC": 20.98,
+        "baselineRainfallMm": 3.8
+      },
+      {
+        "month": 10,
+        "temperatureC": 13.02,
+        "rainfallMm": 24.2,
+        "baselineTemperatureC": 13.26,
+        "baselineRainfallMm": 13
+      },
+      {
+        "month": 11,
+        "temperatureC": 9.74,
+        "rainfallMm": 29.1,
+        "baselineTemperatureC": 6.24,
+        "baselineRainfallMm": 18.4
+      },
+      {
+        "month": 12,
+        "temperatureC": 5.63,
+        "rainfallMm": 37.2,
+        "baselineTemperatureC": 1.41,
+        "baselineRainfallMm": 25.2
+      }
+    ],
+    "annual": {
+      "temperatureC": 14.64,
+      "rainfallMm": 187.8,
+      "baselineTemperatureC": 13.21,
+      "baselineRainfallMm": 170.2,
+      "temperatureChangeC": 1.43,
+      "rainfallChangePct": 10.4
+    }
+  }
+]

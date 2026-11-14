@@ -1,1 +1,1 @@
-export default function ClimatePage() { return <main className="p-8"><h1 className="text-2xl font-semibold">Climate</h1><p className="mt-2 text-gray-600">Climate indicators and anomalies will appear here.</p></main>; }
+export default function ClimatePage() { return <div><h1 className="text-2xl font-semibold">Climate</h1><p className="mt-2 text-gray-600">Climate indicators and anomalies will appear here.</p></div>; }

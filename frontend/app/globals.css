@@ -1,4 +1,57 @@
 @import "tailwindcss";
 
-:root { color-scheme: light; }
-body { margin: 0; background: #f6f7f2; color: #1d2b22; font-family: Arial, Helvetica, sans-serif; }
+@theme {
+  --color-forest: #163d32;
+  --color-primary: #2f7653;
+  --color-primary-hover: #26623f;
+  --color-fresh: #77a86b;
+  --color-page: #f7f8f3;
+  --color-earth: #9a7656;
+  --color-beige: #d8c9a9;
+  --color-sage: #a8bba6;
+  --color-water: #3e82b7;
+  --color-ink: #202b28;
+  --color-caption: #4f5b55;
+  --color-success: #39865b;
+  --color-warning: #d69b3b;
+  --color-danger: #c65b4f;
+  --color-neutral: #7c8982;
+  --color-line: #e3e6dc;
+
+  --color-green-ink: #245c40;
+  --color-green-tint: #e7f0e8;
+  --color-water-ink: #245f8e;
+  --color-water-tint: #e6f0f8;
+  --color-earth-ink: #6e5034;
+  --color-earth-tint: #f1e9dc;
+  --color-warning-ink: #7a5a12;
+  --color-warning-tint: #f6ebd3;
+  --color-danger-ink: #9e3b30;
+  --color-danger-tint: #f8e5e2;
+  --color-neutral-ink: #3e4a44;
+  --color-neutral-tint: #eceee8;
+  --color-on-forest: #d8e4dc;
+  --color-on-forest-muted: #b7cbbe;
+
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-control: 10px;
+  --radius-inner: 12px;
+  --radius-card: 16px;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-page font-sans text-sm text-ink antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
