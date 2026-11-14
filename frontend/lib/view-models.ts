@@ -47,6 +47,8 @@ export type Strategy = {
   summary: string;
   rotation_crops: string[];
   sources: DataLabel[];
+  climate_zone?: "cool" | "warm";
+  current_crop_is_legume?: boolean;
 };
 
 export type Status = "fine" | "watch" | "act";
