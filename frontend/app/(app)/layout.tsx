@@ -1,6 +1,6 @@
-// Shared shell for the app screens: sidebar + top bar go here.
 import type { ReactNode } from "react";
+import { AppShell } from "@/components/layout/AppShell";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return <AppShell>{children}</AppShell>;
 }
