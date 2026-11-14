@@ -8,6 +8,7 @@ import { InsightCard } from "@/components/dashboard/InsightCard";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { Footnote } from "@/components/dashboard/Footnote";
+import { RecentWeather } from "@/components/dashboard/RecentWeather";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { WithSite } from "@/components/layout/WithSite";
 import { FarmMap } from "@/components/map/FarmMap";
@@ -22,6 +23,8 @@ function Dashboard({ site }: { site: ClimateSite }) {
   return (
     <div className="space-y-8">
       <DashboardHero site={site} />
+
+      <RecentWeather site={site} />
 
       <section id="soil" aria-labelledby="year-heading" className="scroll-mt-24 space-y-4">
         <SectionTitle id="year-heading" icon={CalendarRange}>

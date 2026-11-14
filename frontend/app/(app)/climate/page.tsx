@@ -7,6 +7,7 @@ import { TemperatureChart } from "@/components/charts/TemperatureChart";
 import { Footnote } from "@/components/dashboard/Footnote";
 import { InsightCard } from "@/components/dashboard/InsightCard";
 import { KpiCard } from "@/components/dashboard/KpiCard";
+import { RecentWeather } from "@/components/dashboard/RecentWeather";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { WithSite } from "@/components/layout/WithSite";
@@ -20,6 +21,8 @@ function Climate({ site }: { site: ClimateSite }) {
   return (
     <div className="space-y-8">
       <PageIntro icon={Thermometer} title="Climate" lead={headline(site)} site={site.id} />
+
+      <RecentWeather site={site} />
 
       <section aria-labelledby="climate-year" className="space-y-4">
         <SectionTitle id="climate-year" icon={CalendarDays}>

@@ -1,4 +1,4 @@
-import type { DemoClimateResponse, LiveClimateResponse, StrategiesResponse } from "./types";
+import type { DemoClimateResponse, LiveClimateResponse, RecentWeather, StrategiesResponse } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 // The backend waits up to 120 s for NASA on the first call for a new place.
@@ -41,3 +41,9 @@ export const getDemoStrategies = (farm: string, crop: string) =>
 
 export const getLiveStrategies = (latitude: number, longitude: number, crop: string) =>
   request<StrategiesResponse>("/strategies/", post({ latitude, longitude, crop }));
+
+// farm: a demo farm id, so the backend can use its saved monthly data as the usual weather.
+export const getRecentWeather = (latitude: number, longitude: number, farm?: string) =>
+  request<RecentWeather>(
+    `/climate/recent?latitude=${latitude}&longitude=${longitude}${farm ? `&farm=${encodeURIComponent(farm)}` : ""}`,
+  );
