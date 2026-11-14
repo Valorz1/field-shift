@@ -12,7 +12,7 @@ const NORFOLK = [
 ];
 
 const STEPS = [
-  { title: "Pick your field", text: "Drop a pin on the map, or try one of our two example farms." },
+  { title: "Pick your field", text: "Drop a pin on your farm in the UK, or try our Norfolk example. Western Nevada shows it works abroad too." },
   { title: "See what changed", text: "NASA data compares the last 5 years with the 20 years before." },
   { title: "Compare 3 plans", text: "Keep what you grow, use less water, or build up the soil. You decide." },
 ];
@@ -52,7 +52,7 @@ export default function Home() {
                 See how the weather on your field has changed.
               </h1>
               <p className="mt-5 max-w-xl text-lg text-on-forest">
-                Drop a pin on your farm. Field Shift uses NASA data to show what changed in the last 5 years, and 3
+                Drop a pin on your UK farm. Field Shift uses NASA data to show what changed in the last 5 years, and 3
                 crop plans for the next 3.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">

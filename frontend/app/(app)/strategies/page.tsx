@@ -1,26 +1,36 @@
 "use client";
 
-import { Sprout } from "lucide-react";
+import { Columns3, Sprout } from "lucide-react";
+import { CropPicker } from "@/components/farm/CropPicker";
+import { OutsideUkNote } from "@/components/farm/OutsideUkNote";
+import { Page } from "@/components/layout/Page";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { WithSite } from "@/components/layout/WithSite";
-import { ComparisonTable } from "@/components/strategies/ComparisonTable";
 import { StrategyCards } from "@/components/strategies/StrategyCards";
+import { ButtonLink } from "@/components/ui/Button";
 import type { ClimateSite } from "@/lib/data/climate";
+import { farmHref } from "@/lib/navigation";
 
 function Plans({ site }: { site: ClimateSite }) {
   return (
-    <div className="space-y-8">
+    <Page>
       <PageIntro
         icon={Sprout}
-        title="Crop plans"
+        title="Strategies"
         lead="3 ways to plan the next 3 years on your field. Each one is built from NASA climate data and published farming guidance. You choose."
-        site={site.id}
+        actions={
+          <ButtonLink href={farmHref("/compare", site)} variant="secondary">
+            <Columns3 aria-hidden="true" className="size-5" strokeWidth={1.7} />
+            Compare side by side
+          </ButtonLink>
+        }
       />
       <section aria-label="The 3 plans" className="space-y-4">
-        <StrategyCards site={site} />
+        <OutsideUkNote site={site} />
+        <CropPicker site={site} />
+        <StrategyCards site={site} showPicker={false} />
       </section>
-      <ComparisonTable site={site} />
-    </div>
+    </Page>
   );
 }
 

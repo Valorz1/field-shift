@@ -1,14 +1,16 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { cx } from "@/lib/cx";
 import { climateSites } from "@/lib/data/climate";
 import { updateSession } from "@/lib/session-store";
 
+// Example farm switch, as round buttons: white on the dark banner, green on light pages.
 export function SiteSwitcher({ current, onDark = false }: { current: string; onDark?: boolean }) {
   return (
-    <nav aria-label="Location">
-      <ul className={cx("flex flex-wrap gap-2", !onDark && "border-b border-line")}>
+    <nav aria-label="Example farms">
+      <ul className="flex flex-wrap gap-2">
         {climateSites.map((site) => {
           const active = site.id === current;
           return (
@@ -19,18 +21,17 @@ export function SiteSwitcher({ current, onDark = false }: { current: string; onD
                 onClick={() => updateSession({ latitude: undefined, longitude: undefined, crop: undefined })}
                 aria-current={active ? "page" : undefined}
                 className={cx(
-                  onDark
-                    ? "flex min-h-12 items-center justify-center rounded-full border px-4 text-base font-semibold transition-colors"
-                    : "-mb-px flex min-h-12 min-w-12 items-center justify-center border-b-2 px-3 text-lg transition-colors",
+                  "fs-press flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-base font-semibold transition-colors",
                   onDark
                     ? active
                       ? "border-white bg-white text-forest"
                       : "border-on-forest-muted text-white hover:bg-white/10"
                     : active
-                      ? "border-forest font-semibold text-forest"
-                      : "border-transparent text-caption hover:text-forest",
+                      ? "border-forest bg-forest text-white"
+                      : "border-line bg-white text-forest hover:border-sage hover:bg-green-tint",
                 )}
               >
+                {active && <MapPin aria-hidden="true" className="size-4" strokeWidth={2} />}
                 {site.name}
               </Link>
             </li>

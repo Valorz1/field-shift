@@ -8,8 +8,11 @@ import { AssistantPanel } from "@/components/dashboard/AssistantPanel";
 import { InsightCard } from "@/components/dashboard/InsightCard";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
+import { CropPicker } from "@/components/farm/CropPicker";
+import { OutsideUkNote } from "@/components/farm/OutsideUkNote";
 import { Footnote } from "@/components/dashboard/Footnote";
 import { RecentWeather } from "@/components/dashboard/RecentWeather";
+import { Page } from "@/components/layout/Page";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { WithSite } from "@/components/layout/WithSite";
 import { FarmMap } from "@/components/map/FarmMap";
@@ -23,6 +26,10 @@ function Dashboard({ site }: { site: ClimateSite }) {
   const { crop, data, error } = useStrategies(site);
   return (
     <div className="space-y-8">
+      <CropPicker site={site} />
+
+      <OutsideUkNote site={site} />
+
       <DashboardHero site={site} />
 
       <RecentWeather site={site} />
@@ -32,8 +39,8 @@ function Dashboard({ site }: { site: ClimateSite }) {
           {`Your field in ${site.year}`}
         </SectionTitle>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {kpisFor(site, { crop, risk: data?.risk, error }).map((kpi) => (
-            <KpiCard key={kpi.kind} kpi={kpi} />
+          {kpisFor(site, { crop, risk: data?.risk, error }).map((kpi, i) => (
+            <KpiCard key={kpi.kind} kpi={kpi} index={i} />
           ))}
         </div>
       </section>
@@ -77,7 +84,7 @@ function Dashboard({ site }: { site: ClimateSite }) {
         <SectionTitle id="strategies-heading" icon={Sprout}>
           3 plans for the next 3 years
         </SectionTitle>
-        <StrategyCards site={site} />
+        <StrategyCards site={site} showPicker={false} />
       </section>
 
       <section id="assistant" aria-labelledby="assistant-heading" className="scroll-mt-24 space-y-4">
@@ -92,9 +99,9 @@ function Dashboard({ site }: { site: ClimateSite }) {
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
+    <Page>
       <FarmMap />
       <WithSite showStates render={(site) => <Dashboard site={site} />} />
-    </div>
+    </Page>
   );
 }

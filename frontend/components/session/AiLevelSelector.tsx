@@ -3,7 +3,7 @@
 import { cx } from "@/lib/cx";
 import { type AiLevel, DEFAULT_AI_LEVEL, updateSession, useSession } from "@/lib/session-store";
 
-const LEVELS: { level: AiLevel; name: string; text: string }[] = [
+export const AI_LEVELS: { level: AiLevel; name: string; text: string }[] = [
   { level: 1, name: "Advice only", text: "Short answers about your field. No plans." },
   { level: 2, name: "Compare the plans", text: "Helps you weigh up the 3 plans. You choose." },
   { level: 3, name: "Seasonal planning", text: "Helps you think through the seasons of a plan." },
@@ -15,7 +15,7 @@ export function AiLevelSelector() {
   return (
     <fieldset className="space-y-2">
       <legend className="mb-2 text-base font-semibold text-ink">How much should the AI help?</legend>
-      {LEVELS.map(({ level, name, text }) => (
+      {AI_LEVELS.map(({ level, name, text }) => (
         <label
           key={level}
           className={cx(

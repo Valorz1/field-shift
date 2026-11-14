@@ -14,7 +14,7 @@ const edges: Record<Status, string> = {
 export function InsightCard({ insight }: { insight: SeasonInsight }) {
   const Icon = insight.name === "Summer" ? Sun : Flower2;
   return (
-    <Card as="article" className={cx("flex flex-col gap-3 border-l-[6px]", edges[insight.status])}>
+    <Card as="article" className={cx("fs-rise fs-lift flex flex-col gap-3 border-l-[6px]", edges[insight.status])}>
       <div className="flex items-center gap-3">
         <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-water-tint text-water-ink">
           <Icon aria-hidden="true" className="size-6" strokeWidth={1.8} />
