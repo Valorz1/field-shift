@@ -1,9 +1,8 @@
 import { Flower2, Sun } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { StatusTag } from "@/components/ui/StatusTag";
-import { seasonInsights, usualYears } from "@/lib/climate-facts";
+import { seasonInsights, usualYears, seasonChangeLabel } from "@/lib/climate-facts";
 import type { ClimateSite } from "@/lib/data/climate";
-import { formatSigned } from "@/lib/format";
 import { cx } from "@/lib/cx";
 
 function Bar({ label, value, max, recent }: { label: string; value: number; max: number; recent?: boolean }) {
@@ -42,7 +41,7 @@ export function SeasonalRain({ site }: { site: ClimateSite }) {
                 <p className="text-base text-caption">{season.span}</p>
               </div>
               <span className="font-display text-xl font-extrabold text-forest tabular-nums">
-                {formatSigned(season.percent, 0)}%
+                {seasonChangeLabel(season)}
               </span>
             </header>
             <div className="space-y-1.5" role="img" aria-label={`${season.name} rain: ${season.rain} mm in ${site.year}, ${season.usual} mm usual`}>

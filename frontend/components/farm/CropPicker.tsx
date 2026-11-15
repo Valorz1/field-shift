@@ -21,10 +21,14 @@ export function CropPicker({ site, variant = "card" }: { site: Place; variant?: 
   const [typing, setTyping] = useState(other);
   const missing = !crop && !typing;
 
+  const [invalid, setInvalid] = useState(false);
   const save = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const value = String(new FormData(event.currentTarget).get("crop")).trim();
-    if (value) updateSession({ crop: value });
+    const value = String(new FormData(event.currentTarget).get("crop")).trim().replace(/\s+/g, " ");
+    // A crop name: letters (any language), spaces, hyphens and apostrophes, up to 40 characters.
+    const ok = /^\p{L}[\p{L} '’-]{0,39}$/u.test(value);
+    setInvalid(!ok);
+    if (ok) updateSession({ crop: value });
   };
 
   const plain = variant === "plain";
@@ -93,8 +97,17 @@ export function CropPicker({ site, variant = "card" }: { site: Place; variant?: 
               required
               defaultValue={other ? chosen : ""}
               placeholder="For example potatoes"
+              maxLength={40}
+              aria-invalid={invalid}
+              aria-describedby={invalid ? "crop-error" : undefined}
+              onChange={() => invalid && setInvalid(false)}
               className="min-h-12 rounded-control border border-line bg-white px-3 text-base font-normal text-ink"
             />
+            {invalid && (
+              <span id="crop-error" role="alert" className="text-sm font-normal text-danger-ink">
+                Type a crop name using letters only, up to 40 characters.
+              </span>
+            )}
           </label>
           <Button type="submit" variant="secondary">
             Show my plans
