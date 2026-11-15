@@ -12,7 +12,7 @@ const NORFOLK = [
 ];
 
 const STEPS = [
-  { title: "Pick your field", text: "Drop a pin on the map, or try one of our two example farms." },
+  { title: "Pick your field", text: "Drop a pin on your farm in the UK, or try our Norfolk example. Western Nevada shows it works abroad too." },
   { title: "See what changed", text: "NASA data compares the last 5 years with the 20 years before." },
   { title: "Compare 3 plans", text: "Keep what you grow, use less water, or build up the soil. You decide." },
 ];
@@ -48,11 +48,15 @@ export default function Home() {
               <p className="text-sm font-semibold tracking-wide text-on-forest-muted uppercase">
                 NASA Space Apps Challenge 2026 · Field Shift
               </p>
+              <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-forest-deep/50 px-3 py-1.5 text-xs font-bold tracking-[0.14em] text-on-forest uppercase">
+                <Satellite aria-hidden="true" className="size-4 text-sky-200" strokeWidth={1.8} />
+                Earth observations for farmers
+              </p>
               <h1 className="mt-3 font-display text-[36px] leading-[1.1] font-extrabold sm:text-[52px]">
                 See how the weather on your field has changed.
               </h1>
               <p className="mt-5 max-w-xl text-lg text-on-forest">
-                Drop a pin on your farm. Field Shift uses NASA data to show what changed in the last 5 years, and 3
+                Drop a pin on your UK farm. Field Shift uses NASA data to show what changed in the last 5 years, and 3
                 crop plans for the next 3.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -69,20 +73,27 @@ export default function Home() {
                 Free. No account. Nothing is saved.
               </p>
               <p className="mt-6 text-sm text-on-forest-muted">
-                Background: real farmland near Dereham, Norfolk, seen from space on 11 June 2025. NASA HLS (Landsat and
-                Sentinel-2) via NASA Worldview.
+                Seen from space: farmland near Dereham, Norfolk · NASA HLS (Landsat + Sentinel-2) · 11 June 2025
               </p>
             </div>
 
             <aside aria-labelledby="example-heading" className="rounded-card bg-white/95 p-5 text-ink">
               <div className="flex items-center justify-between gap-2">
-                <h2 id="example-heading" className="font-display text-lg font-bold text-forest">
-                  Norfolk, UK: a wheat farm
-                </h2>
-                <span className="rounded-full bg-water-tint px-2.5 py-0.5 text-sm font-medium text-water-ink">
+                <div>
+                  <p className="text-xs font-bold tracking-[0.14em] text-caption uppercase">Field climate brief</p>
+                  <h2 id="example-heading" className="mt-1 font-display text-lg font-bold text-forest">
+                    Norfolk, UK: a wheat farm
+                  </h2>
+                </div>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-water-tint px-2.5 py-1 text-sm font-semibold text-water-ink">
+                  <Satellite aria-hidden="true" className="size-4" strokeWidth={1.8} />
                   NASA POWER
                 </span>
               </div>
+              <p className="mt-2 flex items-center gap-1.5 text-sm text-caption">
+                <MapPin aria-hidden="true" className="size-4 text-primary" strokeWidth={1.8} />
+                52.65° N, 0.90° E · Earth-observed climate
+              </p>
               <p className="mt-1 text-sm text-caption">Real data: 2021–2025 compared with 2001–2020</p>
               <ul className="mt-4 space-y-2.5">
                 {NORFOLK.map(({ icon: Icon, label, value, note, tone }) => (
@@ -131,8 +142,11 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
           <h2 id="data-heading" className="flex items-center gap-3 font-display text-[28px] font-extrabold text-forest">
             <Satellite aria-hidden="true" className="size-7" strokeWidth={1.6} />
-            Built on NASA data
+            From space to your soil
           </h2>
+          <p className="mt-2 max-w-2xl text-base text-caption">
+            Satellite and climate records help put changing field conditions in context.
+          </p>
           <ul className="mt-6 grid gap-4 sm:grid-cols-3">
             {DATA.map(({ name, what, text, tone }) => (
               <li key={name} className={`rounded-card p-5 text-white ${tone}`}>

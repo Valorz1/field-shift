@@ -1,6 +1,9 @@
-import { ArrowRight, ChevronDown, Droplets, type LucideIcon, Repeat, Sprout } from "lucide-react";
+import { Bean, ChevronDown, Droplets, Leaf, type LucideIcon, Repeat, Sprout, Wheat } from "lucide-react";
 import { SourceBadge } from "@/components/ui/SourceBadge";
+import { BestMatchBadge, PlanFitList } from "./PlanFit";
 import { cx } from "@/lib/cx";
+import { LEGUMES, type PlanFit } from "@/lib/farm-profile";
+import type { FarmProfile } from "@/lib/session-store";
 import type { Evidence, Level, Strategy, StrategyKind } from "@/lib/view-models";
 
 // "Uses less water" only when the rules back it up: the water need then starts with "Lower".
@@ -19,7 +22,13 @@ const kindStyles: Record<StrategyKind, { border: string; tile: string; chip: str
 
 // Two short lines, like our design: what the plan is for, and what to watch out for.
 export const aimWatch = (strategy: Strategy): { aim: string; watch: string } => {
-  if (strategy.kind === "baseline") return { aim: "Keep farming as you do now", watch: "Water if summers get drier" };
+  if (strategy.kind === "baseline")
+    return {
+      aim: "Keep farming as you do now",
+      watch: strategy.current_crop_is_perennial
+        ? "A stand lasts years; do not resow it straight after itself"
+        : "Pests and diseases build up with one crop every year; water if summers get drier",
+    };
   if (strategy.kind === "soil-restoration")
     return { aim: "Stronger soil over time", watch: "Benefits take a few seasons; cover crops use some soil water" };
   return strategy.water_need.startsWith("Lower")
@@ -27,7 +36,31 @@ export const aimWatch = (strategy: Strategy): { aim: string; watch: string } => 
     : { aim: "Spread your risk with crops that suit your climate", watch: "New seed, kit and a buyer for the new crop" };
 };
 
-const changeLabels: Record<Level, string> = {
+// Short titles a farmer can scan. The engine's full title stays in "Why we suggest this".
+export const shortTitle = (strategy: Strategy) => {
+  const crop = strategy.rotation[0]?.crop ?? "your crop";
+  if (strategy.kind === "baseline") return `Keep growing ${crop}`;
+  if (strategy.kind === "soil-restoration")
+    return strategy.title.toLowerCase().includes("non-legume") ? "Add a cover crop" : "Add a legume cover crop";
+  return strategy.water_need.startsWith("Lower") ? "Add lower-water crops" : "Mix in crops that suit your climate";
+};
+
+
+
+// "legume cover crop (hairy vetch or red clover)" -> name "Legume cover crop", detail "hairy vetch or red clover".
+const splitCrop = (crop: string) => {
+  const match = crop.match(/^(.*?)\s*\((.*)\)\s*$/);
+  const name = (match ? match[1] : crop).trim();
+  return { name: name[0].toUpperCase() + name.slice(1), detail: match?.[2] };
+};
+
+const cropIcon = (crop: string): LucideIcon => {
+  const text = crop.toLowerCase();
+  if (text.includes("cover")) return Leaf;
+  return LEGUMES.some((legume) => text.includes(legume)) ? Bean : Wheat;
+};
+
+export const changeLabels: Record<Level, string> = {
   low: "Small change",
   medium: "Some change",
   high: "Big change",
@@ -41,21 +74,21 @@ const confidenceLabels: Record<Level, string> = {
   high: "High confidence",
 };
 
-function LevelMeter({ level }: { level: Level }) {
+function LevelMeter({ level, label }: { level: Level; label?: string }) {
   return (
-    <span className="flex items-center gap-3">
+    <span className="flex items-center gap-2">
       <span aria-hidden="true" className="flex gap-1">
         {[1, 2, 3].map((step) => (
           <span
             key={step}
             className={cx(
-              "h-2.5 w-6 rounded-full",
+              "h-2 w-4 rounded-full",
               step <= levelSteps[level] ? "bg-forest" : "border border-sage bg-neutral-tint",
             )}
           />
         ))}
       </span>
-      {changeLabels[level]}
+      {(label ?? changeLabels[level]).replace(" confidence", "").replace(" change", "")}
     </span>
   );
 }
@@ -101,9 +134,45 @@ function EvidenceItem({ evidence }: { evidence: Evidence }) {
   );
 }
 
-type StrategyCardProps = { strategy: Strategy; illustrative?: boolean };
+// The 3 years side by side. compact: for the small plan cards, where the crop's detail would not fit.
+export function YearTiles({ strategy, compact = false }: { strategy: Strategy; compact?: boolean }) {
+  const style = kindStyles[strategy.kind];
+  return (
+    <ol aria-label="Your next 3 years" className="grid grid-cols-3 gap-2">
+      {strategy.rotation.map((step) => {
+        const { name, detail } = splitCrop(step.crop);
+        const CropIcon = cropIcon(step.crop);
+        const same = step.crop === strategy.rotation[0]?.crop;
+        return (
+          <li
+            key={step.year}
+            className={cx(
+              "flex flex-col items-center gap-1 rounded-inner px-2 text-center",
+              compact ? "py-2.5" : "py-3",
+              same ? "bg-page" : style.chip,
+            )}
+          >
+            <span className="text-xs font-semibold tracking-wide text-caption uppercase">Year {step.year}</span>
+            <CropIcon aria-hidden="true" className={compact ? "size-5" : "size-6"} strokeWidth={1.8} />
+            <span className="text-sm leading-tight font-bold">{name}</span>
+            {detail && !compact && <span className="text-xs leading-tight text-caption">{detail}</span>}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
 
-export function StrategyCard({ strategy, illustrative = false }: StrategyCardProps) {
+type StrategyCardProps = {
+  strategy: Strategy;
+  illustrative?: boolean;
+  // The farmer's answers checked against this plan (lib/farm-profile.ts). Absent on sample plans.
+  fit?: PlanFit;
+  profile?: FarmProfile;
+  best?: boolean;
+};
+
+export function StrategyCard({ strategy, illustrative = false, fit, profile, best = false }: StrategyCardProps) {
   const titleId = `strategy-${strategy.id}-title`;
   const style = kindStyles[strategy.kind];
   const Icon = style.icon;
@@ -113,61 +182,66 @@ export function StrategyCard({ strategy, illustrative = false }: StrategyCardPro
     <article
       aria-labelledby={titleId}
       className={cx(
-        "flex flex-col gap-4 rounded-card border border-t-[6px] border-line bg-white p-4 text-base sm:p-5",
+        "fs-lift flex h-full flex-col gap-5 rounded-card border border-t-[6px] border-line bg-white p-5 text-base",
         style.border,
       )}
     >
-      <div className="flex items-start gap-3">
+      <header className="flex items-start gap-3">
         <span className={cx("grid size-12 shrink-0 place-items-center rounded-xl", style.tile)}>
           <Icon aria-hidden="true" className="size-6" strokeWidth={1.8} />
         </span>
-        <div className="space-y-0.5">
-          <p className="text-sm font-semibold text-caption">
+        <div className="min-w-0 space-y-0.5">
+          <p className="text-sm font-semibold tracking-wide text-caption uppercase">
             Option {strategy.position} · {kindLabel(strategy)}
             {illustrative && <span className="sr-only">: a sample plan, not yet worked out for your farm</span>}
           </p>
-          <h3 id={titleId} className="font-display text-xl leading-snug font-bold text-forest">
-            {strategy.title}
+          <h3 id={titleId} className="font-display text-[22px] leading-tight font-extrabold text-forest">
+            {shortTitle(strategy)}
           </h3>
         </div>
-      </div>
+      </header>
 
-      <div className="space-y-2">
-        <h4 className="text-sm font-semibold text-caption">Your next 3 years</h4>
-        <ol className="flex flex-wrap items-center gap-1.5">
-          {strategy.rotation.map((step, i) => (
-            <li key={step.year} className="flex items-center gap-1.5">
-              {i > 0 && <ArrowRight aria-hidden="true" className="size-4 text-caption" strokeWidth={2} />}
-              <span className={cx("rounded-full px-3 py-1.5 text-base font-semibold", style.chip)}>
-                <span className="sr-only">Year {step.year}: </span>
-                {step.crop}
-              </span>
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <dl className="space-y-1.5">
+      {best && (
         <div>
-          <dt className="inline font-semibold text-ink">Aim: </dt>
-          <dd className="inline text-ink">{aim}</dd>
+          <BestMatchBadge />
         </div>
-        <div>
-          <dt className="inline font-semibold text-ink">Watch: </dt>
-          <dd className="inline text-ink">{watch}</dd>
+      )}
+
+      <YearTiles strategy={strategy} />
+
+      <dl className="space-y-2 text-base">
+        <div className="flex gap-2">
+          <dt className="w-14 shrink-0 font-semibold text-forest">Aim</dt>
+          <dd className="text-ink">{aim}</dd>
+        </div>
+        <div className="flex gap-2">
+          <dt className="w-14 shrink-0 font-semibold text-forest">Watch</dt>
+          <dd className="text-ink">{watch}</dd>
         </div>
       </dl>
 
-      <dl className="space-y-2 rounded-inner bg-page p-3">
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <dt className="text-sm font-semibold text-caption">How much change</dt>
-          <dd className="text-ink">
+      {fit && (
+        <div className="space-y-2 rounded-inner bg-page p-3">
+          <h4 className="flex items-center justify-between gap-2 text-xs font-semibold tracking-wide text-caption uppercase">
+            For your farm
+            <SourceBadge source="Your input" className="normal-case tracking-normal" />
+          </h4>
+          <PlanFitList fit={fit} profile={profile} askHref="#farm" />
+        </div>
+      )}
+
+      <dl className="mt-auto grid grid-cols-2 gap-2 border-t border-line pt-4">
+        <div>
+          <dt className="text-xs font-semibold tracking-wide text-caption uppercase">Change</dt>
+          <dd className="mt-1 text-sm text-ink">
             <LevelMeter level={strategy.complexity} />
           </dd>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <dt className="text-sm font-semibold text-caption">How sure we are</dt>
-          <dd className="text-ink">{confidenceLabels[strategy.confidence]}</dd>
+        <div>
+          <dt className="text-xs font-semibold tracking-wide text-caption uppercase">Confidence</dt>
+          <dd className="mt-1 text-sm text-ink">
+            <LevelMeter level={strategy.confidence} label={confidenceLabels[strategy.confidence]} />
+          </dd>
         </div>
       </dl>
 
@@ -181,6 +255,7 @@ export function StrategyCard({ strategy, illustrative = false }: StrategyCardPro
           />
         </summary>
         <div className="space-y-4 border-t border-line p-4">
+          <p className="font-semibold text-ink">{strategy.title}</p>
           <p className="text-ink">{strategy.why}</p>
           <div className="space-y-1">
             <h4 className="font-semibold text-ink">Water need</h4>

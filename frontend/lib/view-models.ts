@@ -50,6 +50,8 @@ export type Strategy = {
   sources: DataLabel[];
   climate_zone?: "cool" | "warm";
   current_crop_is_legume?: boolean;
+  // Alfalfa and other perennials: a stand lasts years, so "the same crop every year" is normal for them.
+  current_crop_is_perennial?: boolean;
 };
 
 export type Status = "fine" | "watch" | "act";
@@ -66,4 +68,6 @@ export type KpiView = {
   meaning: string;
   // Shown in grey while the figure is still on its way, like a missing one but without the Missing badge.
   waiting?: boolean;
+  // Two bars, the usual figure and the recent one, so the change can be seen as well as read.
+  compare?: { usualLabel: string; recentLabel: string; usual: number; recent: number; unit: string; digits: number };
 };

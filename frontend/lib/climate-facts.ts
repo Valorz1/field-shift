@@ -82,7 +82,7 @@ const SEASONS = [
   },
 ] as const;
 
-export type SeasonInsight = { name: string; span: string; status: Status; text: string };
+export type SeasonInsight = { name: string; span: string; status: Status; text: string; rain: number; usual: number; percent: number };
 
 const total = (months: MonthSummary[], pick: (month: MonthSummary) => number) =>
   months.reduce((sum, month) => sum + pick(month), 0);
@@ -107,7 +107,7 @@ export const seasonInsights = (site: ClimateSite): SeasonInsight[] =>
       percent === 0
         ? `${start} about as wet as usual ${figures}.`
         : `${start} ${strength}${direction} than usual ${figures}${effect}.`;
-    return { name: season.name, span: season.span, status, text };
+    return { name: season.name, span: season.span, status, text, rain, usual, percent };
   });
 
 const warmth = (change: number) => `${Math.abs(change).toFixed(1)} °C ${change > 0 ? "warmer" : "cooler"}`;
@@ -135,6 +135,14 @@ export const headline = (site: ClimateSite) => {
     : `In ${site.year} your field was ${warmth(t)}, and ${summers} than usual.`;
 };
 
+// The worst of the three signals the banner talks about, so its tag matches the sentence under it.
+const severity: Record<Status, number> = { fine: 0, watch: 1, act: 2 };
+
+export const headlineStatus = (site: ClimateSite): Status =>
+  [temperatureStatus(temperatureChange(site)), rainStatus(rainChange(site)), seasonRain(site, SEASONS[1]).status].reduce(
+    (worst, status) => (severity[status] > severity[worst] ? status : worst),
+  );
+
 const percentWet = (fraction: number) => Math.round(fraction * 100);
 
 // Whole percents, so "drier" or "wetter" is only said when the figures shown differ.
@@ -146,6 +154,13 @@ export const soilMeaning = ({ recent, usual }: { recent: number; usual?: number 
   if (usual === undefined) return `${start}, on average.`;
   if (recent === usual) return `${start}, about as wet as usual.`;
   return `${start}, a little ${recent < usual ? "drier" : "wetter"} than usual (usual ${usual}% wet).`;
+};
+
+// The short version, for a card that already shows both numbers as bars.
+export const soilComparison = ({ recent, usual }: { recent: number; usual?: number }) => {
+  if (usual === undefined) return soilMeaning({ recent, usual });
+  if (recent === usual) return "About as wet as usual.";
+  return `A little ${recent < usual ? "drier" : "wetter"} than usual.`;
 };
 
 // Display only: the strategy engine decides the level; this just picks the matching tag.
@@ -160,8 +175,18 @@ export const riskStatus = (level: RiskCategory) => riskStatuses[level];
 
 export const riskLevelText = (level: RiskCategory) => level[0].toUpperCase() + level.slice(1);
 
-export const riskReason = ({ drivers }: Risk) => {
-  const changes = [drivers.warming.triggered && "warmer", drivers.drying.triggered && "drier"].filter(Boolean);
+// The engine says whether drying came from yearly rain, summer rain or both (drivers.drying.basis).
+// Summer only: the year as a whole was not much drier, so say "drier summers", not "drier".
+export const summerOnlyDrying = ({ drivers }: Risk) =>
+  drivers.drying.triggered && drivers.drying.basis?.length === 1 && drivers.drying.basis[0] === "summer";
+
+export const riskReason = (risk: Risk) => {
+  const { warming, drying } = risk.drivers;
+  if (drying.triggered && summerOnlyDrying(risk))
+    return warming.triggered
+      ? "Recent years were warmer than usual, with drier summers."
+      : "Recent summers were drier than usual.";
+  const changes = [warming.triggered && "warmer", drying.triggered && "drier"].filter(Boolean);
   return changes.length
     ? `Recent years were ${changes.join(" and ")} than usual.`
     : "Recent years were not much warmer or drier than usual.";

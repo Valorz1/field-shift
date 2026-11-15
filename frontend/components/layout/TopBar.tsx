@@ -1,41 +1,79 @@
 "use client";
 
-import { Lock } from "lucide-react";
-import { formatYears } from "@/lib/format";
-import { Logo } from "./Logo";
-import { WithSite } from "./WithSite";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Suspense } from "react";
+import { currentItem } from "@/lib/navigation";
+import { useClimateSite } from "@/lib/use-climate-site";
+import { LogoMark } from "./Logo";
+import { FarmSelector } from "./topbar/FarmSelector";
+import { FieldAlerts } from "./topbar/FieldAlerts";
+import { PeriodInfo } from "./topbar/PeriodInfo";
+import { SessionMenu } from "./topbar/SessionMenu";
 
-export function TopBar() {
+type Props = { navOpen: boolean; onToggleNav: () => void };
+
+// Farm, page, dates, alerts and session. The dates and alerts only show on pages about one field,
+// and only once the NASA data for it has arrived.
+function Tools({ label, aboutField }: { label?: string; aboutField: boolean }) {
+  const { place, site } = useClimateSite();
   return (
-    <header className="sticky top-0 z-10">
-      <div className="flex min-h-14 items-center bg-forest px-4 lg:hidden">
-        <Logo />
-      </div>
-      <div className="hidden min-h-16 items-center justify-between gap-4 border-b border-line bg-white px-6 lg:flex">
-        <WithSite
-          render={(site) => (
-            <dl className="flex items-center gap-2 text-sm text-ink">
-              <div className="rounded-control border border-line px-3 py-2">
-                <dt className="sr-only">Location</dt>
-                <dd className="font-medium">
-                  {site.name}, {site.region}
-                </dd>
-              </div>
-              <div className="rounded-control border border-line px-3 py-2">
-                <dt className="sr-only">Year shown</dt>
-                <dd className="font-medium">{site.year} average</dd>
-              </div>
-              <div className="rounded-control border border-line px-3 py-2">
-                <dt className="sr-only">Usual</dt>
-                <dd className="font-medium">Usual: {formatYears(site.baseline.start, site.baseline.end)}</dd>
-              </div>
-            </dl>
+    <>
+      <nav aria-label="Breadcrumb" className="min-w-0">
+        <ol className="flex min-w-0 items-center gap-1">
+          <li className="min-w-0">
+            <FarmSelector place={place} />
+          </li>
+          {label && (
+            <li className="hidden items-center gap-2 text-sm sm:flex">
+              <span aria-hidden="true" className="text-sage">
+                /
+              </span>
+              <span aria-current="page" className="font-medium whitespace-nowrap text-ink">
+                {label}
+              </span>
+            </li>
           )}
-        />
-        <p className="inline-flex items-center gap-2 rounded-full bg-green-tint px-3 py-1.5 text-sm font-medium text-green-ink">
-          <Lock aria-hidden="true" className="size-4" strokeWidth={1.6} />
-          Session only · cleared when you finish
-        </p>
+        </ol>
+      </nav>
+      <div className="ml-auto flex shrink-0 items-center gap-1">
+        {aboutField && site && (
+          <>
+            <div className="hidden lg:block">
+              <PeriodInfo site={site} />
+            </div>
+            <FieldAlerts site={site} />
+          </>
+        )}
+        <SessionMenu place={place} />
+      </div>
+    </>
+  );
+}
+
+export function TopBar({ navOpen, onToggleNav }: Props) {
+  const item = currentItem(usePathname());
+  const ToggleIcon = navOpen ? PanelLeftClose : PanelLeftOpen;
+  return (
+    <header className="sticky top-0 z-20 border-b border-line bg-page/85 backdrop-blur-md">
+      <div className="relative flex h-14 items-center gap-1 px-3 md:px-4">
+        <Link href="/dashboard" aria-label="Rotara, go to the dashboard" className="grid size-11 shrink-0 place-items-center rounded-lg md:hidden">
+          <LogoMark />
+        </Link>
+        <button
+          type="button"
+          onClick={onToggleNav}
+          aria-label={navOpen ? "Collapse the sidebar" : "Expand the sidebar"}
+          aria-expanded={navOpen}
+          aria-controls="app-sidebar"
+          className="fs-press mr-1 hidden size-10 place-items-center rounded-control transition-colors hover:bg-white md:grid"
+        >
+          <ToggleIcon aria-hidden="true" className="size-5 text-forest" strokeWidth={1.7} />
+        </button>
+        <Suspense fallback={null}>
+          <Tools label={item?.label} aboutField={Boolean(item?.aboutField)} />
+        </Suspense>
       </div>
     </header>
   );

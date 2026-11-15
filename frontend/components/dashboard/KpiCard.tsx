@@ -20,12 +20,39 @@ const tiles: Record<Status | "none", string> = {
   none: "bg-water-tint text-water-ink",
 };
 
-export function KpiCard({ kpi }: { kpi: KpiView }) {
+type Compare = NonNullable<KpiView["compare"]>;
+
+// Two bars from zero, the usual figure and the recent one. The numbers are written on them, so the bars
+// never have to carry the meaning alone.
+function CompareBars({ usualLabel, recentLabel, usual, recent, unit, digits }: Compare) {
+  const max = Math.max(usual, recent) * 1.12 || 1;
+  const rows = [
+    { label: usualLabel, value: usual, bar: "bg-sage/50", text: "text-caption" },
+    { label: recentLabel, value: recent, bar: "bg-forest", text: "font-semibold text-forest" },
+  ];
+  return (
+    <ul className="space-y-1.5" aria-label={`${recentLabel} compared with ${usualLabel}`}>
+      {rows.map((row) => (
+        <li key={row.label} className="flex items-center gap-2 text-sm">
+          <span className={cx("w-[88px] shrink-0 whitespace-nowrap", row.text)}>{row.label}</span>
+          <span aria-hidden="true" className="h-2.5 flex-1 overflow-hidden rounded-full bg-neutral-tint">
+            <span className={cx("block h-full rounded-full", row.bar)} style={{ width: `${Math.max((row.value / max) * 100, 3)}%` }} />
+          </span>
+          <span className={cx("w-[62px] shrink-0 text-right tabular-nums", row.text)}>
+            {row.value.toFixed(digits)} {unit}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function KpiCard({ kpi, index = 0 }: { kpi: KpiView; index?: number }) {
   const muted = kpi.source === "Missing" || kpi.waiting;
   const Icon = icons[kpi.kind];
 
   return (
-    <Card as="article" className="flex flex-col gap-3">
+    <Card as="article" className="fs-rise fs-lift flex flex-col gap-3" style={{ animationDelay: `${index * 70}ms` }}>
       <div className="flex items-start gap-3">
         <span className={cx("grid size-11 shrink-0 place-items-center rounded-xl", tiles[kpi.status ?? "none"])}>
           <Icon aria-hidden="true" className="size-6" strokeWidth={1.8} />
@@ -42,7 +69,8 @@ export function KpiCard({ kpi }: { kpi: KpiView }) {
         {kpi.unit && <span className="ml-1 font-sans text-xl font-semibold text-ink">{kpi.unit}</span>}
       </p>
       {kpi.status && <StatusTag status={kpi.status} className="self-start" />}
-      <p className="text-base text-caption">{kpi.meaning}</p>
+      {kpi.compare && !muted && <CompareBars {...kpi.compare} />}
+      <p className={cx("text-base text-caption", kpi.compare && !muted && "border-t border-line pt-3")}>{kpi.meaning}</p>
       <SourceBadge source={kpi.source} className="mt-auto self-start" />
     </Card>
   );

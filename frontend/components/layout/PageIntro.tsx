@@ -1,29 +1,25 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { SiteSwitcher } from "@/components/dashboard/SiteSwitcher";
-import { FieldIllustration } from "@/components/landing/FieldIllustration";
 
-type Props = { icon: LucideIcon; title: string; lead: ReactNode; site?: string };
+type Props = { icon: LucideIcon; title: string; lead: ReactNode; actions?: ReactNode };
 
-// The green banner at the top of each page: what the page is about, and (with site) which farm is shown.
-export function PageIntro({ icon: Icon, title, lead, site }: Props) {
+// The header of an inner page: icon, title, one or two lines, and room for a button on the right.
+// The farm is chosen in the top bar, so it is not repeated here.
+export function PageIntro({ icon: Icon, title, lead, actions }: Props) {
   return (
-    <header className="relative overflow-hidden rounded-card bg-forest text-white">
-      <FieldIllustration className="absolute inset-0 size-full" />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(22,61,50,0.97)_0%,rgba(22,61,50,0.9)_60%,rgba(22,61,50,0.6)_100%)]"
-      />
-      <div className="relative space-y-3 p-5 sm:p-7">
+    <header className="fs-rise flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-xl bg-white/15">
-            <Icon aria-hidden="true" className="size-6" strokeWidth={1.8} />
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-forest text-gold">
+            <Icon aria-hidden="true" className="size-5.5" strokeWidth={1.8} />
           </span>
-          <h1 className="font-display text-[26px] leading-tight font-extrabold sm:text-[32px]">{title}</h1>
+          <h1 className="font-display text-[28px] leading-tight font-extrabold tracking-tight text-forest sm:text-[34px]">
+            {title}
+          </h1>
         </div>
-        <p className="max-w-3xl text-lg text-on-forest">{lead}</p>
-        {site && <SiteSwitcher current={site} onDark />}
+        <p className="max-w-3xl text-lg leading-relaxed text-ink">{lead}</p>
       </div>
+      {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
     </header>
   );
 }
