@@ -46,7 +46,7 @@ export default function Home() {
           <div className="mt-10 grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
             <div>
               <p className="text-sm font-semibold tracking-wide text-on-forest-muted uppercase">
-                NASA Space Apps Challenge 2026 · Field Shift
+                NASA Space Apps Challenge 2026 · Field Shift challenge
               </p>
               <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-forest-deep/50 px-3 py-1.5 text-xs font-bold tracking-[0.14em] text-on-forest uppercase">
                 <Satellite aria-hidden="true" className="size-4 text-sky-200" strokeWidth={1.8} />
@@ -56,7 +56,7 @@ export default function Home() {
                 See how the weather on your field has changed.
               </h1>
               <p className="mt-5 max-w-xl text-lg text-on-forest">
-                Drop a pin on your UK farm. Field Shift uses NASA data to show what changed in the last 5 years, and 3
+                Drop a pin on your UK farm. Rotara uses NASA data to show what changed in the last 5 years, and 3
                 crop plans for the next 3.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -157,7 +157,7 @@ export default function Home() {
             ))}
           </ul>
           <p className="mt-10 text-sm text-caption">
-            Field Shift supports your decisions. It does not replace local advice. Built by team Valor Astra for the
+            Rotara supports your decisions. It does not replace local advice. Built by team Valor Astra for the
             NASA Space Apps Challenge 2026.
           </p>
         </div>

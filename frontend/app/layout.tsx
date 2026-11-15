@@ -7,8 +7,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const manrope = Manrope({ subsets: ["latin"], weight: ["700", "800"], variable: "--font-manrope", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Field Shift",
-  description: "Turning Earth observations into smarter farming decisions.",
+  title: "Rotara: crop plans from NASA data",
+  description: "Rotara turns NASA Earth observations into 3 crop rotation plans for your field. You decide.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

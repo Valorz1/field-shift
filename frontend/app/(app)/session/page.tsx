@@ -12,7 +12,7 @@ export default function SessionPage() {
       <PageIntro
         icon={ClipboardList}
         title="Farm session"
-        lead="What Field Shift is holding for this visit. It stays in this browser tab and is gone when you finish."
+        lead="What Rotara is holding for this visit. It stays in this browser tab and is gone when you finish."
       />
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-6">
         <PageSection id="session-now" icon={ClipboardList} title="This session">

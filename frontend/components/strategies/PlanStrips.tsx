@@ -8,7 +8,7 @@ import { ErrorMessage } from "@/components/ui/states/ErrorMessage";
 import { LoadingSkeleton } from "@/components/ui/states/LoadingSkeleton";
 import { riskLevelText, riskReason } from "@/lib/climate-facts";
 import type { Place } from "@/lib/data/climate";
-import { bestMatch, planFit } from "@/lib/farm-profile";
+import { bestMatch, planFit, placeText } from "@/lib/farm-profile";
 import { farmHref } from "@/lib/navigation";
 import { useSession } from "@/lib/session-store";
 import { useStrategies } from "@/lib/use-strategies";
@@ -31,7 +31,7 @@ export function PlanStrips({ site }: { site: Place }) {
           </SectionTitle>
           {data && (
             <p className="max-w-3xl text-base text-caption">
-              Worked out for {data.farm.crop} at {data.farm.name ?? site.name}.{" "}
+              Worked out for {data.farm.crop} {placeText(data.farm.name ?? site.name)}.{" "}
               {data.risk.level === "unknown"
                 ? "Climate risk: not known."
                 : `Climate risk: ${riskLevelText(data.risk.level)}. ${riskReason(data.risk)}`}
