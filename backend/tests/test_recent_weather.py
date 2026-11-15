@@ -62,6 +62,25 @@ def test_counts_frost_nights():
     assert out["frost_nights"] == 30
 
 
+def test_counts_heat_stress_and_heavy_rain_days():
+    raw = _daily(date(2026, 7, 1), 30, rain=5.0, tmax=25.0)
+    hot, wet = "20260710", "20260715"
+    raw["properties"]["parameter"]["T2M_MAX"][hot] = 30.0  # exactly 30 °C counts
+    raw["properties"]["parameter"]["T2M_MAX"]["20260711"] = 29.9  # just under does not
+    raw["properties"]["parameter"]["PRECTOTCORR"][wet] = 31.5
+    raw["properties"]["parameter"]["PRECTOTCORR"]["20260716"] = 20.0  # exactly 20 mm counts
+    out = summarise_recent(raw, monthly_baseline(_baseline_rows()))
+    assert out["heat_days"] == 1
+    assert out["heavy_rain_days"] == 2
+    assert out["wettest"] == {"date": "2026-07-15", "mm": 31.5}
+
+
+def test_quiet_month_has_no_heat_or_heavy_rain_days():
+    out = summarise_recent(_daily(date(2026, 10, 7), 30), monthly_baseline(_baseline_rows()))
+    assert out["heat_days"] == 0
+    assert out["heavy_rain_days"] == 0
+
+
 def test_no_daily_data_is_an_error():
     raw = _daily(date(2026, 10, 7), 5, missing_last=5)
     with pytest.raises(ValueError):
