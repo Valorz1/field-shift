@@ -93,7 +93,7 @@ export function FarmMap({ variant = "card" }: Props) {
             <div className="absolute inset-0">
               <div ref={container} className="h-full w-full" />
             </div>
-            <p className="pointer-events-none absolute right-3 bottom-3 left-3 flex items-center gap-2 rounded-control bg-forest-deep/80 px-3 py-2 text-sm text-white backdrop-blur-sm">
+            <p className="pointer-events-none absolute top-3 right-12 left-3 flex items-center gap-2 rounded-control bg-forest-deep/80 px-3 py-2 text-sm text-white backdrop-blur-sm">
               <MapPin aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.8} />
               {latitude !== undefined && longitude !== undefined
                 ? `Pin at ${formatCoordinates(latitude, longitude)}. Tap somewhere else to move it.`

@@ -60,7 +60,7 @@ const riskKpi = ({ crop, risk, error }: RiskState): KpiView => {
       value: crop ? "Working it out" : "Not yet",
       source: "Calculated",
       waiting: true,
-      meaning: crop ? "This comes with the plans below." : "Choose the crop you grow below to work it out.",
+      meaning: crop ? "This comes with the plans below." : "Pick your crop on the map card at the top to work it out.",
     };
   return {
     kind: "risk",

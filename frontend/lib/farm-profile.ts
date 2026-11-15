@@ -111,6 +111,9 @@ export function planFit(strategy: Strategy, profile: FarmProfile | undefined, ri
     if (priority === "water") {
       if (t.savesWater) good("Uses less water: the rules list these crops as lower-water.");
       else if (t.coverCrops.length) check("A cover crop uses some soil water between your main crops.");
+      else if (strategy.kind === "baseline") note("Same water use as now.");
+      // Cool-climate rules (e.g. Norfolk) give no water figures, so we say so rather than guess.
+      else note("The rules have no water-use figures for these crops, so we cannot say if this plan uses less water.");
     }
     if (priority === "organic-matter" && t.coverCrops.length)
       good("Adds organic matter: the cover crop puts roots and residue back into the soil.");

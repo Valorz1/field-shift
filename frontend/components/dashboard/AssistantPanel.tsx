@@ -104,7 +104,7 @@ export function AssistantPanel({ site, crop }: { site: Place; crop: string }) {
           {busy ? "Asking…" : "Ask"}
         </Button>
       </form>
-      {needsCrop && <p className="text-base text-caption">Choose the crop you grow in the plans section first.</p>}
+      {needsCrop && <p className="text-base text-caption">Pick your crop on the map card at the top first.</p>}
     </Card>
   );
 }

@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <TopBar navOpen={navOpen} onToggleNav={() => setChoice(!navOpen)} />
         <main
           id="main-content"
-          className="mx-auto w-full max-w-[1120px] flex-1 px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:pb-14 lg:px-10 lg:pt-8"
+          className="mx-auto w-full max-w-[1120px] flex-1 [overflow-wrap:anywhere] px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:pb-14 lg:px-10 lg:pt-8"
         >
           {children}
         </main>

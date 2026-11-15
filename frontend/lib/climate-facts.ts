@@ -82,7 +82,26 @@ const SEASONS = [
   },
 ] as const;
 
-export type SeasonInsight = { name: string; span: string; status: Status; text: string; rain: number; usual: number; percent: number };
+export type SeasonInsight = {
+  name: string;
+  span: string;
+  status: Status;
+  text: string;
+  rain: number;
+  usual: number;
+  percent: number;
+  // A dry season (under SMALL_RAIN_MM usual): a few mm look like a big %, so show the change in mm instead.
+  small: boolean;
+};
+
+// Below this much usual rain in a season, percentages mislead (Seville summer: 11 mm vs 9 mm = +22%).
+export const SMALL_RAIN_MM = 30;
+// In such a dry season, a change smaller than this is treated as "about the same".
+const SMALL_RAIN_CHANGE_MM = 10;
+
+// "+22%" normally, but "+2 mm" for a season with very little rain.
+export const seasonChangeLabel = ({ small, rain, usual, percent }: SeasonInsight) =>
+  small ? `${formatSigned(rain - usual, 0)} mm` : `${formatSigned(percent, 0)}%`;
 
 const total = (months: MonthSummary[], pick: (month: MonthSummary) => number) =>
   months.reduce((sum, month) => sum + pick(month), 0);
@@ -92,22 +111,25 @@ const seasonRain = (site: ClimateSite, season: (typeof SEASONS)[number]) => {
   const rain = Math.round(total(months, (m) => m.rainfallMm));
   const usual = Math.round(total(months, (m) => m.baselineRainfallMm));
   const percent = roundPercent((rain / usual - 1) * 100);
-  return { rain, usual, percent, status: rainStatus(percent) };
+  const small = usual < SMALL_RAIN_MM;
+  const status = small && Math.abs(rain - usual) < SMALL_RAIN_CHANGE_MM ? "fine" : rainStatus(percent);
+  return { rain, usual, percent, small, status };
 };
 
 export const seasonInsights = (site: ClimateSite): SeasonInsight[] =>
   SEASONS.map((season) => {
-    const { rain, usual, percent, status } = seasonRain(site, season);
+    const { rain, usual, percent, small, status } = seasonRain(site, season);
     const figures = `(${rain} mm vs ${usual} mm usual)`;
     const direction = percent < 0 ? "drier" : "wetter";
     const strength = status === "fine" ? "a little " : status === "act" || percent > 0 ? "much " : "";
     const effect = status === "fine" ? "" : ` – ${percent < 0 ? season.dry : season.wet}`;
     const start = `${season.name} ${site.year} was`;
-    const text =
-      percent === 0
+    const text = small
+      ? `${season.name} rain here is very low, so a few mm make a big percentage: ${rain} mm in ${site.year} against ${usual} mm usual.`
+      : percent === 0
         ? `${start} about as wet as usual ${figures}.`
         : `${start} ${strength}${direction} than usual ${figures}${effect}.`;
-    return { name: season.name, span: season.span, status, text, rain, usual, percent };
+    return { name: season.name, span: season.span, status, text, rain, usual, percent, small };
   });
 
 const warmth = (change: number) => `${Math.abs(change).toFixed(1)} °C ${change > 0 ? "warmer" : "cooler"}`;
