@@ -43,7 +43,9 @@ On the forest sidebar, text uses `on-forest` (`#D8E4DC`) and `on-forest-muted` (
 - Inter (`font-sans`, the default): 400 at 16px for lead text, 14px for body, 12px for captions and sources.
 - KPI values use tabular numerals.
 
-Both fonts load through `next/font` in `frontend/app/layout.tsx`.
+Both fonts are self-hosted from Fontsource variable-font packages in
+`frontend/app/layout.tsx`, so production builds do not need to fetch Google
+Fonts.
 
 ## Shape and spacing
 

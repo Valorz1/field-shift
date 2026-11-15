@@ -1,10 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
+import "@fontsource-variable/inter/wght.css";
+import "@fontsource-variable/manrope/wght.css";
 import type { ReactNode } from "react";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const manrope = Manrope({ subsets: ["latin"], weight: ["700", "800"], variable: "--font-manrope", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Rotara: crop plans from NASA data",
@@ -13,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
+    <html lang="en">
       <body>{children}</body>
     </html>
   );
