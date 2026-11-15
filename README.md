@@ -595,4 +595,4 @@ Always verify recommendations against local field conditions, measurements and q
 
 **TEAM VALOR ASTRA — NASA SPACE APPS CHALLENGE 2026**
 
-</p>
+</p>
