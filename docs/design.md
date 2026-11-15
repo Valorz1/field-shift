@@ -1,6 +1,6 @@
 # Design
 
-Design canvas: https://claude.ai/artifact/Bjzg8CjWRdfYd2YDjkMCAv ("Field Shift — Farm Dashboard Design", 12 screens).
+The screens started from a 12-screen design canvas made with Claude and an early Base44 dashboard prototype (both private team drafts); the live app at https://rotara-chi.vercel.app is the final version.
 
 All tokens live in `frontend/app/globals.css` under `@theme`, so they are available as Tailwind classes (`bg-forest`, `text-caption`, `rounded-card`, `font-display` and so on).
 
