@@ -22,7 +22,13 @@ const kindStyles: Record<StrategyKind, { border: string; tile: string; chip: str
 
 // Two short lines, like our design: what the plan is for, and what to watch out for.
 export const aimWatch = (strategy: Strategy): { aim: string; watch: string } => {
-  if (strategy.kind === "baseline") return { aim: "Keep farming as you do now", watch: "Water if summers get drier" };
+  if (strategy.kind === "baseline")
+    return {
+      aim: "Keep farming as you do now",
+      watch: strategy.current_crop_is_perennial
+        ? "A stand lasts years; do not resow it straight after itself"
+        : "Pests and diseases build up with one crop every year; water if summers get drier",
+    };
   if (strategy.kind === "soil-restoration")
     return { aim: "Stronger soil over time", watch: "Benefits take a few seasons; cover crops use some soil water" };
   return strategy.water_need.startsWith("Lower")

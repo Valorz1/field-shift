@@ -5,7 +5,15 @@ import { useSyncExternalStore } from "react";
 // Not set means level 2, the backend's default.
 export type AiLevel = 1 | 2 | 3;
 // The farmer's own answers about the farm (lib/farm-profile.ts). Kept with the rest of the session, in memory only.
-export type Priority = "water" | "organic-matter" | "nitrogen" | "erosion" | "forage" | "market" | "small-change";
+export type Priority =
+  | "water"
+  | "organic-matter"
+  | "nitrogen"
+  | "erosion"
+  | "pests"
+  | "forage"
+  | "market"
+  | "small-change";
 export type WaterAccess = "rain-only" | "some" | "full";
 export type KitAccess = "own" | "contractor" | "none";
 export type MarketAccess = "yes" | "unsure" | "no";

@@ -19,7 +19,8 @@ export type ClimateSummary = {
   rainfall: RainSummary;
   summer_rainfall: RainSummary;
 };
-type RiskDriver = { triggered: boolean; points: Measure };
+// basis (drying only): which rain triggered it, "yearly" and/or "summer". Absent from an older backend.
+type RiskDriver = { triggered: boolean; points: Measure; basis?: ("yearly" | "summer")[] };
 export type Risk = { level: RiskCategory; points: Measure; drivers: { warming: RiskDriver; drying: RiskDriver } };
 export type StrategyFarm = { name?: string | null; latitude: number; longitude: number; crop: string };
 export type StrategiesResponse = {
