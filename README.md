@@ -1,7 +1,13 @@
 # Rotara
-[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-Visit_Rotara-163d32?style=for-the-badge&logo=vercel&logoColor=white)](https://rotara-chi.vercel.app/)![Slides](https://img.shields.io/badge/PITCH_DECK-View_Slides-ddb355?style=for-the-badge&logo=canva&logoColor=163d32) ![NASA Space Apps](https://img.shields.io/badge/NASA-SPACE_APPS_2026-2f6b4f?style=for-the-badge)
+[![Live demo](https://img.shields.io/badge/LIVE_DEMO-Visit_Rotara-163d32?style=for-the-badge&logo=vercel&logoColor=white)](https://rotara-chi.vercel.app)
+[![Pitch deck](https://img.shields.io/badge/PITCH_DECK-View_Slides-ddb355?style=for-the-badge&logo=canva&logoColor=163d32)](https://canva.link/um5s5uhjp8bd9gc)
+[![NASA Space Apps 2026](https://img.shields.io/badge/NASA-SPACE_APPS_2026-2f6b4f?style=for-the-badge)](https://www.spaceappschallenge.org/)
 
-!Next.js !FastAPI !Python ![License: MIT](https://img.shields.io/badge/License-MIT-ddb355?style=for-the-badge)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-ddb355?style=for-the-badge)](./LICENSE)
+
 **Turning NASA Earth data into smarter crop rotation decisions.**
 
 Built by **Team Valor Astra** for the **NASA Space Apps Challenge 2026**.
@@ -64,12 +70,12 @@ Choose what matters to you, for example:
 
 - Use less water
 - Build organic matter
-- Add nitrogen
-- Reduce soil erosion
-- Reduce pest and disease pressure
-- Produce livestock feed
-- Keep selling to the same buyers
-- Keep changes manageable
+- Add nitrogen naturally
+- Stop soil washing away
+- Fewer pests and diseases
+- Feed for livestock
+- Easy to sell
+- Keep changes small
 
 You can also add details like water availability, equipment, buyers, soil type and soil organic matter.
 
@@ -78,13 +84,13 @@ Rotara generates three rotation plans for the next three years:
 
 | Plan | Idea |
 |---|---|
-| **The Baseline** | Keep the current crop, as a reference point |
-| **The Climate Switch** | Bring in crops that may suit the changing climate better |
-| **The Soil Builder** | Add cover crops (often legumes) to improve soil health |
+| **Keep the current crop** | What you grow now, as a reference point |
+| **Mix in climate-suited crops** | Bring in crops that may suit the changing climate better |
+| **Build the soil** | Add a cover crop (often a legume) to improve soil health |
 
 Every plan comes with:
 
-- a priority matching score
+- which of your priorities it matches
 - what works for your goals
 - what still needs checking
 - why the plan was suggested
@@ -130,7 +136,7 @@ Plans are built from the rules in [`rotation_rules.json`](./backend/app/ai/agron
 
 - **Pulse breaks:** Field beans and peas are not repeated within the 3-year plan. AHDB recommends at least five years between pulse crops.
 - **Alfalfa:** A stand can last 4–10+ years and should not be resown straight after itself (UW–Madison Extension guidance).
-- **Legume order:** Warm-season legumes like cowpea come before cool-season ones like chickpea (Sita et al., 2017).
+- **Legume order:** In warm places, a warm-season legume like cowpea is suggested before a cool-season one like chickpea (Sita et al., 2017).
 
 ### Preference matching
 Code: `frontend/lib/farm-profile.ts`
@@ -147,6 +153,7 @@ The farmer's answers do **not** change the science. They are only used to score 
 | NASA POWER (daily) | Frost, heat and heavy rain in the last 30 days | Can be a few days behind |
 | [GPM IMERG](https://gpm.nasa.gov/data/imerg) (monthly) | Cross-checking rainfall | Different grid to POWER |
 | [SMAP](https://nsidc.org/data/spl3smp_e/versions/6) (L3 Enhanced, 9 km) | Checking soil wetness in Norfolk, 2016–2025 | Only measures the top 5 cm of soil |
+| [HLS](https://www.earthdata.nasa.gov/data/projects/hls) (Harmonized Landsat Sentinel-2) | The real satellite photo of Norfolk farmland on the home page | One image from 11 June 2025, for illustration only |
 
 ### Checking the data against itself
 
@@ -310,6 +317,8 @@ python -m pytest -q
 | `ALLOWED_ORIGINS` | Backend | Frontend URLs allowed to call the API, separated by commas |
 | `MODEL_BASE_URL` | Backend | Address of the Ollama-compatible model server |
 | `MODEL_NAME` | Backend | Name of the model to use (optional) |
+| `APP_ENV` | Backend | Which environment the backend is running in |
+| `NASA_EARTHDATA_USERNAME`, `NASA_EARTHDATA_PASSWORD` | Data scripts | Only needed to download raw NASA data again |
 
 Never commit secrets or private keys.
 
@@ -364,9 +373,20 @@ field-shift/
 
 **In the app:** only the optional Gemma 4 explainer. It does not create plans or scientific numbers.
 
-**While building it:** we used Claude, GitHub Copilot and Base44 to help with coding, research, review and design. A team member reviewed and tested every change, and we checked factual claims against their sources.
+**While building it:** each team member, in their own words:
 
-The farmland photo on the title slide of our presentation is AI-generated and labelled as such.
+| Team member | AI tool | What for |
+|---|---|---|
+| Parambir | Claude (Anthropic), Base44 | Code, research, code review and slides; Base44 for an early dashboard design prototype |
+| Sanat | Claude Code (Anthropic) | Strategy engine and climate risk rules |
+| Abdirahman | Claude (Anthropic) | AI-assisted coding and research |
+| Júlia | Claude (Anthropic) | Writing code and testing |
+| Faizan | Microsoft Copilot (Codex model) | Building the deployment layer |
+| Ammar | ChatGPT (OpenAI) | Text formatting and research help |
+
+Commits made with Claude are marked as co-authored in the Git history. The demo slides were generated with Canva's AI from our own outline, then checked and edited by the team. A team member reviewed and tested every change, and we checked factual claims against their sources.
+
+The live site has a full statement on its [About & disclosure page](https://rotara-chi.vercel.app/about).
 
 ---
 
