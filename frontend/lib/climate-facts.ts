@@ -82,7 +82,7 @@ const SEASONS = [
   },
 ] as const;
 
-export type SeasonInsight = { name: string; span: string; status: Status; text: string };
+export type SeasonInsight = { name: string; span: string; status: Status; text: string; rain: number; usual: number; percent: number };
 
 const total = (months: MonthSummary[], pick: (month: MonthSummary) => number) =>
   months.reduce((sum, month) => sum + pick(month), 0);
@@ -107,7 +107,7 @@ export const seasonInsights = (site: ClimateSite): SeasonInsight[] =>
       percent === 0
         ? `${start} about as wet as usual ${figures}.`
         : `${start} ${strength}${direction} than usual ${figures}${effect}.`;
-    return { name: season.name, span: season.span, status, text };
+    return { name: season.name, span: season.span, status, text, rain, usual, percent };
   });
 
 const warmth = (change: number) => `${Math.abs(change).toFixed(1)} °C ${change > 0 ? "warmer" : "cooler"}`;
@@ -134,6 +134,14 @@ export const headline = (site: ClimateSite) => {
     ? `In ${site.year} your field was about as warm as usual, but ${summers} than usual.`
     : `In ${site.year} your field was ${warmth(t)}, and ${summers} than usual.`;
 };
+
+// The worst of the three signals the banner talks about, so its tag matches the sentence under it.
+const severity: Record<Status, number> = { fine: 0, watch: 1, act: 2 };
+
+export const headlineStatus = (site: ClimateSite): Status =>
+  [temperatureStatus(temperatureChange(site)), rainStatus(rainChange(site)), seasonRain(site, SEASONS[1]).status].reduce(
+    (worst, status) => (severity[status] > severity[worst] ? status : worst),
+  );
 
 const percentWet = (fraction: number) => Math.round(fraction * 100);
 

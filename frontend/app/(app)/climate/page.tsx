@@ -5,14 +5,14 @@ import { HistoryCharts } from "@/components/charts/HistoryCharts";
 import { RainfallChart } from "@/components/charts/RainfallChart";
 import { TemperatureChart } from "@/components/charts/TemperatureChart";
 import { Footnote } from "@/components/dashboard/Footnote";
-import { InsightCard } from "@/components/dashboard/InsightCard";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { RecentWeather } from "@/components/dashboard/RecentWeather";
+import { SeasonalRain } from "@/components/dashboard/SeasonalRain";
 import { Page } from "@/components/layout/Page";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { WithSite } from "@/components/layout/WithSite";
-import { headline, seasonInsights } from "@/lib/climate-facts";
+import { headline } from "@/lib/climate-facts";
 import type { ClimateSite } from "@/lib/data/climate";
 import { kpisFor } from "@/lib/kpis";
 
@@ -40,11 +40,7 @@ function Climate({ site }: { site: ClimateSite }) {
         <SectionTitle id="climate-seasons" icon={Sun}>
           {`Spring and summer rain, ${site.year}`}
         </SectionTitle>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {seasonInsights(site).map((insight) => (
-            <InsightCard key={insight.name} insight={insight} />
-          ))}
-        </div>
+        <SeasonalRain site={site} />
       </section>
 
       <section aria-labelledby="climate-months" className="space-y-4">

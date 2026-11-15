@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { isPin } from "@/lib/data/climate";
 import { formatCoordinates } from "@/lib/format";
 import { farmHref } from "@/lib/navigation";
+import { KIT_OPTIONS, MARKET_OPTIONS, PRIORITIES, SOIL_OPTIONS, WATER_OPTIONS } from "@/lib/farm-profile";
 import { DEFAULT_AI_LEVEL, useSession } from "@/lib/session-store";
 import { useClimateSite } from "@/lib/use-climate-site";
 import { DEMO_CROPS } from "@/lib/use-strategies";
@@ -21,6 +22,18 @@ function Summary() {
     { name: "Crop", value: crop ? crop[0].toUpperCase() + crop.slice(1) : "Not chosen yet" },
     { name: "AI help", value: level ? `Level ${level.level}: ${level.name}` : "" },
   ];
+  // The farmer's own answers ("About your farm"), only the ones given.
+  const profile = session.profile ?? {};
+  const pick = <T extends string>(options: { id: T; label: string }[], id?: T) => options.find((o) => o.id === id)?.label;
+  const answers = [
+    { name: "Priorities", value: (profile.priorities ?? []).map((p) => pick(PRIORITIES, p)).join(", ") },
+    { name: "Water", value: pick(WATER_OPTIONS, profile.water) },
+    { name: "Kit for a new crop", value: pick(KIT_OPTIONS, profile.kit) },
+    { name: "Buyer for a new crop", value: pick(MARKET_OPTIONS, profile.market) },
+    { name: "Soil", value: pick(SOIL_OPTIONS, profile.soilType) },
+    { name: "Organic matter", value: profile.organicMatter === undefined ? "" : `${profile.organicMatter}%` },
+  ];
+  rows.push(...answers.filter((row): row is { name: string; value: string } => Boolean(row.value)));
   return (
     <>
       <dl className="divide-y divide-line">

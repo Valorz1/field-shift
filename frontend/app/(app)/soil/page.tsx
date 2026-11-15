@@ -1,6 +1,7 @@
 "use client";
 
 import { CalendarDays, Droplets, Layers, Satellite, Sprout } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { Page } from "@/components/layout/Page";
@@ -14,6 +15,7 @@ import { Card } from "@/components/ui/Card";
 import { soilMeaning, soilPercents } from "@/lib/climate-facts";
 import type { ClimateSite } from "@/lib/data/climate";
 import { kpisFor } from "@/lib/kpis";
+import { farmHref } from "@/lib/navigation";
 
 function PlansLink() {
   const site = useSearchParams().get("site");
@@ -89,12 +91,24 @@ function Soil({ site }: { site: ClimateSite }) {
           <Card className="flex flex-col gap-3">
             <h3 className="flex items-center gap-2 font-display text-lg font-bold text-forest">
               <Satellite aria-hidden="true" className="size-5" strokeWidth={1.8} />
-              Coming next: NASA SMAP satellite
+              {site.id === "nevada" ? "Checked from space: no usable readings" : "No satellite check for this field"}
             </h3>
-            <p className="text-base text-caption">
-              These numbers come from a NASA weather model. NASA&apos;s SMAP satellite measures soil moisture from
-              space. We have asked NASA for SMAP data for this farm, to check these numbers against it.
-            </p>
+            {site.id === "nevada" ? (
+              // backend/app/services/smap.py --csv on the AppEEARS point sample, 2016-2025.
+              <p className="text-base text-caption">
+                We asked NASA for 10 years of SMAP satellite soil moisture here (2016–2025). SMAP got a reading on 1,492 of
+                3,571 days, but NASA marked none of them as recommended quality for this spot. So we do not use them, and
+                the numbers on this page come from NASA&apos;s weather model only.
+              </p>
+            ) : (
+              <p className="text-base text-caption">
+                These numbers come from a NASA weather model. NASA&apos;s SMAP satellite also measures soil moisture from
+                space, but we download it farm by farm, so it is only ready for the Norfolk example farm.
+              </p>
+            )}
+            <Link href={farmHref("/guide", site)} className="text-base font-semibold text-primary underline underline-offset-2">
+              Satellite, model and ground data: what is the difference?
+            </Link>
           </Card>
         )}
         <Card className="flex flex-col gap-3">

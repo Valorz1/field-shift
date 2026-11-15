@@ -66,4 +66,6 @@ export type KpiView = {
   meaning: string;
   // Shown in grey while the figure is still on its way, like a missing one but without the Missing badge.
   waiting?: boolean;
+  // Two bars, the usual figure and the recent one, so the change can be seen as well as read.
+  compare?: { usualLabel: string; recentLabel: string; usual: number; recent: number; unit: string; digits: number };
 };

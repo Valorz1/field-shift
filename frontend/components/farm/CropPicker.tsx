@@ -14,7 +14,8 @@ export const CROPS = ["wheat", "barley", "oilseed rape", "field beans", "oats", 
 const label = (name: string) => name[0].toUpperCase() + name.slice(1);
 
 // Step 2, right under the map: big buttons, one tap. The choice is kept in session memory only.
-export function CropPicker({ site }: { site: Place }) {
+// variant "plain": just the buttons, for a card that already has its own heading (the dashboard field card).
+export function CropPicker({ site, variant = "card" }: { site: Place; variant?: "card" | "plain" }) {
   const { chosen, crop } = useStrategies(site);
   const other = chosen !== undefined && !CROPS.includes(chosen);
   const [typing, setTyping] = useState(other);
@@ -26,17 +27,24 @@ export function CropPicker({ site }: { site: Place }) {
     if (value) updateSession({ crop: value });
   };
 
+  const plain = variant === "plain";
   return (
     <section
       aria-labelledby="crop-heading"
       className={cx(
-        "fs-rise space-y-3 rounded-card border bg-white p-4 sm:p-5",
-        missing ? "border-warning ring-2 ring-warning/40" : "border-line",
+        plain ? "space-y-3" : "fs-rise space-y-3 rounded-card border bg-white p-4 sm:p-5",
+        !plain && (missing ? "border-warning ring-2 ring-warning/40" : "border-line"),
       )}
     >
-      <h2 id="crop-heading" className="flex items-center gap-2 font-display text-lg font-bold text-forest">
-        <Sprout aria-hidden="true" className="size-5" strokeWidth={1.8} />
-        What do you grow on this field?
+      <h2
+        id="crop-heading"
+        className={cx(
+          "flex items-center gap-2 font-display font-bold text-forest",
+          plain ? "text-sm tracking-wide text-caption uppercase" : "text-lg",
+        )}
+      >
+        <Sprout aria-hidden="true" className={plain ? "size-4" : "size-5"} strokeWidth={1.8} />
+        {plain ? "Crop on this field" : "What do you grow on this field?"}
       </h2>
       {missing && <p className="text-base text-ink">Tap your crop to see the climate risk and your 3 plans.</p>}
       <ul className="flex flex-wrap gap-2">

@@ -4,7 +4,10 @@ import { Columns3, Droplets, Repeat, Sprout } from "lucide-react";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { cx } from "@/lib/cx";
 import type { Place } from "@/lib/data/climate";
+import { bestMatch, hasProfile, planFit } from "@/lib/farm-profile";
+import { useSession } from "@/lib/session-store";
 import { useStrategies } from "@/lib/use-strategies";
+import { BestMatchBadge, PlanFitList } from "./PlanFit";
 import type { Level, Strategy, StrategyKind } from "@/lib/view-models";
 import { aimWatch, kindLabel, shortTitle } from "./StrategyCard";
 
@@ -55,7 +58,9 @@ const ROWS: { label: string; cell: (s: Strategy) => React.ReactNode }[] = [
 // The 3 plans side by side, one thing per row, so a farmer can compare at a glance.
 export function ComparisonTable({ site }: { site: Place }) {
   const { data } = useStrategies(site);
+  const profile = useSession().profile;
   if (!data) return null;
+  const best = bestMatch(data.strategies, profile, data.risk);
   return (
     <section aria-labelledby="compare-heading" className="space-y-4">
       <SectionTitle id="compare-heading" icon={Columns3}>
@@ -81,6 +86,11 @@ export function ComparisonTable({ site }: { site: Place }) {
                     <span className="block font-display text-lg leading-tight font-extrabold text-forest">
                       {shortTitle(s)}
                     </span>
+                    {best === s.id && (
+                      <span className="mt-2 block">
+                        <BestMatchBadge />
+                      </span>
+                    )}
                   </th>
                 );
               })}
@@ -99,6 +109,18 @@ export function ComparisonTable({ site }: { site: Place }) {
                 ))}
               </tr>
             ))}
+            {hasProfile(profile) && (
+              <tr className="border-t border-line">
+                <th scope="row" className="p-4 align-top text-xs font-semibold tracking-wide text-caption uppercase">
+                  For your farm
+                </th>
+                {data.strategies.map((s) => (
+                  <td key={s.id} className="p-4 align-top">
+                    <PlanFitList fit={planFit(s, profile, data.risk)} profile={profile} />
+                  </td>
+                ))}
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

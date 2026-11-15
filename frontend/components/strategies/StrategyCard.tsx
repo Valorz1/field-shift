@@ -1,6 +1,9 @@
 import { Bean, ChevronDown, Droplets, Leaf, type LucideIcon, Repeat, Sprout, Wheat } from "lucide-react";
 import { SourceBadge } from "@/components/ui/SourceBadge";
+import { BestMatchBadge, PlanFitList } from "./PlanFit";
 import { cx } from "@/lib/cx";
+import { LEGUMES, type PlanFit } from "@/lib/farm-profile";
+import type { FarmProfile } from "@/lib/session-store";
 import type { Evidence, Level, Strategy, StrategyKind } from "@/lib/view-models";
 
 // "Uses less water" only when the rules back it up: the water need then starts with "Lower".
@@ -36,7 +39,7 @@ export const shortTitle = (strategy: Strategy) => {
   return strategy.water_need.startsWith("Lower") ? "Add lower-water crops" : "Mix in crops that suit your climate";
 };
 
-const LEGUMES = ["bean", "pea", "chickpea", "cowpea", "lentil", "alfalfa", "clover", "vetch", "soy"];
+
 
 // "legume cover crop (hairy vetch or red clover)" -> name "Legume cover crop", detail "hairy vetch or red clover".
 const splitCrop = (crop: string) => {
@@ -51,7 +54,7 @@ const cropIcon = (crop: string): LucideIcon => {
   return LEGUMES.some((legume) => text.includes(legume)) ? Bean : Wheat;
 };
 
-const changeLabels: Record<Level, string> = {
+export const changeLabels: Record<Level, string> = {
   low: "Small change",
   medium: "Some change",
   high: "Big change",
@@ -125,9 +128,45 @@ function EvidenceItem({ evidence }: { evidence: Evidence }) {
   );
 }
 
-type StrategyCardProps = { strategy: Strategy; illustrative?: boolean };
+// The 3 years side by side. compact: for the small plan cards, where the crop's detail would not fit.
+export function YearTiles({ strategy, compact = false }: { strategy: Strategy; compact?: boolean }) {
+  const style = kindStyles[strategy.kind];
+  return (
+    <ol aria-label="Your next 3 years" className="grid grid-cols-3 gap-2">
+      {strategy.rotation.map((step) => {
+        const { name, detail } = splitCrop(step.crop);
+        const CropIcon = cropIcon(step.crop);
+        const same = step.crop === strategy.rotation[0]?.crop;
+        return (
+          <li
+            key={step.year}
+            className={cx(
+              "flex flex-col items-center gap-1 rounded-inner px-2 text-center",
+              compact ? "py-2.5" : "py-3",
+              same ? "bg-page" : style.chip,
+            )}
+          >
+            <span className="text-xs font-semibold tracking-wide text-caption uppercase">Year {step.year}</span>
+            <CropIcon aria-hidden="true" className={compact ? "size-5" : "size-6"} strokeWidth={1.8} />
+            <span className="text-sm leading-tight font-bold">{name}</span>
+            {detail && !compact && <span className="text-xs leading-tight text-caption">{detail}</span>}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
 
-export function StrategyCard({ strategy, illustrative = false }: StrategyCardProps) {
+type StrategyCardProps = {
+  strategy: Strategy;
+  illustrative?: boolean;
+  // The farmer's answers checked against this plan (lib/farm-profile.ts). Absent on sample plans.
+  fit?: PlanFit;
+  profile?: FarmProfile;
+  best?: boolean;
+};
+
+export function StrategyCard({ strategy, illustrative = false, fit, profile, best = false }: StrategyCardProps) {
   const titleId = `strategy-${strategy.id}-title`;
   const style = kindStyles[strategy.kind];
   const Icon = style.icon;
@@ -156,27 +195,13 @@ export function StrategyCard({ strategy, illustrative = false }: StrategyCardPro
         </div>
       </header>
 
-      <ol aria-label="Your next 3 years" className="grid grid-cols-3 gap-2">
-        {strategy.rotation.map((step) => {
-          const { name, detail } = splitCrop(step.crop);
-          const CropIcon = cropIcon(step.crop);
-          const same = step.crop === strategy.rotation[0]?.crop;
-          return (
-            <li
-              key={step.year}
-              className={cx(
-                "flex flex-col items-center gap-1 rounded-inner px-2 py-3 text-center",
-                same ? "bg-page" : style.chip,
-              )}
-            >
-              <span className="text-xs font-semibold tracking-wide text-caption uppercase">Year {step.year}</span>
-              <CropIcon aria-hidden="true" className="size-6" strokeWidth={1.8} />
-              <span className="text-sm leading-tight font-bold">{name}</span>
-              {detail && <span className="text-xs leading-tight text-caption">{detail}</span>}
-            </li>
-          );
-        })}
-      </ol>
+      {best && (
+        <div>
+          <BestMatchBadge />
+        </div>
+      )}
+
+      <YearTiles strategy={strategy} />
 
       <dl className="space-y-2 text-base">
         <div className="flex gap-2">
@@ -188,6 +213,16 @@ export function StrategyCard({ strategy, illustrative = false }: StrategyCardPro
           <dd className="text-ink">{watch}</dd>
         </div>
       </dl>
+
+      {fit && (
+        <div className="space-y-2 rounded-inner bg-page p-3">
+          <h4 className="flex items-center justify-between gap-2 text-xs font-semibold tracking-wide text-caption uppercase">
+            For your farm
+            <SourceBadge source="Your input" className="normal-case tracking-normal" />
+          </h4>
+          <PlanFitList fit={fit} profile={profile} askHref="#farm" />
+        </div>
+      )}
 
       <dl className="mt-auto grid grid-cols-2 gap-2 border-t border-line pt-4">
         <div>

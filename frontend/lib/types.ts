@@ -38,6 +38,10 @@ export type RecentWeather = {
   rain: { recent_mm: number; usual_mm: number; change_pct: number | null };
   temperature: { recent_c: number; usual_c: number; change_c: number };
   frost_nights: number;
+  // Days with a high of 30 °C or more, and days with 20 mm of rain or more. Absent from an older backend.
+  heat_days?: number;
+  heavy_rain_days?: number;
+  wettest?: { date: string; mm: number };
   hottest: { date: string; max_c: number };
   coldest: { date: string; min_c: number };
   source: string;

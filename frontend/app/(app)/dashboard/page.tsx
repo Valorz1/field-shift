@@ -1,38 +1,41 @@
 "use client";
 
+import { CalendarRange, ChevronDown, MessageCircle, Sun } from "lucide-react";
+import { Suspense } from "react";
 import { HistoryCharts } from "@/components/charts/HistoryCharts";
 import { RainfallChart } from "@/components/charts/RainfallChart";
 import { TemperatureChart } from "@/components/charts/TemperatureChart";
-import { CalendarRange, ChevronDown, MessageCircle, Sprout, Sun } from "lucide-react";
 import { AssistantPanel } from "@/components/dashboard/AssistantPanel";
-import { InsightCard } from "@/components/dashboard/InsightCard";
-import { KpiCard } from "@/components/dashboard/KpiCard";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
-import { CropPicker } from "@/components/farm/CropPicker";
-import { OutsideUkNote } from "@/components/farm/OutsideUkNote";
+import { FieldHero } from "@/components/dashboard/FieldHero";
 import { Footnote } from "@/components/dashboard/Footnote";
+import { KpiCard } from "@/components/dashboard/KpiCard";
 import { RecentWeather } from "@/components/dashboard/RecentWeather";
+import { SeasonalRain } from "@/components/dashboard/SeasonalRain";
+import { FarmProfileCard } from "@/components/farm/FarmProfileCard";
+import { FieldRisks } from "@/components/dashboard/FieldRisks";
 import { Page } from "@/components/layout/Page";
 import { SectionTitle } from "@/components/layout/SectionTitle";
 import { WithSite } from "@/components/layout/WithSite";
-import { FarmMap } from "@/components/map/FarmMap";
-import { StrategyCards } from "@/components/strategies/StrategyCards";
-import { seasonInsights } from "@/lib/climate-facts";
+import { PlanStrips } from "@/components/strategies/PlanStrips";
 import type { ClimateSite } from "@/lib/data/climate";
 import { kpisFor } from "@/lib/kpis";
 import { useStrategies } from "@/lib/use-strategies";
 
+// Top to bottom: the answer first (banner), then what to do (3 plans), then the evidence, then the chat.
 function Dashboard({ site }: { site: ClimateSite }) {
   const { crop, data, error } = useStrategies(site);
   return (
     <div className="space-y-8">
-      <CropPicker site={site} />
-
-      <OutsideUkNote site={site} />
-
       <DashboardHero site={site} />
 
+      <FarmProfileCard />
+
+      <PlanStrips site={site} />
+
       <RecentWeather site={site} />
+
+      <FieldRisks site={site} />
 
       <section id="soil" aria-labelledby="year-heading" className="scroll-mt-24 space-y-4">
         <SectionTitle id="year-heading" icon={CalendarRange}>
@@ -49,11 +52,7 @@ function Dashboard({ site }: { site: ClimateSite }) {
         <SectionTitle id="seasons-heading" icon={Sun}>
           {`Spring and summer rain, ${site.year}`}
         </SectionTitle>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {seasonInsights(site).map((insight) => (
-            <InsightCard key={insight.name} insight={insight} />
-          ))}
-        </div>
+        <SeasonalRain site={site} />
       </section>
 
       <details className="group rounded-card border border-line bg-white">
@@ -80,13 +79,6 @@ function Dashboard({ site }: { site: ClimateSite }) {
         </div>
       </details>
 
-      <section id="plans" aria-labelledby="strategies-heading" className="scroll-mt-24 space-y-4">
-        <SectionTitle id="strategies-heading" icon={Sprout}>
-          3 plans for the next 3 years
-        </SectionTitle>
-        <StrategyCards site={site} showPicker={false} />
-      </section>
-
       <section id="assistant" aria-labelledby="assistant-heading" className="scroll-mt-24 space-y-4">
         <SectionTitle id="assistant-heading" icon={MessageCircle}>
           Ask about your field
@@ -100,7 +92,9 @@ function Dashboard({ site }: { site: ClimateSite }) {
 export default function DashboardPage() {
   return (
     <Page>
-      <FarmMap />
+      <Suspense fallback={null}>
+        <FieldHero />
+      </Suspense>
       <WithSite showStates render={(site) => <Dashboard site={site} />} />
     </Page>
   );
