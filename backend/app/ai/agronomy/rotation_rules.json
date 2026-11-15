@@ -37,6 +37,11 @@
       "url": "https://www.nrcs.usda.gov/sites/default/files/2022-09/Cover_Crop_340_CPS.pdf",
       "supports": "Cover crops are grasses, legumes and forbs planted for seasonal vegetative cover to protect and improve soil; the standard also covers planning termination to prepare the field for the next crop and to optimise soil moisture."
     },
+    "sita_legumes_heat_2017": {
+      "citation": "Sita, K. et al. Food Legumes and Rising Temperatures: Effects, Adaptive Functional Mechanisms Specific to Reproductive Growth Stage and Strategies to Improve Heat Tolerance. Frontiers in Plant Science 8:1658 (2017)",
+      "url": "https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2017.01658/full",
+      "supports": "Cool-season food legumes include broad bean, lentil, dry pea and chickpea; warm-season food legumes include pigeonpea, cowpea, mungbean and common bean, which are mainly grown in hot and humid conditions."
+    },
     "fao_nri_sorghum": {
       "citation": "Natural Resources Institute; edited by D. Mejia and B. Lewis (FAO AGSI). SORGHUM: Post-harvest Operations. FAO Post-harvest Compendium",
       "url": "https://www.fao.org/fileadmin/user_upload/inpho/docs/Post_Harvest_Compendium_-_SORGHUM.pdf",
@@ -106,8 +111,9 @@
       "id": "WE-3",
       "statement": "Cowpea and chickpea are drought-tolerant grain legumes that can be added to a rotation.",
       "applies_to": ["*"],
-      "alternatives": ["chickpea", "cowpea"],
-      "source_ids": ["preventionweb_drought_crops"],
+      "alternatives": ["cowpea", "chickpea"],
+      "order_note": "Cowpea is listed first because it is a warm-season legume, while chickpea is a cool-season legume (Sita et al., 2017); these rules are used in warm places only.",
+      "source_ids": ["preventionweb_drought_crops", "sita_legumes_heat_2017"],
       "climates": ["warm"],
       "role": "lower-water crop"
     },
