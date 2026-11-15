@@ -76,6 +76,19 @@ def _is_legume(rules: dict, crop: str) -> bool:
     return crop in legumes or _canonical(rules, crop) in legumes
 
 
+def _is_pulse(rules: dict, crop: str) -> bool:
+    pulses = set(rules.get("pulses", {}).get("crops", []))
+    return crop in pulses or _canonical(rules, crop) in pulses
+
+
+def _pulse_notes(rules: dict, crop: str) -> tuple[str, str, dict]:
+    """Risk text, gap text and evidence item for a farm whose current crop is a pulse."""
+    rule = rules["pulses"]["rule"]
+    risk = f"{crop} is a pulse: {rule['statement']} Grow it again only after a long break."
+    gap = f"The field's pulse history was not checked; a 3-year table cannot show the full break between {crop} crops."
+    return risk, gap, _rule_evidence(rules, rule)
+
+
 def _matches(rule: dict, crop: str, rules: dict | None = None, zone: str | None = None) -> bool:
     if zone is not None and zone not in rule.get("climates", ["cool", "warm"]):
         return False
@@ -174,21 +187,28 @@ def _rotation(crops: list[str], roles: list[str], extra: dict[int, dict] | None 
 # --------------------------------------------------------------------------
 # The three strategies
 # --------------------------------------------------------------------------
-def _baseline(crop: str, climate: dict, risk: dict) -> dict[str, Any]:
+def _baseline(crop_key: str, crop: str, climate: dict, risk: dict, rules: dict) -> dict[str, Any]:
     risks = []
+    gaps = list(COMMON_GAPS)
+    evidence = _climate_evidence(climate, risk)
     if risk["level"] != "low":
         risks.append(
             f"Climate risk is '{risk['level']}'; this option makes no adaptation to it."
         )
+    if _is_pulse(rules, crop_key):
+        pulse_risk, pulse_gap, pulse_evidence = _pulse_notes(rules, crop)
+        risks.append(f"Growing {crop} every year goes against the pulse-break advice. {pulse_risk}")
+        gaps.append(pulse_gap)
+        evidence.append(pulse_evidence)
     return {
         "id": "baseline",
         "title": "Keep the current crop",
         "rotation": _rotation([crop] * ROTATION_YEARS, ["current crop"] * ROTATION_YEARS),
         "why": f"Reference case: grow {crop} every year, as now. Other options are compared against this.",
-        "evidence": _climate_evidence(climate, risk),
+        "evidence": evidence,
         "benefits": ["No change to current management, equipment or markets."],
         "risks": risks,
-        "gaps": list(COMMON_GAPS),
+        "gaps": gaps,
         "water_need": "Unchanged (current crop).",
         "complexity": "low",
         "confidence": "medium",
@@ -217,13 +237,17 @@ def _water_efficient(crop_key: str, crop: str, climate: dict, risk: dict, rules:
     crop_rules = [r for r in used_rules if r.get("kind") != "caution"]
     caution_rules = [r for r in used_rules if r.get("kind") == "caution"]
 
+    pulse = _is_pulse(rules, crop_key)
     alternatives: list[str] = []
     roles: dict[str, str] = {}
     for rule in crop_rules:
         for alt in rule["alternatives"]:
-            if not _same_crop(rules, alt, crop_key) and alt not in alternatives:
-                alternatives.append(alt)
-                roles[alt] = rule.get("role", "lower-water crop")
+            if _same_crop(rules, alt, crop_key) or alt in alternatives:
+                continue
+            if pulse and _is_pulse(rules, alt):
+                continue  # pulse break: no pulse straight after a pulse
+            alternatives.append(alt)
+            roles[alt] = rule.get("role", "lower-water crop")
 
     # Only claim "lower water" when a rule that says so was used.
     lower_water = any(r.get("role", "lower-water crop") == "lower-water crop" for r in crop_rules)
@@ -236,7 +260,17 @@ def _water_efficient(crop_key: str, crop: str, climate: dict, risk: dict, rules:
         gaps.append("The cool-climate rules give no water-use comparison between these crops.")
 
     if alternatives:
-        year2, year3 = alternatives[0], alternatives[1] if len(alternatives) > 1 else crop
+        year2 = alternatives[0]
+        # At most one pulse in the 3 years (pulse break, rule PG-1).
+        pulse_used = pulse or _is_pulse(rules, year2)
+        later = [a for a in alternatives[1:] if not (pulse_used and _is_pulse(rules, a))]
+        if later:
+            year3 = later[0]
+        elif not pulse_used:
+            year3 = crop
+        else:
+            year3 = rules["pulses"]["break_cereal"][zone]
+            roles[year3] = "cereal (pulse break)"
         rotation = _rotation(
             [crop, year2, year3],
             ["current crop", roles[year2], roles.get(year3, "current crop")],
@@ -251,6 +285,16 @@ def _water_efficient(crop_key: str, crop: str, climate: dict, risk: dict, rules:
             if lower_water
             else "Not compared: the rules give no water-use figures for these crops."
         )
+    elif pulse:
+        # No allowed alternative, but a pulse must not be grown again straight away.
+        cereal = rules["pulses"]["break_cereal"][zone]
+        rotation = _rotation([crop, cereal, cereal], ["current crop", "cereal (pulse break)", "cereal (pulse break)"])
+        why = (
+            f"{priority}: {reason}. The rules list no other {zone}-climate crop for {crop}, so {cereal} "
+            f"is grown after it to give the pulse break."
+        )
+        water_need = "Not compared: the rules give no water-use comparison for this break crop."
+        gaps.append(f"The rules contain no {zone}-climate alternative for '{crop}' other than the pulse-break cereal.")
     else:
         rotation = _rotation([crop] * ROTATION_YEARS, ["current crop"] * ROTATION_YEARS)
         why = f"{priority}: {reason}. The rules list no alternative for {crop} in a {zone} climate."
@@ -261,6 +305,12 @@ def _water_efficient(crop_key: str, crop: str, climate: dict, risk: dict, rules:
     if lower_water:
         risks.append("Lower-water crops are less water-demanding, but the rules give no yield comparison.")
     risks += [r["statement"] for r in caution_rules]
+    evidence = _climate_evidence(climate, risk) + [zone_evidence] + [_rule_evidence(rules, r) for r in used_rules]
+    if pulse:
+        pulse_risk, pulse_gap, pulse_evidence = _pulse_notes(rules, crop)
+        risks.append(pulse_risk)
+        gaps.append(pulse_gap)
+        evidence.append(pulse_evidence)
     confidence = "medium" if any(_crop_specific(r, crop_key, rules) for r in crop_rules) else "low"
 
     return {
@@ -268,7 +318,7 @@ def _water_efficient(crop_key: str, crop: str, climate: dict, risk: dict, rules:
         "title": f"Keep the current crop, add {kind_of_crop}",
         "rotation": rotation,
         "why": why,
-        "evidence": _climate_evidence(climate, risk) + [zone_evidence] + [_rule_evidence(rules, r) for r in used_rules],
+        "evidence": evidence,
         "benefits": ["Spreads exposure to dry years across more than one crop."] if alternatives else [],
         "risks": risks,
         "gaps": gaps,
@@ -316,6 +366,16 @@ def _soil_restoration(crop_key: str, crop: str, climate: dict, risk: dict, rules
         extra_gaps = []
 
     evidence = _climate_evidence(climate, risk) + [_rule_evidence(rules, r) for r in used]
+    gaps = list(COMMON_GAPS) + extra_gaps
+    year3, year3_role = crop, "current crop"
+    if _is_pulse(rules, crop_key):
+        zone, zone_evidence = _climate_zone(climate)
+        year3, year3_role = rules["pulses"]["break_cereal"][zone], "cereal (pulse break)"
+        pulse_risk, pulse_gap, pulse_evidence = _pulse_notes(rules, crop)
+        risks.append(f"{pulse_risk} So year 3 is {year3}, not {crop} again.")
+        gaps.append(pulse_gap)
+        evidence += [zone_evidence, pulse_evidence]
+        why += f" Year 3 is {year3} because {crop} is a pulse and pulses need a long break."
     if legume:
         evidence.append({
             "type": "agronomy_rule",
@@ -328,15 +388,15 @@ def _soil_restoration(crop_key: str, crop: str, climate: dict, risk: dict, rules
         "id": "soil_restoration",
         "title": title,
         "rotation": _rotation(
-            [crop, f"{role} ({cover_text})", crop],
-            ["current crop", role, "current crop"],
+            [crop, f"{role} ({cover_text})", year3],
+            ["current crop", role, year3_role],
             extra={2: {"alternatives": cover_crops}},
         ),
         "why": why,
         "evidence": evidence,
         "benefits": [r["statement"] for r in benefit_rules],
         "risks": risks + [r["statement"] for r in caution_rules],
-        "gaps": list(COMMON_GAPS) + extra_gaps,
+        "gaps": gaps,
         "water_need": "Current crop plus the cover crop's soil-water use; no volume available.",
         "complexity": "medium",
         "confidence": "medium",
@@ -357,7 +417,7 @@ def build_strategies(
     rules = rules if rules is not None else load_rules()
     crop_key, crop = _current_crop(farm)
     strategies = [
-        _baseline(crop, climate, risk),
+        _baseline(crop_key, crop, climate, risk, rules),
         _water_efficient(crop_key, crop, climate, risk, rules),
         _soil_restoration(crop_key, crop, climate, risk, rules),
     ]

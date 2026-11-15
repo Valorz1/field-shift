@@ -67,6 +67,11 @@
       "url": "https://foodfoundation.org.uk/sites/default/files/2026-06/UK%20Bean%20production%20briefing%20FINAL_3.pdf",
       "supports": "Faba beans are otherwise known as field beans or broad beans; UK pulse production is dominated by faba beans and peas; pulses include lentils, peas, chickpeas, dry beans and faba beans; clover and sainfoin are named as legumes."
     },
+    "ahdb_pulses_2026": {
+      "citation": "Lowth, H. (AHDB). Finger on the pulse: The truth about peas, beans and other legumes (AHDB news, 19 August 2026)",
+      "url": "https://ahdb.org.uk/news/finger-on-the-pulse-the-truth-about-peas-beans-and-other-legumes",
+      "supports": "It's recommended to leave at least five years between pulse crops, to reduce rotational risks such as soilborne diseases."
+    },
     "sare_mccp_cereal_rye": {
       "citation": "SARE, Managing Cover Crops Profitably, 3rd edition (2007), Nonlegume Cover Crops: Cereal Rye",
       "url": "https://www.sare.org/publications/managing-cover-crops-profitably/nonlegume-cover-crops/cereal-rye/",
@@ -155,6 +160,18 @@
     "note": "Crops treated as legumes. If the farm's current crop is on this list, the engine does not suggest adding a legume cover crop.",
     "crops": ["alfalfa", "clover", "red clover", "white clover", "crimson clover", "sweet clover", "sainfoin", "vetch", "hairy vetch", "beans", "field beans", "broad beans", "soybean", "soybeans", "peanut", "peanuts", "cowpea", "cowpeas", "peas", "field peas", "chickpea", "chickpeas", "lentil", "lentils"],
     "source_ids": ["nmsu_a129", "sare_building_soils", "foodfoundation_beans_2026"]
+  },
+  "pulses": {
+    "note": "Pulse (grain legume) crops. Pulses should not follow each other closely, so the 3-year table never holds more than one pulse. Forage legumes such as alfalfa and clover are legumes but not pulses.",
+    "crops": ["beans", "field beans", "broad beans", "peas", "field peas", "chickpea", "chickpeas", "lentil", "lentils", "cowpea", "cowpeas"],
+    "rule": {
+      "id": "PG-1",
+      "statement": "Leave at least five years between pulse crops, to reduce rotational risks such as soil-borne diseases.",
+      "source_ids": ["ahdb_pulses_2026"]
+    },
+    "break_cereal": {"cool": "winter wheat", "warm": "sorghum"},
+    "break_cereal_note": "Cereal put in year 3 after a pulse. Both come from the zone's crop rules (winter wheat from CL-1, sorghum from WE-1).",
+    "source_ids": ["ahdb_pulses_2026", "foodfoundation_beans_2026", "preventionweb_drought_crops"]
   },
   "crop_aliases": {
     "note": "Names treated as the same crop, so a farm is not told to switch to the crop it already grows.",
