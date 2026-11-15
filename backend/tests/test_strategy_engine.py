@@ -282,3 +282,63 @@ def test_rule_ids_are_unique():
 
 def test_rules_file_exists_where_the_brief_says():
     assert RULES_PATH.as_posix().endswith("backend/app/ai/agronomy/rotation_rules.json")
+
+
+# ---------- pulse break (rule PG-1) ------------------------------------------------
+def _pulse_count(rules, crops):
+    from app.services.strategy_engine import _is_pulse
+    return sum(_is_pulse(rules, c.lower()) for c in crops)
+
+
+@pytest.mark.parametrize("crop", ["field beans", "Faba Beans", "peas"])
+def test_cool_pulse_soil_plan_ends_with_a_cereal(cool_high_dry, crop):
+    soil = build(cool_high_dry, crop)[2]
+    assert soil["rotation"][2]["crop"] == "winter wheat"
+    assert soil["rotation"][2]["role"] == "cereal (pulse break)"
+    assert any("at least five years between pulse crops" in r for r in soil["risks"])
+    assert any("pulse history was not checked" in g for g in soil["gaps"])
+    assert "PG-1" in [e["rule_id"] for e in soil["evidence"] if e["type"] == "agronomy_rule"]
+
+
+def test_warm_pulse_soil_plan_ends_with_sorghum(high_dry):
+    assert build(high_dry, "chickpea")[2]["rotation_crops"][2] == "sorghum"
+
+
+@pytest.mark.parametrize("fixture, crop", [
+    ("cool_high_dry", "field beans"), ("cool_high_dry", "wheat"), ("high_dry", "chickpea"),
+    ("high_dry", "alfalfa"), ("high_dry", "maize"), ("high_dry", "dragonfruit"), ("high_dry", "lentils"),
+])
+def test_never_more_than_one_pulse_in_three_years(fixture, crop, request):
+    rules = load_rules()
+    for s in build(request.getfixturevalue(fixture), crop)[1:]:
+        assert _pulse_count(rules, s["rotation_crops"]) <= 1, (s["id"], s["rotation_crops"])
+
+
+def test_pulse_farm_water_plan_offers_no_pulses(cool_high_dry):
+    rules = load_rules()
+    alts = build(cool_high_dry, "field beans")[1]["rotation"][1]["alternatives"]
+    assert alts and _pulse_count(rules, alts) == 0
+
+
+def test_pulse_baseline_warns_about_the_break(cool_high_dry):
+    base = build(cool_high_dry, "field beans")[0]
+    assert base["rotation_crops"] == ["field beans"] * 3  # reference case is unchanged
+    assert any("goes against the pulse-break advice" in r for r in base["risks"])
+
+
+def test_non_pulse_crop_gets_no_pulse_warning(cool_high_dry):
+    for s in build(cool_high_dry, "wheat"):
+        assert not any("pulse" in r for r in s["risks"])
+
+
+def test_alfalfa_is_a_legume_but_not_a_pulse(high_dry):
+    soil = build(high_dry, "alfalfa")[2]
+    assert soil["current_crop_is_legume"] is True
+    assert soil["rotation_crops"][2] == "alfalfa"
+
+
+def test_pulse_rule_cites_a_known_source():
+    rules = load_rules()
+    for sid in rules["pulses"]["rule"]["source_ids"] + rules["pulses"]["source_ids"]:
+        assert rules["sources"][sid]["url"].startswith("https://")
+    assert set(rules["pulses"]["crops"]) <= set(rules["legumes"]["crops"])

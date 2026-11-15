@@ -89,6 +89,17 @@ Real data: Norfolk's baseline is 10.08 °C, so it counts as cool. Nevada's is 13
 - water_efficient is not changed by this check: grain legumes there (chickpea, cowpea) are rotation crops, not a "add a legume for nitrogen" step.
 - Crops not on the list are treated as non-legumes.
 
+### Pulse break
+
+- `rotation_rules.json` → `pulses` lists pulse (grain legume) crops: beans including field/faba/broad beans, peas, chickpea, lentil, cowpea. Forage legumes such as alfalfa and clover are legumes but **not** pulses.
+- Rule PG-1: leave at least five years between pulse crops, to reduce soil-borne disease (AHDB, 19 August 2026). A 3-year table cannot show a 5-year break, so the engine makes sure it **never holds more than one pulse**.
+- Current crop is a pulse:
+  - soil_restoration: year 3 is a cereal instead of the pulse again. That is winter wheat in a cool place (from CL-1) or sorghum in a warm place (from WE-1). Example: field beans → cereal rye → winter wheat.
+  - water_efficient: no other pulse is offered. If no other crop is left, the cereal is used.
+  - baseline: the rotation stays unchanged (it is the reference case), but `risks` says it goes against the pulse break.
+  - All three get a `gaps` note: the field's pulse history was not checked.
+- Current crop is not a pulse: water_efficient can still add one pulse (e.g. chickpea), but never two. If every later option is also a pulse, the zone's cereal is used in year 3 instead.
+
 ### Same crop, different name
 
 `rotation_rules.json` → `crop_aliases` treats names such as "winter wheat" and "wheat", "spring barley" and "barley", or "faba beans" and "field beans" as one crop. A farm is never offered the crop it already grows under another name.
