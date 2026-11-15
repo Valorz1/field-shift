@@ -39,7 +39,7 @@ export function FieldHero() {
         <AddressSearch />
         <SiteSwitcher current={place.id} />
         <OutsideUkNote site={place} />
-        <CropPicker site={place} variant="plain" />
+        <CropPicker key={place.id} site={place} variant="plain" />
 
         <p className="mt-auto text-sm text-caption">
           A pinned place, or an address you type, is sent to NASA and the map provider (Mapbox) to find it and load the

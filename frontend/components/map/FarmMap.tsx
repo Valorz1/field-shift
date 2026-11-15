@@ -45,6 +45,9 @@ export function FarmMap({ variant = "card" }: Props) {
       return;
     }
     map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }));
+    // The map's box changes height when the panel beside it grows (crop box, Nevada note): redraw to fit.
+    const resizer = new ResizeObserver(() => map.current?.resize());
+    resizer.observe(container.current);
     // The pin lives in the in-memory session only; nothing is written to storage.
     map.current.on("click", ({ lngLat }) => updateSession({ latitude: lngLat.lat, longitude: lngLat.lng }));
     map.current.on("error", ({ error }) => {
@@ -62,6 +65,7 @@ export function FarmMap({ variant = "card" }: Props) {
         .forEach((key) => localStorage.removeItem(key));
     window.addEventListener("pagehide", forget);
     return () => {
+      resizer.disconnect();
       window.removeEventListener("pagehide", forget);
       window.removeEventListener("fs:flyto", fly);
       forget();
