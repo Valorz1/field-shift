@@ -40,7 +40,7 @@ All values are rounded to 2 decimals before differences, percentages and thresho
 | Rule | Threshold | Points |
 |---|---|---|
 | Warmer | temperature change **≥ +0.5 °C** | 1 |
-| Drier | yearly rain change **≤ −5 %** (drier by 5 % or more) | 1 |
+| Drier | yearly rain change **≤ −5 %**, **or** summer (Jun–Aug) rain change **≤ −5 %** | 1 |
 
 | Points | Risk level |
 |---|---|
@@ -50,7 +50,9 @@ All values are rounded to 2 decimals before differences, percentages and thresho
 
 Notes:
 - A value exactly on a threshold (+0.50 °C, −5.00 %) counts as triggered. This is covered by tests.
-- "Drier" is judged on **yearly** rain, as set out in the task brief. Summer rain change is calculated and reported, but it does not score points.
+- "Drier" is judged on yearly rain **or** summer rain. Either one, or both, gives 1 point, so the scale stays 0–2. `risk.drivers.drying.basis` lists which one triggered (`["yearly"]`, `["summer"]`, both, or `[]`).
+- Why summer counts: a place can lose a lot of summer rain, when crops need it most, while its yearly total hardly changes. Norfolk is the example: yearly rain −1.78 %, summer rain −29.58 %. Before this rule Norfolk scored moderate; now it scores high.
+- The summer trigger reuses the same −5 % threshold as yearly rain. It is a team screening choice, not a published standard. Summer rain varies a lot from year to year, and the recent period has only 5 summers, so a summer trigger is less certain than a yearly one.
 - The thresholds are constants in `indicators.py` (`WARMING_THRESHOLD_C`, `DRYING_THRESHOLD_PCT`). They are simple screening thresholds chosen by the team, not values taken from a published standard.
 
 ## 4. Strategies (`strategy_engine.build_strategies`)
