@@ -1,4 +1,215 @@
 {
-  "notice": "Illustrative starter only; replace with cited, locally validated rotation guidance.",
-  "items": []
+  "version": 2,
+  "note": "Qualitative agronomy rules only: no yields, prices or water volumes are stated. Every rule lists the source(s) it comes from. 'climates' says where a rule is used: 'cool' rules only in places under the cool-climate threshold, 'warm' rules everywhere else (a 'warm' tag means no source was found supporting the rule for cool places; the threshold itself is set in code, see docs/methodology.md). Sources were checked on 2026-11-14; re-check wording before publishing.",
+  "sources": {
+    "fao_sorghum": {
+      "citation": "FAO Land & Water, Crop information: Sorghum",
+      "url": "https://www.fao.org/land-water/databases-and-software/crop-information/sorghum/ar",
+      "supports": "Sorghum is described as relatively more drought-resistant than many other crops, e.g. maize."
+    },
+    "hadebe_sorghum": {
+      "citation": "Hadebe, Modi & Mabhaudhi. Drought Tolerance and Water Use of Cereal Crops: A Focus on Sorghum as a Food Security Crop in Sub-Saharan Africa (record in FAO AGRIS)",
+      "url": "https://agris.fao.org/search/en/records/65de5ec80f3e94b9e5ce7c5e",
+      "supports": "Sorghum has high and stable water-use efficiency and drought and heat tolerance; suggested for water-scarce arid and semi-arid zones."
+    },
+    "un_millets": {
+      "citation": "UN News, Millets prove tasty solution to climate and food security challenges",
+      "url": "https://news.un.org/en/node/1092492",
+      "supports": "Millets can grow under drought and non-irrigated conditions and have a low water footprint compared with wheat, rice or maize."
+    },
+    "preventionweb_drought_crops": {
+      "citation": "PreventionWeb news article on drought-tolerant crops and methods (lists cowpea and chickpea). Author, title and date were not captured in the source check: add them before publishing",
+      "url": "https://www.preventionweb.net/news/view/52232",
+      "supports": "Cowpea and chickpea are described as drought-tolerant grain legumes."
+    },
+    "sare_building_soils": {
+      "citation": "SARE, Building Soils for Better Crops, Ch. 10 Cover Crops (Magdoff & van Es)",
+      "url": "https://www.sare.org/publications/building-soils-for-better-crops/cover-crops",
+      "supports": "Legume cover crops (e.g. hairy vetch, red clover) fix nitrogen with Rhizobium bacteria; cover crops enhance soil health in several ways."
+    },
+    "sare_mcp_fertility": {
+      "citation": "SARE, Managing Cover Crops Profitably, Building Soil Fertility (Sarrantonio)",
+      "url": "https://sare.org/publications/managing-cover-crops-profitably/building-soil-fertility",
+      "supports": "Cover crops catch nutrients before they leach; legumes add nitrogen to the soil."
+    },
+    "nrcs_340": {
+      "citation": "USDA NRCS, Conservation Practice Standard: Cover Crop (Code 340)",
+      "url": "https://www.nrcs.usda.gov/sites/default/files/2022-09/Cover_Crop_340_CPS.pdf",
+      "supports": "Cover crops are grasses, legumes and forbs planted for seasonal vegetative cover to protect and improve soil; the standard also covers planning termination to prepare the field for the next crop and to optimise soil moisture."
+    },
+    "sita_legumes_heat_2017": {
+      "citation": "Sita, K. et al. Food Legumes and Rising Temperatures: Effects, Adaptive Functional Mechanisms Specific to Reproductive Growth Stage and Strategies to Improve Heat Tolerance. Frontiers in Plant Science 8:1658 (2017)",
+      "url": "https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2017.01658/full",
+      "supports": "Cool-season food legumes include broad bean, lentil, dry pea and chickpea; warm-season food legumes include pigeonpea, cowpea, mungbean and common bean, which are mainly grown in hot and humid conditions."
+    },
+    "fao_nri_sorghum": {
+      "citation": "Natural Resources Institute; edited by D. Mejia and B. Lewis (FAO AGSI). SORGHUM: Post-harvest Operations. FAO Post-harvest Compendium",
+      "url": "https://www.fao.org/fileadmin/user_upload/inpho/docs/Post_Harvest_Compendium_-_SORGHUM.pdf",
+      "supports": "Grain sorghums are generally grown in regions which are too dry or too hot for successful maize production; sorghum is a main food grain in the semi-arid tropics."
+    },
+    "defra_landuse_2026": {
+      "citation": "Defra, Agricultural land use in England at 1 June 2026 (official statistics, updated 24 September 2026)",
+      "url": "https://www.gov.uk/government/statistics/agricultural-land-use-in-england/agricultural-land-use-in-england-at-1-june-2026",
+      "supports": "Wheat, winter barley, spring barley, oats, oilseed rape and field beans are reported as arable crops grown in England."
+    },
+    "ahdb_harvest_2026": {
+      "citation": "AHDB, Final harvest report confirms cereal yields are below historic averages across the UK (press release, 25 September 2026)",
+      "url": "https://ahdb.org.uk/news/final-harvest-report-confirms-cereal-yields-are-below-historic-averages-across-the-uk",
+      "supports": "In a season shaped by limited rainfall from spring onwards, oilseed rape was the standout performer, spring barley was one of the most challenging crops and oats were below average."
+    },
+    "ahdb_crop_ratings_2026": {
+      "citation": "AHDB, Crop ratings slip after dry spring, but harvest hope remains (29 June 2026)",
+      "url": "https://ahdb.org.uk/news/crop-ratings-slip-after-dry-spring-but-harvest-hope-remains",
+      "supports": "Dry conditions through April and May took a toll on crop development, particularly for spring crops; spring crops faced the greatest challenges, with establishment affected by dry seedbeds."
+    },
+    "nmsu_a129": {
+      "citation": "Flynn, R. and Idowu, J. Nitrogen Fixation by Legumes. New Mexico State University Cooperative Extension, Guide A-129 (revised June 2015)",
+      "url": "https://pubs.nmsu.edu/_a/A129.pdf",
+      "supports": "Alfalfa, sweet clover, true clovers, vetches, beans, peanuts, soybeans, cowpeas and fava beans are named as nitrogen-fixing legumes."
+    },
+    "foodfoundation_beans_2026": {
+      "citation": "The Food Foundation, Unlocking the potential of bean, pulse and legume cultivation in the UK (briefing, July 2026)",
+      "url": "https://foodfoundation.org.uk/sites/default/files/2026-06/UK%20Bean%20production%20briefing%20FINAL_3.pdf",
+      "supports": "Faba beans are otherwise known as field beans or broad beans; UK pulse production is dominated by faba beans and peas; pulses include lentils, peas, chickpeas, dry beans and faba beans; clover and sainfoin are named as legumes."
+    },
+    "ahdb_pulses_2026": {
+      "citation": "Lowth, H. (AHDB). Finger on the pulse: The truth about peas, beans and other legumes (AHDB news, 19 August 2026)",
+      "url": "https://ahdb.org.uk/news/finger-on-the-pulse-the-truth-about-peas-beans-and-other-legumes",
+      "supports": "It's recommended to leave at least five years between pulse crops, to reduce rotational risks such as soilborne diseases."
+    },
+    "sare_mccp_cereal_rye": {
+      "citation": "SARE, Managing Cover Crops Profitably, 3rd edition (2007), Nonlegume Cover Crops: Cereal Rye",
+      "url": "https://www.sare.org/publications/managing-cover-crops-profitably/nonlegume-cover-crops/cereal-rye/",
+      "supports": "Rye is the hardiest of cereals and the best cool-season cereal cover for absorbing unused soil nitrogen (a nutrient catch crop)."
+    },
+    "uw_alfalfa_autotoxicity": {
+      "citation": "Jennings, J. Understanding autotoxicity in alfalfa. University of Wisconsin-Madison Extension, Crops & Soils",
+      "url": "https://cropsandsoils.extension.wisc.edu/articles/understanding-autotoxicity-in-alfalfa",
+      "supports": "Alfalfa can remain productive in stands from four to ten years or more; reseeding alfalfa immediately following alfalfa is not recommended in most states due to autotoxicity, seedling disease and insect pests; rotation intervals of at least 12 months have been effective in avoiding autotoxic effects."
+    }
+  },
+  "lower_water_rules": [
+    {
+      "id": "WE-1",
+      "statement": "Sorghum is a drought-resistant cereal that can replace or alternate with a more water-demanding cereal.",
+      "applies_to": ["maize", "corn", "wheat", "barley", "oats"],
+      "alternatives": ["sorghum"],
+      "source_ids": ["fao_sorghum", "hadebe_sorghum", "fao_nri_sorghum"],
+      "climates": ["warm"],
+      "role": "lower-water crop"
+    },
+    {
+      "id": "WE-2",
+      "statement": "Millets tolerate drought and have a low water footprint compared with wheat and maize.",
+      "applies_to": ["maize", "corn", "wheat"],
+      "alternatives": ["millet"],
+      "source_ids": ["un_millets"],
+      "climates": ["warm"],
+      "role": "lower-water crop"
+    },
+    {
+      "id": "WE-3",
+      "statement": "Cowpea and chickpea are drought-tolerant grain legumes that can be added to a rotation.",
+      "applies_to": ["*"],
+      "alternatives": ["cowpea", "chickpea"],
+      "order_note": "Cowpea is listed first because it is a warm-season legume, while chickpea is a cool-season legume (Sita et al., 2017); these rules are used in warm places only.",
+      "source_ids": ["preventionweb_drought_crops", "sita_legumes_heat_2017"],
+      "climates": ["warm"],
+      "role": "lower-water crop"
+    },
+    {
+      "id": "CL-1",
+      "statement": "Oilseed rape, field beans, oats, spring barley and winter wheat are established arable crops in England, so they suit a cool-climate rotation.",
+      "applies_to": ["*"],
+      "climates": ["cool"],
+      "role": "cool-climate crop",
+      "alternatives": ["oilseed rape", "field beans", "oats", "spring barley", "winter wheat"],
+      "order_note": "Oilseed rape is listed first because it did best in the dry 2026 season; spring-sown crops are listed last because they struggled most (CL-2).",
+      "source_ids": ["defra_landuse_2026", "ahdb_harvest_2026"]
+    },
+    {
+      "id": "CL-2",
+      "kind": "caution",
+      "statement": "In the dry 2026 UK season spring crops faced the greatest challenges: spring barley was one of the most difficult crops and oats were below average, while oilseed rape did best.",
+      "applies_to": ["*"],
+      "climates": ["cool"],
+      "source_ids": ["ahdb_harvest_2026", "ahdb_crop_ratings_2026"]
+    }
+  ],
+  "soil_restoration_rules": [
+    {
+      "id": "SR-1",
+      "statement": "Legume cover crops fix atmospheric nitrogen and add it to the soil, which can reduce later nitrogen fertiliser needs.",
+      "applies_to": ["*"],
+      "cover_crops": ["hairy vetch", "red clover"],
+      "source_ids": ["sare_building_soils", "sare_mcp_fertility"],
+      "for_crops": "non_legume"
+    },
+    {
+      "id": "SR-2",
+      "statement": "Cover crops protect and improve soil during periods when cropland would otherwise be bare.",
+      "applies_to": ["*"],
+      "source_ids": ["nrcs_340"]
+    },
+    {
+      "id": "SR-3",
+      "statement": "Cover crop termination should be planned to prepare the field for the next crop and to manage soil moisture.",
+      "applies_to": ["*"],
+      "kind": "caution",
+      "source_ids": ["nrcs_340"]
+    },
+    {
+      "id": "SR-4",
+      "statement": "Cereal rye is a very winter-hardy non-legume cover crop that takes up leftover soil nitrogen (a catch crop), so it suits a field that already grows a legume.",
+      "applies_to": ["*"],
+      "for_crops": "legume",
+      "cover_crops": ["cereal rye"],
+      "source_ids": ["sare_mccp_cereal_rye", "sare_building_soils"]
+    }
+  ],
+  "legumes": {
+    "note": "Crops treated as legumes. If the farm's current crop is on this list, the engine does not suggest adding a legume cover crop.",
+    "crops": ["alfalfa", "clover", "red clover", "white clover", "crimson clover", "sweet clover", "sainfoin", "vetch", "hairy vetch", "beans", "field beans", "broad beans", "soybean", "soybeans", "peanut", "peanuts", "cowpea", "cowpeas", "peas", "field peas", "chickpea", "chickpeas", "lentil", "lentils"],
+    "source_ids": ["nmsu_a129", "sare_building_soils", "foodfoundation_beans_2026"]
+  },
+  "pulses": {
+    "note": "Pulse (grain legume) crops. Pulses should not follow each other closely, so the 3-year table never holds more than one pulse. Forage legumes such as alfalfa and clover are legumes but not pulses.",
+    "crops": ["beans", "field beans", "broad beans", "peas", "field peas", "chickpea", "chickpeas", "lentil", "lentils", "cowpea", "cowpeas"],
+    "rule": {
+      "id": "PG-1",
+      "statement": "Leave at least five years between pulse crops, to reduce rotational risks such as soil-borne diseases.",
+      "source_ids": ["ahdb_pulses_2026"]
+    },
+    "break_cereal": {"cool": "winter wheat", "warm": "sorghum"},
+    "break_cereal_note": "Cereal put in year 3 after a pulse. Both come from the zone's crop rules (winter wheat from CL-1, sorghum from WE-1).",
+    "source_ids": ["ahdb_pulses_2026", "foodfoundation_beans_2026", "preventionweb_drought_crops"]
+  },
+  "crop_aliases": {
+    "note": "Names treated as the same crop, so a farm is not told to switch to the crop it already grows.",
+    "aliases": {
+      "winter wheat": "wheat",
+      "spring wheat": "wheat",
+      "winter barley": "barley",
+      "spring barley": "barley",
+      "winter oats": "oats",
+      "spring oats": "oats",
+      "corn": "maize",
+      "faba beans": "field beans",
+      "faba bean": "field beans",
+      "fava beans": "field beans",
+      "fava bean": "field beans",
+      "broad beans": "field beans",
+      "winter oilseed rape": "oilseed rape"
+    },
+    "source_ids": ["defra_landuse_2026", "foodfoundation_beans_2026"]
+  },
+  "perennials": {
+    "note": "Perennial crops: one stand is kept for several years, so the 3-year table shows planning slots, not a new sowing each year.",
+    "crops": ["alfalfa"],
+    "rule": {
+      "id": "PE-1",
+      "statement": "Alfalfa is a perennial: one stand can stay productive for four to ten years or more. Reseeding alfalfa straight after alfalfa is not recommended (autotoxicity, seedling disease, pests); a break of at least 12 months has worked.",
+      "source_ids": ["uw_alfalfa_autotoxicity"]
+    }
+  }
 }

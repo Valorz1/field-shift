@@ -1,1 +1,29 @@
-export function SourceBadge({ source }: { source: string }) { return <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-900">Source: {source}</span>; }
+import { cx } from "@/lib/cx";
+import type { DataLabel } from "@/lib/view-models";
+
+const tones: Record<DataLabel, string> = {
+  "NASA POWER": "bg-water-tint text-water-ink",
+  "NASA POWER (MERRA-2 model)": "bg-water-tint text-water-ink",
+  "GPM IMERG": "bg-water-tint text-water-ink",
+  "NASA SMAP": "bg-water-tint text-water-ink",
+  Calculated: "bg-neutral-tint text-neutral-ink",
+  "Your input": "bg-green-tint text-green-ink",
+  AI: "border border-neutral-ink bg-white text-neutral-ink",
+  "General agronomy": "bg-earth-tint text-earth-ink",
+  "Sample data": "bg-warning-tint text-warning-ink",
+  Missing: "border border-dashed border-neutral-ink bg-neutral-tint text-neutral-ink",
+};
+
+export function SourceBadge({ source, className }: { source: DataLabel; className?: string }) {
+  return (
+    <span
+      className={cx(
+        "inline-flex max-w-full items-center rounded-full px-2.5 py-0.5 text-sm leading-snug font-medium",
+        tones[source],
+        className,
+      )}
+    >
+      {source}
+    </span>
+  );
+}
