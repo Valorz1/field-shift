@@ -11,9 +11,9 @@ Built by **Team Valor Astra** for the **NASA Space Apps Challenge 2026**.
 
 > The repo is called `field-shift` because that was our working name. The app is called Rotara.
 
-[![Watch the 30-second Rotara demo](https://img.youtube.com/vi/_YVbdCdE7Lo/hqdefault.jpg)](https://youtu.be/_YVbdCdE7Lo)
+<a href="https://youtu.be/_YVbdCdE7Lo"><img src="https://img.youtube.com/vi/_YVbdCdE7Lo/maxresdefault.jpg" width="640" alt="Watch the 30-second Rotara demo on YouTube"></a>
 
-*Watch the 30-second demo on YouTube.*
+**▶ [Watch the 30-second demo on YouTube](https://youtu.be/_YVbdCdE7Lo)**
 
 ---
 
