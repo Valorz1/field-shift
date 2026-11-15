@@ -27,7 +27,9 @@ export function Footnote({ site }: { site: ClimateSite }) {
           Soil wetness is how wet the root zone was, from the NASA POWER MERRA-2 model, not from a satellite.
           {site.smap
             ? " The Soil page checks it against the NASA SMAP satellite."
-            : " NASA SMAP satellite soil data is still coming for this farm."}
+            : site.id === "nevada"
+              ? " NASA SMAP satellite readings here were not of recommended quality, so they are not used."
+              : " NASA SMAP satellite soil data is only ready for the Norfolk example farm."}
         </li>
         <li>Source: NASA POWER monthly data, {formatYears(source.firstYear, source.lastYear)}.</li>
       </ul>

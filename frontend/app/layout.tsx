@@ -5,8 +5,8 @@ import "@fontsource-variable/manrope/wght.css";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Field Shift",
-  description: "Turning Earth observations into smarter farming decisions.",
+  title: "Rotara: crop plans from NASA data",
+  description: "Rotara turns NASA Earth observations into 3 crop rotation plans for your field. You decide.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

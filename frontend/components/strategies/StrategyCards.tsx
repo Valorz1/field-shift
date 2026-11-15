@@ -8,7 +8,7 @@ import { ErrorMessage } from "@/components/ui/states/ErrorMessage";
 import { LoadingSkeleton } from "@/components/ui/states/LoadingSkeleton";
 import { riskLevelText, riskReason } from "@/lib/climate-facts";
 import type { Place } from "@/lib/data/climate";
-import { bestMatch, planFit } from "@/lib/farm-profile";
+import { bestMatch, planFit, placeText } from "@/lib/farm-profile";
 import { updateSession, useSession } from "@/lib/session-store";
 import type { Risk } from "@/lib/types";
 import { useStrategies } from "@/lib/use-strategies";
@@ -91,7 +91,7 @@ export function StrategyCards({
       {data ? (
         <>
           <p className="text-base text-caption">
-            Worked out for {data.farm.crop} at {data.farm.name ?? site.name}.{" "}
+            Worked out for {data.farm.crop} {placeText(data.farm.name ?? site.name)}.{" "}
             {riskText(data.risk)}
           </p>
           <div className="grid gap-4 xl:grid-cols-3">

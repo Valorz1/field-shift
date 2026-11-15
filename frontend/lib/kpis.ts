@@ -28,7 +28,7 @@ const soilKpi = (site: ClimateSite): KpiView => {
       label: `Soil wetness in ${site.year}`,
       value: "No data",
       source: "Missing",
-      meaning: "NASA POWER has no root-zone soil wetness for this place. NASA SMAP satellite soil data is still coming.",
+      meaning: "NASA POWER has no root-zone soil wetness for this place. We have no satellite soil check for this place either.",
     };
   return {
     kind: "soil-wetness",

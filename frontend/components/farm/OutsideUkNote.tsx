@@ -1,7 +1,7 @@
 import { Globe } from "lucide-react";
 import { type Place, isInUk, isPin } from "@/lib/data/climate";
 
-// Field Shift is built for UK farms first. Elsewhere the NASA climate numbers are still real,
+// Rotara is built for UK farms first. Elsewhere the NASA climate numbers are still real,
 // but the crop suggestions were written with UK farming in mind, so say so plainly.
 export function OutsideUkNote({ site }: { site: Place }) {
   if (isInUk(site)) return null;
