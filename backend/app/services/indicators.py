@@ -30,7 +30,7 @@ SUMMER_MONTHS = (6, 7, 8)  # June, July, August
 
 # Risk thresholds (documented in docs/methodology.md).
 WARMING_THRESHOLD_C = 0.5  # warmer by >= 0.5 deg C -> 1 point
-DRYING_THRESHOLD_PCT = 5.0  # drier by >= 5 % -> 1 point
+DRYING_THRESHOLD_PCT = 5.0  # yearly OR summer rain drier by >= 5 % -> 1 point
 
 # NASA POWER marks missing values with -999.
 FILL_VALUE = -999
@@ -156,7 +156,12 @@ def climate_summary(csv_path: str | Path) -> dict[str, Any]:
     # Risk scoring uses the rounded values shown in the output, so the result
     # can be re-checked by hand from the JSON.
     warming = t_change >= WARMING_THRESHOLD_C
-    drying = rainfall["change_pct"]["value"] <= -DRYING_THRESHOLD_PCT
+    # Drying counts if yearly rain or summer (Jun-Aug) rain fell by the
+    # threshold or more. It is still one point, so the scale stays 0-2.
+    yearly_drying = rainfall["change_pct"]["value"] <= -DRYING_THRESHOLD_PCT
+    summer_drying = summer["change_pct"]["value"] <= -DRYING_THRESHOLD_PCT
+    drying = yearly_drying or summer_drying
+    drying_basis = [name for name, hit in (("yearly", yearly_drying), ("summer", summer_drying)) if hit]
     points = int(warming) + int(drying)
 
     return {
@@ -182,7 +187,11 @@ def climate_summary(csv_path: str | Path) -> dict[str, Any]:
             "points": _num(points, "points"),
             "drivers": {
                 "warming": {"triggered": warming, "points": _num(int(warming), "points")},
-                "drying": {"triggered": drying, "points": _num(int(drying), "points")},
+                "drying": {
+                    "triggered": drying,
+                    "points": _num(int(drying), "points"),
+                    "basis": drying_basis,
+                },
             },
         },
     }
