@@ -7,7 +7,7 @@
 
 Built by **Team Valor Astra** for the **NASA Space Apps Challenge 2026**.
 
-[Live app](https://rotara-chi.vercel.app) · [API docs](https://field-shift-backends.onrender.com/docs) · [Demo slides](https://canva.link/um5s5uhjp8bd9gc) · [Methodology](./docs/methodology.md)
+[Live app](https://rotara-chi.vercel.app) · [API docs](https://field-shift-backends.onrender.com/docs) · [Demo slides](https://canva.link/um5s5uhjp8bd9gc) · [Methodology](./docs/methodology.md) · [Background research](./docs/research.pdf)
 
 > The repo is called `field-shift` because that was our working name. The app is called Rotara.
 
