@@ -2,6 +2,7 @@ import { CloudRain, Lock, MapPin, Satellite, Sprout, Thermometer } from "lucide-
 import Image from "next/image";
 import { FieldIllustration } from "@/components/landing/FieldIllustration";
 import { Logo } from "@/components/layout/Logo";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ButtonLink } from "@/components/ui/Button";
 
 // Real results for the Norfolk example farm (NASA POWER, 2021-2025 vs 2001-2020), the same numbers the dashboard shows.
@@ -34,12 +35,14 @@ export default function Home() {
           alt=""
           fill
           priority
-          sizes="100vw"
+          // On a tall phone screen the wide photo is cropped by height, so it needs the full-size file to stay sharp.
+          sizes="(max-width: 1024px) 2400px, 100vw"
+          quality={85}
           className="object-cover"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(22,61,50,0.96)_0%,rgba(22,61,50,0.85)_55%,rgba(22,61,50,0.45)_100%)]"
+          className="absolute inset-0 bg-forest/90 md:bg-transparent md:bg-[linear-gradient(90deg,rgba(22,61,50,0.96)_0%,rgba(22,61,50,0.85)_55%,rgba(22,61,50,0.45)_100%)]"
         />
         <div className="relative mx-auto max-w-6xl px-4 pt-6 pb-14 sm:px-8 sm:pb-20">
           <Logo />
@@ -160,6 +163,7 @@ export default function Home() {
             Rotara supports your decisions. It does not replace local advice. Built by team Valor Astra for the
             NASA Space Apps Challenge 2026.
           </p>
+          <SiteFooter className="mt-6 border-t border-line pt-6" />
         </div>
       </section>
     </main>

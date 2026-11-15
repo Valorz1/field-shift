@@ -1,6 +1,14 @@
 import { FieldIllustration } from "@/components/landing/FieldIllustration";
 import { StatusTag } from "@/components/ui/StatusTag";
-import { headline, headlineStatus, seasonInsights, temperatureChange, rainChange, usualYears } from "@/lib/climate-facts";
+import {
+  headline,
+  headlineStatus,
+  rainChange,
+  seasonChangeLabel,
+  seasonInsights,
+  temperatureChange,
+  usualYears,
+} from "@/lib/climate-facts";
 import type { ClimateSite } from "@/lib/data/climate";
 import { formatSigned } from "@/lib/format";
 
@@ -10,7 +18,7 @@ export function DashboardHero({ site }: { site: ClimateSite }) {
   const figures = [
     { value: `${formatSigned(temperatureChange(site))} °C`, label: "temperature" },
     { value: `${formatSigned(rainChange(site), 0)}%`, label: "rain over the year" },
-    ...(summer ? [{ value: `${formatSigned(summer.percent, 0)}%`, label: "summer rain" }] : []),
+    ...(summer ? [{ value: seasonChangeLabel(summer), label: "summer rain" }] : []),
   ];
 
   return (
