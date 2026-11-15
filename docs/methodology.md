@@ -104,6 +104,12 @@ Real data: Norfolk's baseline is 10.08 °C, so it counts as cool. Nevada's is 13
 
 `rotation_rules.json` → `crop_aliases` treats names such as "winter wheat" and "wheat", "spring barley" and "barley", or "faba beans" and "field beans" as one crop. A farm is never offered the crop it already grows under another name.
 
+### Perennial crops (alfalfa)
+
+- `rotation_rules.json` → `perennials` lists crops whose stand is kept for several years. It currently holds only alfalfa.
+- Rule PE-1 (UW–Madison Extension): an alfalfa stand can stay productive for four to ten years or more. Reseeding alfalfa straight after alfalfa is not recommended (autotoxicity, seedling disease, pests); a break of at least 12 months has worked.
+- When the current crop is a perennial, every strategy gets two `risks`, one `gaps` note (stand age and density were not checked), the PE-1 evidence item and `current_crop_is_perennial: true`. The rotations themselves are not changed: an "alfalfa" year means keeping the stand, not sowing it again.
+
 ### Output fields
 
 Each strategy has: `id`, `title`, `rotation` (years 1–3, each `{year, crop, role}`), `why`, `evidence`, `benefits`, `risks`, `gaps`, `water_need`, `complexity`, `confidence`.

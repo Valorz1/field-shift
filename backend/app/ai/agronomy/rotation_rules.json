@@ -76,6 +76,11 @@
       "citation": "SARE, Managing Cover Crops Profitably, 3rd edition (2007), Nonlegume Cover Crops: Cereal Rye",
       "url": "https://www.sare.org/publications/managing-cover-crops-profitably/nonlegume-cover-crops/cereal-rye/",
       "supports": "Rye is the hardiest of cereals and the best cool-season cereal cover for absorbing unused soil nitrogen (a nutrient catch crop)."
+    },
+    "uw_alfalfa_autotoxicity": {
+      "citation": "Jennings, J. Understanding autotoxicity in alfalfa. University of Wisconsin-Madison Extension, Crops & Soils",
+      "url": "https://cropsandsoils.extension.wisc.edu/articles/understanding-autotoxicity-in-alfalfa",
+      "supports": "Alfalfa can remain productive in stands from four to ten years or more; reseeding alfalfa immediately following alfalfa is not recommended in most states due to autotoxicity, seedling disease and insect pests; rotation intervals of at least 12 months have been effective in avoiding autotoxic effects."
     }
   },
   "lower_water_rules": [
@@ -191,5 +196,14 @@
       "winter oilseed rape": "oilseed rape"
     },
     "source_ids": ["defra_landuse_2026", "foodfoundation_beans_2026"]
+  },
+  "perennials": {
+    "note": "Perennial crops: one stand is kept for several years, so the 3-year table shows planning slots, not a new sowing each year.",
+    "crops": ["alfalfa"],
+    "rule": {
+      "id": "PE-1",
+      "statement": "Alfalfa is a perennial: one stand can stay productive for four to ten years or more. Reseeding alfalfa straight after alfalfa is not recommended (autotoxicity, seedling disease, pests); a break of at least 12 months has worked.",
+      "source_ids": ["uw_alfalfa_autotoxicity"]
+    }
   }
 }
