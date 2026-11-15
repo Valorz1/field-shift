@@ -44,7 +44,7 @@ export function Sidebar() {
   }, [mark, ready]);
 
   return (
-    <aside id="app-sidebar" aria-label="Sidebar" className="fs-sidebar hidden bg-forest md:block">
+    <aside id="app-sidebar" aria-label="Sidebar" className="fs-sidebar relative z-30 hidden bg-forest md:block">
       <div className="fs-sidebar-inner sticky top-0 flex h-dvh flex-col px-3 pb-3">
         <div className="flex h-14 shrink-0 items-center pl-1.5">
           <Logo fades />
