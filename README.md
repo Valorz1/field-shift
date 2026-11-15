@@ -16,6 +16,12 @@ Prerequisites: Docker Desktop / Docker Engine with Compose.
 
 The initial scaffold includes service placeholders; connect data providers and a model runner before relying on live outputs.
 
+## Deploy the backend to Render
+
+The repository includes a Render Blueprint for the backend-only API service.
+See [backend/RENDER.md](./backend/RENDER.md) for deployment steps and environment
+variables.
+
 ## Data sources
 Planned integrations:
 - NASA POWER: meteorological and solar data.
