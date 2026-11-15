@@ -3,6 +3,7 @@ import {
   ClipboardList,
   Columns3,
   House,
+  Info,
   Layers,
   LayoutDashboard,
   type LucideIcon,
@@ -48,6 +49,7 @@ export const navGroups: NavGroup[] = [
       { href: "/guide", label: "What the words mean", shortLabel: "Guide", icon: BookOpen, keepsFarm: true },
       { href: "/session", label: "Farm session", shortLabel: "Session", icon: ClipboardList, keepsFarm: true },
       { href: "/settings", label: "Settings", shortLabel: "Settings", icon: Settings, keepsFarm: true },
+      { href: "/about", label: "About & disclosure", shortLabel: "About", icon: Info, keepsFarm: true },
     ],
   },
 ];
