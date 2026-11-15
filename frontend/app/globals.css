@@ -36,8 +36,8 @@
   --color-on-forest: #d8e4dc;
   --color-on-forest-muted: #b7cbbe;
 
-  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
 
   --radius-control: 10px;
   --radius-inner: 12px;
