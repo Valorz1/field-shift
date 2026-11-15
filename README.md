@@ -273,6 +273,7 @@ Rotara uses multiple datasets to analyse climate conditions and independently ex
 | NASA POWER — Daily | Frost, heat and heavy rainfall indicators over the last 30 days | Data can run several days behind |
 | [GPM IMERG](https://gpm.nasa.gov/data/imerg) — Monthly | Independent rainfall cross-checking | Different spatial grids |
 | [SMAP](https://nsidc.org/data/spl3smp_e/versions/6) — L3 Enhanced 9 km | Soil wetness comparison for Norfolk (2016–2025) | Measures the top 5 cm of soil |
+| [HLS](https://www.earthdata.nasa.gov/data/projects/hls) (Harmonized Landsat Sentinel-2) | The real satellite photo of Norfolk farmland on the home page | A single image from 11 June 2025, used for illustration only |
 
 ### Data validation
 
@@ -547,11 +548,20 @@ AI supported the development of Rotara, but the project's scientific calculation
 
 **AI in the application:** An optional Gemma 4 model explains existing recommendations. It does not generate plans or scientific numbers.
 
-**AI during development:** The team used Claude, GitHub Copilot and Base44 for coding, research, review and design support.
+**AI during development:** each team member, in their own words:
 
-Every change was reviewed and tested by a team member, and factual claims were checked against their sources.
+| Team member | AI tool | What for |
+|---|---|---|
+| Parambir | Claude (Anthropic), Base44 | Code, research, code review and slides; Base44 for an early dashboard design prototype |
+| Sanat | Claude Code (Anthropic) | Strategy engine and climate risk rules |
+| Abdirahman | Claude (Anthropic) | AI-assisted coding and research |
+| Júlia | Claude (Anthropic) | Writing code and testing |
+| Faizan | Microsoft Copilot (Codex model) | Building the deployment layer |
+| Ammar | ChatGPT (OpenAI) | Text formatting and research help |
 
-The farmland photograph on the presentation title slide is AI-generated and labelled.
+Commits made with Claude are marked as co-authored in the Git history. The demo slides were generated with Canva's AI from our own outline, then checked and edited by the team.
+
+Every change was reviewed and tested by a team member, and factual claims were checked against their sources. The live site has a full statement on its [About & disclosure page](https://rotara-chi.vercel.app/about).
 
 ---
 
