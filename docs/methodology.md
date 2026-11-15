@@ -74,7 +74,7 @@ Always three, in this order: `baseline`, `water_efficient`, `soil_restoration`. 
 - It uses the **baseline** temperature (the long-term climate of the place), not the recent one.
 - Each lower-water rule has `climates`: `["cool"]` or `["warm"]`. In a cool place only `cool` rules are used; in a warm place only `warm` rules are used. A `warm` tag does not mean the crop cannot grow in a cool place. It means no source was found that supports suggesting it there, so it is left out.
 - Cool-place crops (rule CL-1): oilseed rape, field beans, oats, spring barley, winter wheat. These are established arable crops in England (Defra land-use statistics, 2026). Oilseed rape is listed first because it did best in the dry 2026 UK season, and spring-sown crops are listed last because they struggled most (AHDB, 2026; rule CL-2, which is also added to the strategy's `risks`).
-- Warm-place crops are unchanged: sorghum, millet, chickpea, cowpea (rules WE-1 to WE-3).
+- Warm-place crops: sorghum, millet, cowpea, chickpea (rules WE-1 to WE-3). Cowpea is listed before chickpea because it is a warm-season legume and chickpea is a cool-season one (Sita et al., 2017, *Frontiers in Plant Science* 8:1658). So for Nevada/alfalfa the first suggested crop is cowpea, not chickpea.
 - The cool-climate sources say where these crops are grown, not how much water they use. So in a cool place the strategy title says "add crops suited to a cool climate", not "lower-water crops", and `water_need` says the water use was not compared.
 - The zone and the reason (the baseline temperature against 12 °C) are in the strategy's `climate_zone` field and its `evidence`.
 
