@@ -2,6 +2,7 @@
 
 import { type ReactNode, useState, useSyncExternalStore } from "react";
 import { MobileNav } from "./MobileNav";
+import { SiteFooter } from "./SiteFooter";
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 
@@ -37,6 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="mx-auto w-full max-w-[1120px] flex-1 [overflow-wrap:anywhere] px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:pb-14 lg:px-10 lg:pt-8"
         >
           {children}
+          <SiteFooter className="mt-14 border-t border-line pt-6" />
         </main>
       </div>
       <MobileNav />

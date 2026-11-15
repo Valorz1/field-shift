@@ -1,149 +1,588 @@
-# Rotara
+# ROTARA
+### Turning NASA Earth data into smarter crop rotation decisions.
 
-**Crop rotation plans from NASA data. The farmer decides.**
+<p align="center">
+  <strong>25 YEARS OF NASA DATA · 3 INTELLIGENT ROTATION PLANS · 1 FARMER-FIRST APPROACH</strong>
+</p>
 
-Built by team **Valor Astra** for the NASA Space Apps Challenge 2026, challenge *Field Shift: Adapting Farms with NASA Data*.
+<p align="center">
+  Built for the <strong>NASA Space Apps Challenge 2026</strong><br/>
+  by <strong>TEAM VALOR ASTRA</strong>
+</p>
 
-| | |
+<p align="center">
+  <a href="https://rotara-chi.vercel.app"><strong>EXPLORE ROTARA</strong></a>
+  &nbsp; · &nbsp;
+  <a href="https://field-shift-backends.onrender.com/docs"><strong>API DOCUMENTATION</strong></a>
+  &nbsp; · &nbsp;
+  <a href="./docs/methodology.md"><strong>OUR METHODOLOGY</strong></a>
+</p>
+
+---
+
+## THE IDEA
+
+**What if farmers could see how their climate is changing before deciding what to plant next?**
+
+Climate change is not just about hotter temperatures or less rainfall. It is also about *when* rain falls, how soil moisture changes, and whether traditional crop choices will remain suitable.
+
+Farmers need information they can actually use.
+
+That's where **Rotara** comes in.
+
+Rotara combines 25 years of NASA Earth observation data with agronomic research to help farmers understand their fields and explore smarter crop rotation strategies.
+
+Find your field.  
+Understand its climate.  
+Explore three possible futures.  
+Make the decision yourself.
+
+**We bring the data. You stay in control.**
+
+---
+
+## EXPLORE ROTARA
+
+| Resource | Link |
 |---|---|
-| Live site | https://field-shift-frontend-seven.vercel.app |
-| Demo (slides) | DEMO_SLIDES_URL |
-| Backend API docs | https://field-shift-backends.onrender.com/docs |
+| Live application | [Launch Rotara](https://rotara-chi.vercel.app) |
+| Backend API | [Explore API documentation](https://field-shift-backends.onrender.com/docs) |
+| Demo presentation | `DEMO_SLIDES_URL` |
 
-## What it does
+---
 
-A farmer drops a pin (or types a postcode), picks the crop they grow, and says what matters to them. Rotara compares 25 years of NASA data for that field and offers **3 crop rotations for the next 3 years**:
+## WHAT MAKES ROTARA DIFFERENT?
 
-1. **Keep the current crop**: the reference case.
-2. **Mix in crops that suit the climate**: for example wheat → oilseed rape → field beans.
-3. **Build up the soil**: add a cover crop, often a legume.
+Most climate dashboards show you numbers.
 
-Each plan shows which of the farmer's priorities it meets, what to check first, why it was suggested, the cited evidence, the risks, and what was not checked. The farmer always makes the choice.
+**Rotara connects those numbers to decisions.**
 
-### Why it matters: the Norfolk example
+Instead of simply telling a farmer that summer rainfall has decreased, Rotara explores what that could mean for crop choices and presents alternative rotations backed by documented agronomic rules.
 
-In Norfolk, UK, rain over the whole year hardly changed: 706 mm a year in 2001–2020, 693 mm in 2021–2025 (−2%). Summer rain fell from 206 mm to 145 mm (−30%), right when crops fill their grain.
+### 01 — Climate intelligence
 
-This is not one bad year. All 5 summers from 2021 to 2025 were below the 2001–2020 average, and 2022 (95 mm) and 2025 (105 mm) were drier than any summer from 2001 to 2020 (the driest had 120 mm). A yearly total hides this; Rotara shows it.
+Analyse 25 years of NASA POWER data to compare recent conditions against historical averages.
 
-## Features
+### 02 — Seasonal change detection
 
-- **Find your field**: drop a pin or search a postcode or village (Mapbox).
-- **What changed**: temperature, yearly and seasonal rain, root-zone soil wetness and a climate risk level, recent (2021–2025) against usual (2001–2020).
-- **Field risks**: frost nights, heat-stress days (30 °C or more) and heavy rain days (20 mm or more) in the last 30 days, and summer plant water stress.
-- **About your farm**: priorities (use less water, build organic matter, add nitrogen, stop soil washing away, fewer pests and diseases, feed for livestock, easy to sell, keep changes small), water, kit, buyer, soil type and organic matter from a soil test.
-- **3 plans**: each with "Matches X of your priorities", ✓ what fits, ! what to check, and a "Best fit" badge only when one plan clearly leads.
-- **Compare** the plans side by side.
-- **What the words mean**: NDVI, evapotranspiration, soil moisture anomaly, pest breaks, and satellite vs model vs ground data.
-- **Ask about your field** (optional): a local Gemma 4 model explains the plans in 1–2 lines, at an AI level the farmer chooses. It never creates plans or numbers.
-- **Private by design**: no account, nothing stored. The session lives in the browser tab and is gone when it closes.
+See changes in temperature, annual rainfall, summer rainfall and soil wetness.
 
-## How the plans are made
+### 03 — Three-year crop strategies
 
-No AI model produces any number or plan. Everything is calculated or comes from cited rules.
+Explore three different crop rotation scenarios, each designed around a different agricultural objective.
 
-1. **Climate summary** (`backend/app/services/indicators.py`). From NASA POWER monthly data, using complete years only.
-2. **Risk level**: 1 point if it got **warmer by 0.5 °C or more**, 1 point if **yearly or summer rain fell by 5% or more**. 0 = low, 1 = moderate, 2 = high. These are screening thresholds chosen by the team, documented in [docs/methodology.md](./docs/methodology.md).
-3. **3 plans** (`backend/app/services/strategy_engine.py`). Built from crop rules in [`rotation_rules.json`](./backend/app/ai/agronomy/rotation_rules.json), each linked to one of 17 published sources. For example:
-   - **Pulse break**: pulses such as field beans or peas never appear twice in 3 years. AHDB advises at least five years between pulse crops.
-   - **Alfalfa**: a stand lasts 4–10+ years and should not be resown straight after itself (UW–Madison Extension).
-   - **Warm places**: cowpea, a warm-season legume, comes before chickpea, a cool-season one (Sita et al., 2017).
-4. **Farmer answers** (`frontend/lib/farm-profile.ts`) never change the science. They add notes to each plan, worked out from what the plan already contains (its crops, water need and how big a change it is).
+### 04 — Evidence, not AI guesses
 
-## NASA data
+Crop plans are generated through documented agronomic rules and published research, not an AI model making up recommendations.
 
-| Dataset | Used for | Limits |
+### 05 — Farmer-first decisions
+
+Farmers can set their priorities, compare trade-offs and decide which strategy makes sense for their land.
+
+---
+
+## THE ROTARA EXPERIENCE
+
+### 01. Find your field
+
+Drop a pin on the interactive map or search for a postcode or village.
+
+Powered by Mapbox.
+
+### 02. Discover what is changing
+
+Rotara analyses climate indicators using two comparison periods:
+
+| Period | Role |
+|---|---|
+| 2001–2020 | Historical baseline |
+| 2021–2025 | Recent conditions |
+
+Explore:
+- Temperature changes.
+- Annual and seasonal precipitation.
+- Root-zone soil wetness.
+- Topsoil wetness.
+- Climate risk screening.
+
+### 03. Tell us about your farm
+
+Every farm has different needs.
+
+Farmers can select priorities such as:
+
+- Use less water.
+- Build organic matter.
+- Add nitrogen.
+- Reduce soil erosion.
+- Reduce pest and disease pressure.
+- Produce livestock feed.
+- Maintain marketability.
+- Keep changes manageable.
+
+They can also provide information about water availability, equipment, buyers, soil type and soil organic matter.
+
+### 04. Explore three possible futures
+
+Rotara generates three alternative crop rotation plans for the next three years.
+
+| Strategy | What it explores |
+|---|---|
+| **The Baseline** | Keep the current crop as a reference scenario |
+| **The Climate Switch** | Introduce crops that may better suit the identified climate conditions |
+| **The Soil Builder** | Incorporate cover crops, often legumes, to support soil health |
+
+Every strategy includes:
+
+- A priority matching score.
+- What works for the farmer's goals.
+- What needs checking.
+- Why the strategy was suggested.
+- Published supporting evidence.
+- Potential risks.
+- Important limitations and unchecked factors.
+
+A **Best Fit** label is shown only when one strategy clearly leads.
+
+### 05. Compare. Understand. Decide.
+
+Compare all three strategies side by side.
+
+Rotara does not force a decision or pretend there is one perfect rotation.
+
+**The farmer has the final say. Always.**
+
+---
+
+## REAL DATA. REAL CLIMATE INSIGHTS.
+
+### The Norfolk case study
+
+One of the most interesting findings from our analysis came from Norfolk, UK.
+
+At first glance, annual rainfall seems relatively stable.
+
+But look closer.
+
+| Rainfall indicator | 2001–2020 | 2021–2025 | Difference |
+|---|---:|---:|---:|
+| Annual rainfall | 706 mm | 693 mm | −2% |
+| Summer rainfall | 206 mm | 145 mm | **−30%** |
+
+<details>
+<summary><strong>Why is this important?</strong></summary>
+
+Summer rainfall is particularly important during crop development and grain filling.
+
+Despite only a 2% reduction in annual rainfall, summer rainfall decreased by 30%.
+
+The pattern was consistent across the recent period:
+
+- Every summer from 2021 to 2025 was below the 2001–2020 summer average.
+- Summer 2022 recorded just 95 mm.
+- Summer 2025 recorded just 105 mm.
+- Both were below the driest summer in the 2001–2020 baseline, which recorded 120 mm.
+
+**The takeaway:** Annual averages can hide important seasonal changes. Rotara helps bring those changes to the surface.
+
+</details>
+
+This is exactly the kind of insight we want to make accessible to farmers.
+
+---
+
+## UNDER THE HOOD: HOW ROTARA WORKS
+
+**No AI model generates our scientific numbers or crop rotation plans.**
+
+Rotara uses a combination of climate calculations, documented agronomic rules and published research.
+
+### 1. Climate analysis
+
+Implementation: `backend/app/services/indicators.py`
+
+NASA POWER monthly data is processed using complete years only.
+
+The application calculates climate indicators and compares recent conditions with the historical baseline.
+
+### 2. Climate risk screening
+
+Rotara uses two team-defined screening thresholds:
+
+| Condition | Points |
+|---|---:|
+| Temperature increased by 0.5 °C or more | +1 |
+| Annual or summer rainfall decreased by 5% or more | +1 |
+
+| Total score | Classification |
+|---|---|
+| 0 | LOW |
+| 1 | MODERATE |
+| 2 | HIGH |
+
+These are project-specific screening thresholds, not official agricultural risk classifications.
+
+Full details: [`docs/methodology.md`](./docs/methodology.md).
+
+### 3. Agronomic strategy engine
+
+Implementation: `backend/app/services/strategy_engine.py`
+
+Rotations are generated using documented crop rules:
+
+[`rotation_rules.json`](./backend/app/ai/agronomy/rotation_rules.json)
+
+These rules are connected to 17 published sources.
+
+Some examples:
+
+**Pulse crop breaks**
+
+Pulses such as field beans and peas are not repeated within the three-year rotation. AHDB recommends at least five years between pulse crops.
+
+**Alfalfa management**
+
+Alfalfa stands can last 4–10+ years and should not be resown immediately after themselves, following UW–Madison Extension guidance.
+
+**Climate suitability**
+
+Warm-season legumes such as cowpea are positioned before cool-season legumes such as chickpea, based on research by Sita et al. (2017).
+
+### 4. Farmer preference matching
+
+Implementation: `frontend/lib/farm-profile.ts`
+
+Farmer answers do not change the underlying science.
+
+Instead, Rotara evaluates the characteristics of existing plans, including:
+- Which crops they contain.
+- Their water requirements.
+- How substantial the required changes are.
+
+This provides context about how each plan aligns with farmer priorities.
+
+---
+
+## POWERED BY NASA EARTH OBSERVATION
+
+Rotara uses multiple datasets to analyse climate conditions and independently examine important patterns.
+
+| Dataset | What we use it for | Important limitation |
 |---|---|---|
-| [NASA POWER](https://power.larc.nasa.gov/), monthly, 2001–2025 | Temperature, rain, root-zone and topsoil wetness, live for any pin | Modelled (MERRA-2), about a 50 km grid; does not know the farm's soil or irrigation |
-| NASA POWER, daily | Frost, heat-stress and heavy rain days in the last 30 days | Runs a few days behind today |
-| [GPM IMERG](https://gpm.nasa.gov/data/imerg), monthly | Checks POWER rain: Norfolk 706 vs 735 mm a year, Nevada 170 vs 170 mm | Different grids, so agreement supports but does not prove either |
-| [SMAP](https://nsidc.org/data/spl3smp_e/versions/6) L3 Enhanced 9 km (SPL3SMP_E v006), via AppEEARS | Checks the pattern of POWER soil wetness for Norfolk, 2016–2025 | Top 5 cm only. Nevada: 0 of 1,492 readings were of recommended quality, so none are used |
+| [NASA POWER](https://power.larc.nasa.gov/) — Monthly | Temperature, rainfall, root-zone and topsoil wetness (2001–2025) | MERRA-2 modelled data, approximately 50 km grid |
+| NASA POWER — Daily | Frost, heat and heavy rainfall indicators over the last 30 days | Data can run several days behind |
+| [GPM IMERG](https://gpm.nasa.gov/data/imerg) — Monthly | Independent rainfall cross-checking | Different spatial grids |
+| [SMAP](https://nsidc.org/data/spl3smp_e/versions/6) — L3 Enhanced 9 km | Soil wetness comparison for Norfolk (2016–2025) | Measures the top 5 cm of soil |
 
-## What Rotara cannot know
+### Data validation
 
-- The farm's own soil, drainage, slope and irrigation, unless the farmer tells it.
-- Pests, weeds and diseases on the farm, crop prices, yields and contracts.
-- What the weather will do next. Everything is what has already happened.
-- Whether a plan is right. It is a starting point to talk through with an agronomist.
+We also compared independent datasets to understand where the observed patterns agree.
 
-Two data notes: the recent period is only 5 years, so it shows recent change, not a climate trend. In Western Nevada summer rain is only about 20 mm, so a few millimetres show as a large percentage.
+| Location | NASA POWER rainfall | GPM IMERG rainfall |
+|---|---:|---:|
+| Norfolk | 706 mm | 735 mm |
+| Nevada | 170 mm | 170 mm |
 
-## Run it locally
+SMAP observations were used to check the pattern of NASA POWER soil wetness in Norfolk.
 
-You need Python 3.12 and Node.js 20 or later.
+For Nevada, 0 out of 1,492 SMAP readings met recommended quality criteria, so none were used.
 
-**Backend** (terminal 1):
+**We believe transparency matters as much as accuracy.** Where data quality is limited, we make that limitation visible rather than hiding it.
+
+---
+
+## OPTIONAL AI ASSISTANT
+
+Rotara includes an optional locally hosted **Gemma 4** model for explaining existing recommendations.
+
+It can turn technical explanations into simpler one- or two-line answers, with the explanation level selected by the farmer.
+
+But there is an important distinction:
+
+| AI can | AI cannot |
+|---|---|
+| Explain existing plans | Generate crop rotation plans |
+| Simplify technical language | Calculate climate indicators |
+| Help users understand recommendations | Invent scientific evidence |
+
+The science and strategy generation remain separate from the language model.
+
+---
+
+## PRIVACY BY DESIGN
+
+Farm information should belong to the farmer.
+
+Rotara is designed without mandatory accounts or server-side user profiles.
+
+- No account required.
+- No farm profile stored on a server.
+- Information stays in the browser session.
+- Session data disappears when the browser tab closes.
+
+---
+
+## WHAT ROTARA DOES NOT KNOW
+
+We believe an honest tool is a better tool.
+
+Rotara cannot independently determine:
+
+- Actual soil composition, drainage, slope or irrigation conditions.
+- Existing pests, weeds or diseases.
+- Crop prices, yields, contracts or buyer requirements.
+- Future weather conditions.
+- Whether a proposed rotation will succeed on a particular farm.
+
+Some details can be supplied by the farmer, but not independently verified by the application.
+
+**Important considerations:**
+
+- The recent comparison period is only five years. It shows recent change, not a definitive long-term climate trend.
+- Western Nevada receives around 20 mm of summer rainfall, so small changes can produce large percentage differences.
+- NASA POWER uses modelled data and cannot capture every field-level difference.
+- Satellite and model data should be considered alongside local measurements and professional expertise.
+
+Rotara is a decision-support prototype, not a replacement for an agronomist.
+
+---
+
+## TECHNOLOGY STACK
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js |
+| Backend | Python, FastAPI |
+| Climate data | NASA POWER |
+| Rainfall validation | GPM IMERG |
+| Soil moisture validation | SMAP |
+| Interactive mapping | Mapbox |
+| Optional AI explanations | Gemma 4 via Ollama |
+| Backend deployment | Render |
+| Frontend deployment | Vercel |
+| Containerisation | Docker |
+
+---
+
+## RUN ROTARA LOCALLY
+
+### Prerequisites
+
+- Python 3.12
+- Node.js 20+
+- npm
+- Git
+
+### 1. Clone the repository
+
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd <YOUR_REPOSITORY_NAME>
+```
+
+### 2. Start the backend
 
 ```bash
 cd backend
+
 python -m venv .venv
-# Windows: .venv\Scripts\activate    macOS/Linux: source .venv/bin/activate
+```
+
+Activate the environment:
+
+**Windows**
+
+```bash
+.venv\Scripts\activate
+```
+
+**macOS / Linux**
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies and start the API:
+
+```bash
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-The API runs at http://localhost:8000 (docs at http://localhost:8000/docs).
+Backend: http://localhost:8000
 
-**Frontend** (terminal 2):
+API documentation: http://localhost:8000/docs
+
+### 3. Start the frontend
+
+Open another terminal:
 
 ```bash
 cd frontend
+
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000. For the map and address search, put a free Mapbox token in `frontend/.env.local`:
+Frontend: http://localhost:3000
 
-```
+### 4. Configure Mapbox
+
+Create `frontend/.env.local`:
+
+```env
 NEXT_PUBLIC_MAPBOX_TOKEN=your-token
 ```
 
-**Optional chat**: run [Ollama](https://ollama.com/) with `gemma4:e4b` (see `scripts/pull-model.sh`). Everything else works without it.
+Add your Mapbox public access token to enable maps and address search.
 
-**Or with Docker**: copy `.env.example` to `.env`, then `docker compose up --build`.
+### 5. Optional AI setup
 
-**Tests**:
+Install [Ollama](https://ollama.com/) and run the `gemma4:e4b` model.
+
+See `scripts/pull-model.sh` for setup instructions.
+
+The core application works without the optional model.
+
+### 6. Run using Docker
+
+Alternatively:
 
 ```bash
-cd backend && python -m pytest -q
+cp .env.example .env
+docker compose up --build
 ```
 
-## Environment variables
+### 7. Run tests
 
-| Variable | Where | What |
+```bash
+cd backend
+python -m pytest -q
+```
+
+---
+
+## ENVIRONMENT VARIABLES
+
+| Variable | Location | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_API_URL` | Frontend | Backend URL. Default `http://localhost:8000` |
-| `NEXT_PUBLIC_MAPBOX_TOKEN` | Frontend | Mapbox public token for the map and address search. Never commit it |
-| `ALLOWED_ORIGINS` | Backend | Deployed frontend URL(s), comma-separated, no trailing slash. `localhost:3000` is always allowed |
-| `MODEL_BASE_URL`, `MODEL_NAME` | Backend | Ollama-compatible model for the optional chat |
+| `NEXT_PUBLIC_API_URL` | Frontend | Backend URL; defaults to `http://localhost:8000` |
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | Frontend | Mapbox public access token |
+| `ALLOWED_ORIGINS` | Backend | Comma-separated frontend origins |
+| `MODEL_BASE_URL` | Backend | Ollama-compatible model server |
+| `MODEL_NAME` | Backend | Optional model name |
 
-## Deploy
+Do not commit private credentials or secrets.
 
-- **Backend on Render**: New → Blueprint → this repo. It uses [`render.yaml`](./render.yaml); see [backend/RENDER.md](./backend/RENDER.md).
-- **Frontend on Vercel**: import this repo with root directory `frontend`, and set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_MAPBOX_TOKEN`.
-- Then set `ALLOWED_ORIGINS` on the backend to the Vercel URL.
+---
 
-The chat needs a model server, so it does not run on the deployed site.
+## DEPLOYMENT
 
-## Project structure
+### Backend — Render
 
+1. Create a new Blueprint on Render.
+2. Connect this repository.
+3. Use [`render.yaml`](./render.yaml) for deployment configuration.
+
+Additional instructions: [`backend/RENDER.md`](./backend/RENDER.md).
+
+### Frontend — Vercel
+
+1. Import the repository into Vercel.
+2. Set the root directory to `frontend`.
+3. Configure `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_MAPBOX_TOKEN`.
+4. Deploy.
+
+Finally, configure `ALLOWED_ORIGINS` on the backend to include the deployed Vercel URL.
+
+**Note:** The optional AI assistant requires a separate model server and is not available on the deployed application by default.
+
+---
+
+## PROJECT STRUCTURE
+
+```text
+ROTARA/
+│
+├── backend/
+│   ├── app/
+│   │   ├── services/
+│   │   │   ├── indicators.py
+│   │   │   └── strategy_engine.py
+│   │   └── ai/
+│   │       └── agronomy/
+│   │           └── rotation_rules.json
+│   ├── requirements.txt
+│   └── RENDER.md
+│
+├── frontend/
+│   ├── app/
+│   └── lib/
+│       └── farm-profile.ts
+│
+├── data/
+│   └── raw/
+│       └── NASA POWER, GPM IMERG and SMAP data
+│
+├── docs/
+│   ├── methodology.md
+│   ├── architecture/
+│   ├── privacy/
+│   └── design notes
+│
+├── scripts/
+│   └── pull-model.sh
+│
+├── render.yaml
+├── docker-compose.yml
+├── .env.example
+└── LICENSE
 ```
-backend/   FastAPI API, climate indicators, strategy engine, crop rules, tests
-frontend/  Next.js app (dashboard, plans, compare, soil, climate, guide)
-data/raw/  NASA POWER, GPM IMERG and SMAP data for the two example farms
-docs/      methodology, architecture, privacy, design notes
-```
 
-## Use of AI
+---
 
-- **In the app**: optional Gemma 4 chat, run locally, that explains the existing plans. It does not make plans.
-- **In building it**: the team used AI assistants (including Claude, GitHub Copilot and Base44) for code, research, review and design. Every change was reviewed and tested by a team member, and facts were checked against their sources.
-- The farmland photo on the title slide is AI-generated and labelled.
+## TRANSPARENCY: OUR USE OF AI
 
-## Team Valor Astra
+AI supported the development of Rotara, but the project's scientific calculations and crop rotation logic are independently implemented.
 
-Parambir · Sanat · Abdirahman · Júlia · Faizan · Ammar
+**AI in the application:** An optional Gemma 4 model explains existing recommendations. It does not generate plans or scientific numbers.
 
-## Licence and disclaimer
+**AI during development:** The team used Claude, GitHub Copilot and Base44 for coding, research, review and design support.
 
-[MIT](./LICENSE). Rotara is a student prototype. Its plans are a starting point, not advice: check them with local experts and your own field before acting.
+Every change was reviewed and tested by a team member, and factual claims were checked against their sources.
+
+The farmland photograph on the presentation title slide is AI-generated and labelled.
+
+---
+
+## THE TEAM BEHIND ROTARA
+
+### TEAM VALOR ASTRA
+
+**Parambir · Sanat · Abdirahman · Júlia · Faizan · Ammar**
+
+Built with curiosity, collaboration and a shared interest in using space technology to solve challenges here on Earth.
+
+Created for the **NASA Space Apps Challenge 2026**.
+
+---
+
+## LICENCE
+
+Released under the [MIT Licence](./LICENSE).
+
+Rotara is a student-built prototype. Its crop rotation plans are intended for exploration and decision support, not professional agricultural advice.
+
+Always verify recommendations against local field conditions, measurements and qualified agricultural expertise before implementation.
+
+---
+
+<p align="center">
+
+### BETTER DATA. SMARTER ROTATIONS. STRONGER FUTURES.
+
+**The satellite sees the change. Rotara explains the possibilities. The farmer decides.**
+
+**TEAM VALOR ASTRA — NASA SPACE APPS CHALLENGE 2026**
+
+</p>

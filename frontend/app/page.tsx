@@ -2,6 +2,7 @@ import { CloudRain, Lock, MapPin, Satellite, Sprout, Thermometer } from "lucide-
 import Image from "next/image";
 import { FieldIllustration } from "@/components/landing/FieldIllustration";
 import { Logo } from "@/components/layout/Logo";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ButtonLink } from "@/components/ui/Button";
 
 // Real results for the Norfolk example farm (NASA POWER, 2021-2025 vs 2001-2020), the same numbers the dashboard shows.
@@ -162,6 +163,7 @@ export default function Home() {
             Rotara supports your decisions. It does not replace local advice. Built by team Valor Astra for the
             NASA Space Apps Challenge 2026.
           </p>
+          <SiteFooter className="mt-6 border-t border-line pt-6" />
         </div>
       </section>
     </main>
