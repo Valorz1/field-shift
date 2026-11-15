@@ -1,5 +1,5 @@
 # Rotara
-[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-Visit_Rotara-163d32?style=for-the-badge)](https://rotara-chi.vercel.app/) [![Pitch Deck](https://img.shields.io/badge/PITCH_DECK-View_Slides-ddb355?style=for-the-badge&logo=canva&logoColor=163d32)](https://canva.link/um5s5uhjp8bd9gc) [![NASA Space Apps 2026](https://img.shields.io/badge/NASA-SPACE_APPS_2026-2f6b4f?style=for-the-badge)](https://www.spaceappschallenge.org/)
+[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-Visit_Rotara-163d32?style=for-the-badge)](https://rotara-chi.vercel.app/) [![Demo Video](https://img.shields.io/badge/DEMO_VIDEO-Watch_30s-c4302b?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/_YVbdCdE7Lo) [![Pitch Deck](https://img.shields.io/badge/PITCH_DECK-View_Slides-ddb355?style=for-the-badge&logo=canva&logoColor=163d32)](https://canva.link/um5s5uhjp8bd9gc) [![NASA Space Apps 2026](https://img.shields.io/badge/NASA-SPACE_APPS_2026-2f6b4f?style=for-the-badge)](https://www.spaceappschallenge.org/)
 
  ![Next.js](https://img.shields.io/badge/Next.js-163d32?style=for-the-badge&logo=next.js&logoColor=white) ![Python](https://img.shields.io/badge/Python-ddb355?style=for-the-badge&logo=python&logoColor=black) ![FastAPI](https://img.shields.io/badge/FastAPI-2f6b4f?style=for-the-badge&logo=fastapi&logoColor=white) [![MIT License](https://img.shields.io/badge/License-MIT-ddb355?style=for-the-badge)](https://github.com/Valorz1/field-shift/blob/main/LICENSE)
 
@@ -7,9 +7,13 @@
 
 Built by **Team Valor Astra** for the **NASA Space Apps Challenge 2026**.
 
-[Live app](https://rotara-chi.vercel.app) · [API docs](https://field-shift-backends.onrender.com/docs) · [Demo slides](https://canva.link/um5s5uhjp8bd9gc) · [Methodology](./docs/methodology.md) · [Background research](./docs/research.pdf)
+[Live app](https://rotara-chi.vercel.app) · [Demo video](https://youtu.be/_YVbdCdE7Lo) · [API docs](https://field-shift-backends.onrender.com/docs) · [Demo slides](https://canva.link/um5s5uhjp8bd9gc) · [Methodology](./docs/methodology.md) · [Background research](./docs/research.pdf)
 
 > The repo is called `field-shift` because that was our working name. The app is called Rotara.
+
+[![Watch the 30-second Rotara demo](https://img.youtube.com/vi/_YVbdCdE7Lo/hqdefault.jpg)](https://youtu.be/_YVbdCdE7Lo)
+
+*Watch the 30-second demo on YouTube.*
 
 ---
 
@@ -379,7 +383,7 @@ field-shift/
 | Faizan | Microsoft Copilot (Codex model) | Building the deployment layer |
 | Ammar | ChatGPT (OpenAI) | Text formatting and research help |
 
-Commits made with Claude are marked as co-authored in the Git history. The demo slides were generated with Canva's AI from our own outline, then checked and edited by the team. A team member reviewed and tested every change, and we checked factual claims against their sources.
+Commits made with Claude are marked as co-authored in the Git history. The demo slides were generated with Canva's AI from our own outline, then checked and edited by the team. The [demo video](https://youtu.be/_YVbdCdE7Lo) was made by the team from real recordings of the app, the NASA HLS satellite image and Pixabay music (Pixabay Content License), with light AI help for editing; the voiceover is a team member. A team member reviewed and tested every change, and we checked factual claims against their sources.
 
 The live site has a full statement on its [About & disclosure page](https://rotara-chi.vercel.app/about).
 
