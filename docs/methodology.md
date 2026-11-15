@@ -40,7 +40,7 @@ All values are rounded to 2 decimals before differences, percentages and thresho
 | Rule | Threshold | Points |
 |---|---|---|
 | Warmer | temperature change **≥ +0.5 °C** | 1 |
-| Drier | yearly rain change **≤ −5 %** (drier by 5 % or more) | 1 |
+| Drier | yearly rain change **≤ −5 %**, **or** summer (Jun–Aug) rain change **≤ −5 %** | 1 |
 
 | Points | Risk level |
 |---|---|
@@ -50,7 +50,9 @@ All values are rounded to 2 decimals before differences, percentages and thresho
 
 Notes:
 - A value exactly on a threshold (+0.50 °C, −5.00 %) counts as triggered. This is covered by tests.
-- "Drier" is judged on **yearly** rain, as set out in the task brief. Summer rain change is calculated and reported, but it does not score points.
+- "Drier" is judged on yearly rain **or** summer rain. Either one, or both, gives 1 point, so the scale stays 0–2. `risk.drivers.drying.basis` lists which one triggered (`["yearly"]`, `["summer"]`, both, or `[]`).
+- Why summer counts: a place can lose a lot of summer rain, when crops need it most, while its yearly total hardly changes. Norfolk is the example: yearly rain −1.78 %, summer rain −29.58 %. Before this rule Norfolk scored moderate; now it scores high.
+- The summer trigger reuses the same −5 % threshold as yearly rain. It is a team screening choice, not a published standard. Summer rain varies a lot from year to year, and the recent period has only 5 summers, so a summer trigger is less certain than a yearly one.
 - The thresholds are constants in `indicators.py` (`WARMING_THRESHOLD_C`, `DRYING_THRESHOLD_PCT`). They are simple screening thresholds chosen by the team, not values taken from a published standard.
 
 ## 4. Strategies (`strategy_engine.build_strategies`)
@@ -74,7 +76,7 @@ Always three, in this order: `baseline`, `water_efficient`, `soil_restoration`. 
 - It uses the **baseline** temperature (the long-term climate of the place), not the recent one.
 - Each lower-water rule has `climates`: `["cool"]` or `["warm"]`. In a cool place only `cool` rules are used; in a warm place only `warm` rules are used. A `warm` tag does not mean the crop cannot grow in a cool place. It means no source was found that supports suggesting it there, so it is left out.
 - Cool-place crops (rule CL-1): oilseed rape, field beans, oats, spring barley, winter wheat. These are established arable crops in England (Defra land-use statistics, 2026). Oilseed rape is listed first because it did best in the dry 2026 UK season, and spring-sown crops are listed last because they struggled most (AHDB, 2026; rule CL-2, which is also added to the strategy's `risks`).
-- Warm-place crops are unchanged: sorghum, millet, chickpea, cowpea (rules WE-1 to WE-3).
+- Warm-place crops: sorghum, millet, cowpea, chickpea (rules WE-1 to WE-3). Cowpea is listed before chickpea because it is a warm-season legume and chickpea is a cool-season one (Sita et al., 2017, *Frontiers in Plant Science* 8:1658). So for Nevada/alfalfa the first suggested crop is cowpea, not chickpea.
 - The cool-climate sources say where these crops are grown, not how much water they use. So in a cool place the strategy title says "add crops suited to a cool climate", not "lower-water crops", and `water_need` says the water use was not compared.
 - The zone and the reason (the baseline temperature against 12 °C) are in the strategy's `climate_zone` field and its `evidence`.
 
@@ -87,9 +89,26 @@ Real data: Norfolk's baseline is 10.08 °C, so it counts as cool. Nevada's is 13
 - water_efficient is not changed by this check: grain legumes there (chickpea, cowpea) are rotation crops, not a "add a legume for nitrogen" step.
 - Crops not on the list are treated as non-legumes.
 
+### Pulse break
+
+- `rotation_rules.json` → `pulses` lists pulse (grain legume) crops: beans including field/faba/broad beans, peas, chickpea, lentil, cowpea. Forage legumes such as alfalfa and clover are legumes but **not** pulses.
+- Rule PG-1: leave at least five years between pulse crops, to reduce soil-borne disease (AHDB, 19 August 2026). A 3-year table cannot show a 5-year break, so the engine makes sure it **never holds more than one pulse**.
+- Current crop is a pulse:
+  - soil_restoration: year 3 is a cereal instead of the pulse again. That is winter wheat in a cool place (from CL-1) or sorghum in a warm place (from WE-1). Example: field beans → cereal rye → winter wheat.
+  - water_efficient: no other pulse is offered. If no other crop is left, the cereal is used.
+  - baseline: the rotation stays unchanged (it is the reference case), but `risks` says it goes against the pulse break.
+  - All three get a `gaps` note: the field's pulse history was not checked.
+- Current crop is not a pulse: water_efficient can still add one pulse (e.g. chickpea), but never two. If every later option is also a pulse, the zone's cereal is used in year 3 instead.
+
 ### Same crop, different name
 
 `rotation_rules.json` → `crop_aliases` treats names such as "winter wheat" and "wheat", "spring barley" and "barley", or "faba beans" and "field beans" as one crop. A farm is never offered the crop it already grows under another name.
+
+### Perennial crops (alfalfa)
+
+- `rotation_rules.json` → `perennials` lists crops whose stand is kept for several years. It currently holds only alfalfa.
+- Rule PE-1 (UW–Madison Extension): an alfalfa stand can stay productive for four to ten years or more. Reseeding alfalfa straight after alfalfa is not recommended (autotoxicity, seedling disease, pests); a break of at least 12 months has worked.
+- When the current crop is a perennial, every strategy gets two `risks`, one `gaps` note (stand age and density were not checked), the PE-1 evidence item and `current_crop_is_perennial: true`. The rotations themselves are not changed: an "alfalfa" year means keeping the stand, not sowing it again.
 
 ### Output fields
 

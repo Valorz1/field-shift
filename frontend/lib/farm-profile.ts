@@ -78,6 +78,9 @@ export function planTraits(strategy: Strategy): PlanTraits {
   };
 }
 
+// "at Norfolk demo farm", but "on your field" for a dropped pin.
+export const placeText = (name: string) => (name.toLowerCase() === "your field" ? "on your field" : `at ${name}`);
+
 // good: fits a priority or a condition. check: sort this out first. note: worth knowing, neither for nor against.
 export type FitNote = { tone: "good" | "check" | "note"; text: string };
 export type PlanFit = { notes: FitNote[]; matches: number; asked: number };
@@ -169,12 +172,16 @@ export function planFit(strategy: Strategy, profile: FarmProfile | undefined, ri
 // The plan that matches the most priorities, if one clearly does. Ties give none: we do not pick for the farmer.
 export function bestMatch(strategies: Strategy[], profile: FarmProfile | undefined, risk?: Risk) {
   if (!profile?.priorities?.length) return undefined;
-  const scored = strategies.map((strategy) => ({ id: strategy.id, fit: planFit(strategy, profile, risk) }));
-  const counted = scored.map(({ id, fit }) => ({
-    id,
-    score: fit.notes.filter((note) => note.tone === "good").length - fit.notes.filter((note) => note.tone === "check").length,
-  }));
-  const top = Math.max(...counted.map((entry) => entry.score));
-  const leaders = counted.filter((entry) => entry.score === top);
-  return top > 0 && leaders.length === 1 ? leaders[0].id : undefined;
+  // Ranked by how many of the farmer's priorities a plan meets, then by fewer things to check.
+  // Other notes (soil, water) never decide it. A plan that meets none is never the best fit, and ties give none.
+  const ranked = strategies
+    .map((strategy) => {
+      const fit = planFit(strategy, profile, risk);
+      return { id: strategy.id, matches: fit.matches, checks: fit.notes.filter((note) => note.tone === "check").length };
+    })
+    .sort((a, b) => b.matches - a.matches || a.checks - b.checks);
+  const [first, second] = ranked;
+  if (!first || first.matches === 0) return undefined;
+  if (second && second.matches === first.matches && second.checks === first.checks) return undefined;
+  return first.id;
 }

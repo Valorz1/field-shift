@@ -11,14 +11,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   } catch (error) {
     if (error instanceof DOMException && error.name === "TimeoutError")
       throw new Error("NASA took too long to answer. Wait a moment, then try again.");
-    throw new Error("Could not reach the Field Shift server. Check it is running, then try again.");
+    throw new Error("Could not reach the Rotara server. Check it is running, then try again.");
   }
   if (!response.ok) {
     const detail = await response
       .json()
       .then((body) => body?.detail)
       .catch(() => undefined);
-    throw new Error(typeof detail === "string" ? detail : `The Field Shift server answered with an error (${response.status}).`);
+    throw new Error(typeof detail === "string" ? detail : `The Rotara server answered with an error (${response.status}).`);
   }
   return response.json() as Promise<T>;
 }

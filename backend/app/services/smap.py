@@ -10,6 +10,11 @@ month is the mean of its days. This runs once, offline; the app then reads the s
 
 Run from the backend folder (needs: pip install netCDF4):
     python -m app.services.smap --name norfolk --lat 52.65 --lon 0.90 --input ../data/raw/SPL3SMP_E.006_9.00805km_aid0001.nc
+
+An AppEEARS point sample (one 9 km cell, a CSV) works too, with the same quality rule:
+    python -m app.services.smap --name nevada --csv ../data/raw/field-shift-smap-nevada-SPL3SMP-E-006-results.csv
+Nevada (2016-2025): 3,571 days, a reading on 1,492, none of recommended quality, so no file is saved
+and the app says so instead of showing the readings.
 """
 from __future__ import annotations
 
@@ -59,6 +64,27 @@ def daily_near(path: Path, lat: float, lon: float, cells: int = 1) -> dict[date,
     return out
 
 
+CSV_SM = "SPL3SMP_E_006_Soil_Moisture_Retrieval_Data_AM_soil_moisture"
+CSV_QF = "SPL3SMP_E_006_Soil_Moisture_Retrieval_Data_AM_retrieval_qual_flag"
+
+
+def daily_from_point_csv(path: Path) -> tuple[dict[date, float], dict[str, int]]:
+    """Recommended-quality days from an AppEEARS point CSV, and how many days had any reading at all."""
+    days: dict[date, float] = {}
+    counts = {"days": 0, "readings": 0, "recommended": 0}
+    with path.open(newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            counts["days"] += 1
+            value, flag = float(row[CSV_SM]), int(float(row[CSV_QF]))
+            if value < 0 or flag & 4:  # -9999, or bit 2 set: the retrieval did not succeed
+                continue
+            counts["readings"] += 1
+            if flag & 1 == 0:  # bit 0 is 0: recommended quality
+                counts["recommended"] += 1
+                days[date.fromisoformat(row["Date"])] = value
+    return days, counts
+
+
 def save(rows: list[dict], name: str, out_dir: Path = OUT_DIR) -> Path:
     path = out_dir / f"smap_{name}_monthly.csv"
     with path.open("w", newline="", encoding="utf-8") as f:
@@ -71,11 +97,22 @@ def save(rows: list[dict], name: str, out_dir: Path = OUT_DIR) -> Path:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--name", required=True)
-    parser.add_argument("--lat", type=float, required=True)
-    parser.add_argument("--lon", type=float, required=True)
-    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--lat", type=float)
+    parser.add_argument("--lon", type=float)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input", type=Path, help="AppEEARS area sample (NetCDF); needs --lat and --lon")
+    source.add_argument("--csv", type=Path, help="AppEEARS point sample (CSV)")
     args = parser.parse_args()
-    days = daily_near(args.input, args.lat, args.lon)
+    if args.csv:
+        days, counts = daily_from_point_csv(args.csv)
+        print(f"{counts['days']} days, a reading on {counts['readings']}, {counts['recommended']} of recommended quality")
+        if not days:
+            print("Nothing saved: no recommended-quality readings.")
+            return
+    else:
+        if args.lat is None or args.lon is None:
+            parser.error("--input needs --lat and --lon")
+        days = daily_near(args.input, args.lat, args.lon)
     path = save(monthly_means(days), args.name)
     print(f"Saved {path} ({len(days)} days of recommended-quality data)")
 

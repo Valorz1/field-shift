@@ -90,12 +90,34 @@ def test_wetter_is_not_a_risk(make_csv):
     assert r["risk"]["drivers"]["drying"]["triggered"] is False
 
 
-def test_summer_drying_alone_does_not_score(make_csv):
-    # Summer rain is reported but the brief scores yearly rain only.
-    r = climate_summary(make_csv(summer_base=100, summer_recent=0.0 + 90, rain_base=50, rain_recent=50))
+def test_summer_drying_alone_counts_as_drying(make_csv):
+    # Yearly rain barely changes, but summer rain falls 10 %.
+    r = climate_summary(make_csv(summer_base=100, summer_recent=90, rain_base=50, rain_recent=50))
     assert val(r, "climate", "summer_rainfall", "change_pct") == -10.0
     assert val(r, "climate", "rainfall", "change_pct") > -5.0
+    drying = r["risk"]["drivers"]["drying"]
+    assert drying["triggered"] is True and drying["basis"] == ["summer"]
+    assert r["risk"]["level"] == "moderate"
+
+
+def test_summer_drying_exactly_at_threshold_counts(make_csv):
+    r = climate_summary(make_csv(summer_base=100, summer_recent=95, rain_base=100, rain_recent=100))
+    assert val(r, "climate", "summer_rainfall", "change_pct") == -5.0
+    assert r["risk"]["drivers"]["drying"]["basis"] == ["summer"]
+
+
+def test_summer_drying_just_below_threshold_does_not_count(make_csv):
+    r = climate_summary(make_csv(summer_base=100, summer_recent=96, rain_base=100, rain_recent=100))
+    assert r["risk"]["drivers"]["drying"]["triggered"] is False
+    assert r["risk"]["drivers"]["drying"]["basis"] == []
     assert r["risk"]["level"] == "low"
+
+
+def test_yearly_and_summer_drying_is_still_one_point(make_csv):
+    r = climate_summary(make_csv(temp_recent=10.6, rain_base=100, rain_recent=80))
+    assert r["risk"]["drivers"]["drying"]["basis"] == ["yearly", "summer"]
+    assert r["risk"]["drivers"]["drying"]["points"]["value"] == 1
+    assert r["risk"]["points"]["value"] == 2 and r["risk"]["level"] == "high"
 
 
 # ---------- data cleaning -------------------------------------------------
@@ -211,3 +233,12 @@ def test_classify_anomaly():
     assert classify_anomaly(0.2) == "low"
     assert classify_anomaly(1.2) == "moderate"
     assert classify_anomaly(-2.1) == "high"
+
+
+@pytest.mark.skipif(not (NORFOLK.exists() and NEVADA.exists()), reason="real CSVs not in data/raw")
+def test_norfolk_summer_drying_makes_risk_high_nevada_stays_moderate():
+    norfolk, nevada = climate_summary(NORFOLK), climate_summary(NEVADA)
+    assert norfolk["risk"]["level"] == "high"
+    assert norfolk["risk"]["drivers"]["drying"]["basis"] == ["summer"]
+    assert nevada["risk"]["level"] == "moderate"
+    assert nevada["risk"]["drivers"]["drying"]["triggered"] is False
