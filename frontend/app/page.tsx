@@ -34,12 +34,14 @@ export default function Home() {
           alt=""
           fill
           priority
-          sizes="100vw"
+          // On a tall phone screen the wide photo is cropped by height, so it needs the full-size file to stay sharp.
+          sizes="(max-width: 1024px) 2400px, 100vw"
+          quality={85}
           className="object-cover"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(22,61,50,0.96)_0%,rgba(22,61,50,0.85)_55%,rgba(22,61,50,0.45)_100%)]"
+          className="absolute inset-0 bg-forest/90 md:bg-transparent md:bg-[linear-gradient(90deg,rgba(22,61,50,0.96)_0%,rgba(22,61,50,0.85)_55%,rgba(22,61,50,0.45)_100%)]"
         />
         <div className="relative mx-auto max-w-6xl px-4 pt-6 pb-14 sm:px-8 sm:pb-20">
           <Logo />

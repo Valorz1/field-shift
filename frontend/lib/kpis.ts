@@ -60,7 +60,7 @@ const riskKpi = ({ crop, risk, error }: RiskState): KpiView => {
       value: crop ? "Working it out" : "Not yet",
       source: "Calculated",
       waiting: true,
-      meaning: crop ? "This comes with the plans below." : "Pick your crop on the map card at the top to work it out.",
+      meaning: crop ? "This comes with the 3 plans." : "Pick your crop on the map card at the top to work it out.",
     };
   return {
     kind: "risk",
@@ -68,7 +68,7 @@ const riskKpi = ({ crop, risk, error }: RiskState): KpiView => {
     value: riskLevelText(risk.level),
     source: "Calculated",
     status: riskStatus(risk.level),
-    meaning: `${riskReason(risk)} The plans below are based on this.`,
+    meaning: `${riskReason(risk)} The 3 plans are based on this.`,
   };
 };
 
