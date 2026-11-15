@@ -145,3 +145,21 @@ Crop ideas come only from `rotation_rules.json`. Each rule lists the sources it 
 ## 5. Things to check in the data
 
 - NASA POWER has reported that, for monthly (interannual) data from January 2018, its precipitation values were monthly averages rather than monthly sums (NASA Applied Sciences, Energy Management Q&A, 2021). `PRECTOTCORR_MONTH_TOTAL` should be mm per **month**. If the recent years look about 30 times smaller than the baseline years, the data has this problem and the rain change would be wrong.
+
+## 6. How solid is the summer drying?
+
+The headline Norfolk result is that yearly rain barely changed (706 mm to 693 mm, −2%) while summer (June–August) rain fell by about 30% (206 mm to 145 mm), comparing 2021–2025 with 2001–2020. Because the recent period is only 5 years, we checked that this is not caused by one odd summer. All figures are NASA POWER `PRECTOTCORR_MONTH_TOTAL` totals for June–August, from `data/raw/power_norfolk_monthly.csv`.
+
+| Summer | Rain (Jun–Aug) | Compared with the 2001–2020 average (206 mm) |
+| --- | ---: | --- |
+| 2021 | 182 mm | below |
+| 2022 | 95 mm | below, and drier than any summer in 2001–2020 |
+| 2023 | 194 mm | below |
+| 2024 | 147 mm | below |
+| 2025 | 105 mm | below, and drier than any summer in 2001–2020 |
+
+- **All 5** recent summers were below the 2001–2020 average.
+- **2 of the 5** (2022 and 2025) were drier than the driest summer in 2001–2020 (120 mm).
+- So the drop is spread across the period, not one outlier, though 5 summers is still a short record and this is not a climate trend test.
+
+**Nevada:** summer rain there is tiny (about 19 mm on average in 2001–2020, ranging from 2 mm to 61 mm), so one storm can swing the percentage a lot. In 2021–2025 it averaged about 23 mm, so it is not drier, but we treat Nevada summer percentages as noisy and do not base any plan on them.
