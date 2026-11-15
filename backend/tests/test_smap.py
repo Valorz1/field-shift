@@ -3,7 +3,7 @@ from datetime import date
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services.smap import monthly_means
+from app.services.smap import CSV_QF, CSV_SM, daily_from_point_csv, monthly_means
 
 
 def test_monthly_means_average_the_days_and_count_them():
@@ -24,3 +24,12 @@ def test_norfolk_demo_includes_smap_rows():
 def test_nevada_has_no_smap_yet():
     body = TestClient(app).get("/climate/demo/nevada").json()
     assert "NASA SMAP" not in body["sources"]
+
+
+def test_point_csv_keeps_only_recommended_quality(tmp_path):
+    rows = [("2016-01-01", -9999.0, 7), ("2016-01-02", 0.21, 1), ("2016-01-03", 0.18, 0), ("2016-01-04", 0.2, 5)]
+    path = tmp_path / "point.csv"
+    path.write_text(f"Date,{CSV_SM},{CSV_QF}\n" + "".join(f"{d},{v},{q}.0\n" for d, v, q in rows), encoding="utf-8")
+    days, counts = daily_from_point_csv(path)
+    assert days == {date(2016, 1, 3): 0.18}
+    assert counts == {"days": 4, "readings": 2, "recommended": 1}

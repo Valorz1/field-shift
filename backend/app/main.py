@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -5,10 +7,14 @@ from app.routers import climate, soil, strategies, chat, photo
 
 app = FastAPI(title="Field Shift API", version="0.1.0")
 
-# Let the Next.js frontend (port 3000) call this API from the browser.
+# Let the Next.js frontend call this API from the browser: port 3000 locally, plus the deployed site's
+# address from ALLOWED_ORIGINS (comma-separated, e.g. "https://rotara.example.app").
+LOCAL_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
+EXTRA_ORIGINS = [o.strip().rstrip("/") for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=LOCAL_ORIGINS + EXTRA_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -18,6 +18,10 @@ DAILY_PARAMETERS = ["T2M", "T2M_MIN", "T2M_MAX", "PRECTOTCORR"]
 BASELINE = (2001, 2020)
 DAYS = 30
 FROST_C = 0.0
+# Heat stress: many crops suffer above about 30 °C, wheat most around flowering.
+HEAT_C = 30.0
+# Heavy rain: 20 mm or more in a day, the "very heavy precipitation day" of the ETCCDI climate indices (R20mm).
+HEAVY_RAIN_MM = 20.0
 
 
 def fetch_daily(lat: float, lon: float, start: date, end: date, timeout: float = 60) -> dict:
@@ -85,6 +89,7 @@ def summarise_recent(raw: dict, baseline: dict[int, dict[str, float]], days: int
     usual_temperature = mean(baseline[d.month]["temperature"] for d in window)
     hottest = max(window, key=lambda d: values[d]["T2M_MAX"])
     coldest = min(window, key=lambda d: values[d]["T2M_MIN"])
+    wettest = max(window, key=lambda d: values[d]["PRECTOTCORR"])
 
     return {
         "period": {"start": window[0].isoformat(), "end": window[-1].isoformat(), "days": len(window)},
@@ -99,6 +104,9 @@ def summarise_recent(raw: dict, baseline: dict[int, dict[str, float]], days: int
             "change_c": round(temperature - usual_temperature, 1),
         },
         "frost_nights": sum(1 for d in window if values[d]["T2M_MIN"] < FROST_C),
+        "heat_days": sum(1 for d in window if values[d]["T2M_MAX"] >= HEAT_C),
+        "heavy_rain_days": sum(1 for d in window if values[d]["PRECTOTCORR"] >= HEAVY_RAIN_MM),
+        "wettest": {"date": wettest.isoformat(), "mm": round(values[wettest]["PRECTOTCORR"], 1)},
         "hottest": {"date": hottest.isoformat(), "max_c": round(values[hottest]["T2M_MAX"], 1)},
         "coldest": {"date": coldest.isoformat(), "min_c": round(values[coldest]["T2M_MIN"], 1)},
         "source": "NASA POWER daily",
