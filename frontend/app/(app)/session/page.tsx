@@ -23,7 +23,7 @@ export default function SessionPage() {
         <PageSection id="session-privacy" icon={Lock} title="Your privacy">
           <Card className="space-y-4">
             <ul className="list-disc space-y-1.5 pl-5 text-base text-ink marker:text-sage">
-              <li>No account and no database. Your pin and crop are kept in this browser tab only.</li>
+              <li>No account and no database. Your pin, crop and farm answers are kept in this browser tab only.</li>
               <li>Your pin is sent to NASA POWER for the climate data, and to the map provider to draw the map.</li>
               <li>Free to use. No hidden fees.</li>
             </ul>

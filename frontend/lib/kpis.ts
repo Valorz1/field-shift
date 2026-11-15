@@ -7,6 +7,7 @@ import {
   riskStatus,
   soilMeaning,
   soilPercents,
+  usualYears,
   temperatureChange,
   temperatureMeaning,
   temperatureStatus,
@@ -36,6 +37,9 @@ const soilKpi = (site: ClimateSite): KpiView => {
     unit: "% wet",
     source: "NASA POWER (MERRA-2 model)",
     meaning: soilMeaning(soil),
+    ...(soil.usual !== undefined && {
+      compare: { usualLabel: usualYears(site), recentLabel: site.year, usual: soil.usual, recent: soil.recent, unit: "%", digits: 0 },
+    }),
   };
 };
 
@@ -80,6 +84,14 @@ export const kpisFor = (site: ClimateSite, risk: RiskState): KpiView[] => {
       source: "Calculated",
       status: temperatureStatus(t),
       meaning: temperatureMeaning(t),
+      compare: {
+        usualLabel: usualYears(site),
+        recentLabel: site.year,
+        usual: site.annual.baselineTemperatureC,
+        recent: site.annual.temperatureC,
+        unit: "°C",
+        digits: 1,
+      },
     },
     {
       kind: "rain",
@@ -89,6 +101,14 @@ export const kpisFor = (site: ClimateSite, risk: RiskState): KpiView[] => {
       source: "Calculated",
       status: rainStatus(r),
       meaning: rainMeaning(r),
+      compare: {
+        usualLabel: usualYears(site),
+        recentLabel: site.year,
+        usual: site.annual.baselineRainfallMm,
+        recent: site.annual.rainfallMm,
+        unit: "mm",
+        digits: 0,
+      },
     },
     soilKpi(site),
     riskKpi(risk),

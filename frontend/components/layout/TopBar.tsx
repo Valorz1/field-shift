@@ -58,8 +58,8 @@ export function TopBar({ navOpen, onToggleNav }: Props) {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-page/85 backdrop-blur-md">
       <div className="relative flex h-14 items-center gap-1 px-3 md:px-4">
-        <Link href="/dashboard" aria-label="Field Shift, go to the dashboard" className="grid size-11 shrink-0 place-items-center rounded-lg md:hidden">
-          <LogoMark tone="forest" />
+        <Link href="/dashboard" aria-label="Rotara, go to the dashboard" className="grid size-11 shrink-0 place-items-center rounded-lg md:hidden">
+          <LogoMark />
         </Link>
         <button
           type="button"

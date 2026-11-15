@@ -2,6 +2,7 @@
 
 import { Columns3, Sprout } from "lucide-react";
 import { CropPicker } from "@/components/farm/CropPicker";
+import { FarmProfileCard } from "@/components/farm/FarmProfileCard";
 import { OutsideUkNote } from "@/components/farm/OutsideUkNote";
 import { Page } from "@/components/layout/Page";
 import { PageIntro } from "@/components/layout/PageIntro";
@@ -28,6 +29,7 @@ function Plans({ site }: { site: ClimateSite }) {
       <section aria-label="The 3 plans" className="space-y-4">
         <OutsideUkNote site={site} />
         <CropPicker site={site} />
+        <FarmProfileCard compact />
         <StrategyCards site={site} showPicker={false} />
       </section>
     </Page>

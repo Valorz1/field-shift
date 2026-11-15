@@ -8,7 +8,8 @@ import { ErrorMessage } from "@/components/ui/states/ErrorMessage";
 import { LoadingSkeleton } from "@/components/ui/states/LoadingSkeleton";
 import { riskLevelText, riskReason } from "@/lib/climate-facts";
 import type { Place } from "@/lib/data/climate";
-import { updateSession } from "@/lib/session-store";
+import { bestMatch, planFit } from "@/lib/farm-profile";
+import { updateSession, useSession } from "@/lib/session-store";
 import type { Risk } from "@/lib/types";
 import { useStrategies } from "@/lib/use-strategies";
 import { StrategyCard } from "./StrategyCard";
@@ -32,6 +33,8 @@ export function StrategyCards({
 }) {
   const { chosen, crop, data, error, retry } = useStrategies(site);
   const other = chosen !== undefined && !CROPS.includes(chosen);
+  const profile = useSession().profile;
+  const best = data ? bestMatch(data.strategies, profile, data.risk) : undefined;
 
   return (
     <>
@@ -94,7 +97,12 @@ export function StrategyCards({
           <div className="grid gap-4 xl:grid-cols-3">
             {data.strategies.map((strategy, i) => (
               <div key={strategy.id} className="fs-rise h-full" style={{ animationDelay: `${i * 80}ms` }}>
-                <StrategyCard strategy={strategy} />
+                <StrategyCard
+                  strategy={strategy}
+                  fit={planFit(strategy, profile, data.risk)}
+                  profile={profile}
+                  best={best === strategy.id}
+                />
               </div>
             ))}
           </div>

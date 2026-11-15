@@ -8,13 +8,14 @@ const statuses: Record<Status, { label: string; icon: LucideIcon; tone: string }
   act: { label: "Act now", icon: CircleAlert, tone: "border-danger bg-danger-tint text-danger-ink" },
 };
 
-export function StatusTag({ status, className }: { status: Status; className?: string }) {
+// onDark: for the green banner, where the pale tints would not show.
+export function StatusTag({ status, className, onDark = false }: { status: Status; className?: string; onDark?: boolean }) {
   const { label, icon: Icon, tone } = statuses[status];
   return (
     <span
       className={cx(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-base font-semibold whitespace-nowrap",
-        tone,
+        onDark ? "border-white/35 bg-white/10 text-white" : tone,
         className,
       )}
     >

@@ -1,23 +1,27 @@
 import Link from "next/link";
 import { cx } from "@/lib/cx";
 
-// The mark: three furrows bending across a field. Gold tile for dark backgrounds, forest tile for light ones.
-export function LogoMark({ tone = "gold" }: { tone?: "gold" | "forest" }) {
+// One leaf, pointing up, drawn around the origin. The mark turns it three times around the sun.
+const LEAF = "M0 0C12-5 17-26 3.5-40C-11-28-13-7 0 0Z";
+const LEAVES = [
+  { angle: 24, fill: "#1f5f3d" },
+  { angle: 144, fill: "#4b9b54" },
+  { angle: 264, fill: "#a8d45a" },
+];
+
+// The mark: three leaves, one for each plan, turning around the sun. The colours are the logo's own,
+// so it sits on a white tile and looks the same on the dark sidebar and the light pages.
+export function LogoMark({ className }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={cx("grid size-8 shrink-0 place-items-center rounded-lg", tone === "gold" ? "bg-gold" : "bg-forest")}
+      className={cx("grid size-10 shrink-0 place-items-center rounded-xl bg-white ring-1 ring-line", className)}
     >
-      <svg
-        viewBox="0 0 20 20"
-        className={cx("size-5", tone === "gold" ? "stroke-forest" : "stroke-gold")}
-        fill="none"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      >
-        <path d="M4 15c2-3 3-6 3-10" />
-        <path d="M8.5 15c2-3 3-6 3-10" />
-        <path d="M13 15c2-3 3-6 3-10" />
+      <svg viewBox="-50 -50 100 100" className="size-8">
+        {LEAVES.map(({ angle, fill }) => (
+          <path key={angle} d={LEAF} fill={fill} transform={`rotate(${angle}) translate(0 -8)`} />
+        ))}
+        <circle r="8" fill="#f2b53a" />
       </svg>
     </span>
   );
@@ -28,15 +32,15 @@ export function Logo({ className, fades = false }: { className?: string; fades?:
   return (
     <Link
       href="/dashboard"
-      aria-label="Field Shift, go to the dashboard"
+      aria-label="Rotara, go to the dashboard"
       className={cx(
         "inline-flex min-h-11 items-center gap-3 overflow-hidden rounded-control focus-visible:outline-white",
         className,
       )}
     >
       <LogoMark />
-      <span className={cx("font-display text-[17px] font-extrabold tracking-tight text-white", fades && "fs-nav-label")}>
-        Field Shift
+      <span className={cx("font-display text-[20px] font-extrabold tracking-tight text-white", fades && "fs-nav-label")}>
+        Rotara
       </span>
     </Link>
   );

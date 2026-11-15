@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarClock, CloudRain, Snowflake, Thermometer } from "lucide-react";
+import { CalendarClock, CloudRain, Thermometer, ThermometerSun } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { SourceBadge } from "@/components/ui/SourceBadge";
 import { type ClimateSite, isPin } from "@/lib/data/climate";
@@ -84,10 +84,10 @@ export function RecentWeather({ site }: { site: ClimateSite }) {
           note={`${formatSigned(data.temperature.change_c)} °C vs usual`}
         />
         <Figure
-          icon={Snowflake}
-          label="Frost nights (below 0 °C)"
-          value={String(data.frost_nights)}
-          note={`Coldest: ${data.coldest.min_c.toFixed(1)} °C on ${day(data.coldest.date)}`}
+          icon={ThermometerSun}
+          label="Warmest and coldest"
+          value={`${Math.round(data.hottest.max_c)} / ${Math.round(data.coldest.min_c)} °C`}
+          note={`High on ${day(data.hottest.date)}, low on ${day(data.coldest.date)}`}
         />
       </div>
       <div className="flex flex-wrap items-center gap-2 text-sm text-caption">
