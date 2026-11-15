@@ -1,12 +1,7 @@
 # Rotara
-[![Live demo](https://img.shields.io/badge/LIVE_DEMO-Visit_Rotara-163d32?style=for-the-badge&logo=vercel&logoColor=white)](https://rotara-chi.vercel.app)
-[![Pitch deck](https://img.shields.io/badge/PITCH_DECK-View_Slides-ddb355?style=for-the-badge&logo=canva&logoColor=163d32)](https://canva.link/um5s5uhjp8bd9gc)
-[![NASA Space Apps 2026](https://img.shields.io/badge/NASA-SPACE_APPS_2026-2f6b4f?style=for-the-badge)](https://www.spaceappschallenge.org/)
+![Live Demo](https://img.shields.io/badge/LIVE_DEMO-Visit_Rotara-163d32?style=for-the-badge&logo=vercel&logoColor=white) ![Pitch Deck](https://img.shields.io/badge/PITCH_DECK-View_Slides-ddb355?style=for-the-badge&logo=canva&logoColor=163d32) ![NASA Space Apps 2026](https://img.shields.io/badge/NASA-SPACE_APPS_2026-2f6b4f?style=for-the-badge)
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-[![License: MIT](https://img.shields.io/badge/License-MIT-ddb355?style=for-the-badge)](./LICENSE)
+!Next.js !FastAPI !Python ![MIT License](https://img.shields.io/badge/License-MIT-ddb355?style=for-the-badge)
 
 **Turning NASA Earth data into smarter crop rotation decisions.**
 
