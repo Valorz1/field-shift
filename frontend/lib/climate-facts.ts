@@ -156,6 +156,13 @@ export const soilMeaning = ({ recent, usual }: { recent: number; usual?: number 
   return `${start}, a little ${recent < usual ? "drier" : "wetter"} than usual (usual ${usual}% wet).`;
 };
 
+// The short version, for a card that already shows both numbers as bars.
+export const soilComparison = ({ recent, usual }: { recent: number; usual?: number }) => {
+  if (usual === undefined) return soilMeaning({ recent, usual });
+  if (recent === usual) return "About as wet as usual.";
+  return `A little ${recent < usual ? "drier" : "wetter"} than usual.`;
+};
+
 // Display only: the strategy engine decides the level; this just picks the matching tag.
 const riskStatuses: Record<RiskCategory, Status | undefined> = {
   low: "fine",
@@ -168,8 +175,18 @@ export const riskStatus = (level: RiskCategory) => riskStatuses[level];
 
 export const riskLevelText = (level: RiskCategory) => level[0].toUpperCase() + level.slice(1);
 
-export const riskReason = ({ drivers }: Risk) => {
-  const changes = [drivers.warming.triggered && "warmer", drivers.drying.triggered && "drier"].filter(Boolean);
+// The engine says whether drying came from yearly rain, summer rain or both (drivers.drying.basis).
+// Summer only: the year as a whole was not much drier, so say "drier summers", not "drier".
+export const summerOnlyDrying = ({ drivers }: Risk) =>
+  drivers.drying.triggered && drivers.drying.basis?.length === 1 && drivers.drying.basis[0] === "summer";
+
+export const riskReason = (risk: Risk) => {
+  const { warming, drying } = risk.drivers;
+  if (drying.triggered && summerOnlyDrying(risk))
+    return warming.triggered
+      ? "Recent years were warmer than usual, with drier summers."
+      : "Recent summers were drier than usual.";
+  const changes = [warming.triggered && "warmer", drying.triggered && "drier"].filter(Boolean);
   return changes.length
     ? `Recent years were ${changes.join(" and ")} than usual.`
     : "Recent years were not much warmer or drier than usual.";

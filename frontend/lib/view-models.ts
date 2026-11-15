@@ -50,6 +50,8 @@ export type Strategy = {
   sources: DataLabel[];
   climate_zone?: "cool" | "warm";
   current_crop_is_legume?: boolean;
+  // Alfalfa and other perennials: a stand lasts years, so "the same crop every year" is normal for them.
+  current_crop_is_perennial?: boolean;
 };
 
 export type Status = "fine" | "watch" | "act";

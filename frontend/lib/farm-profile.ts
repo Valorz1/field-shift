@@ -1,4 +1,5 @@
 import type { FarmProfile, KitAccess, MarketAccess, Priority, SoilType, WaterAccess } from "./session-store";
+import { summerOnlyDrying } from "./climate-facts";
 import type { Risk } from "./types";
 import type { Strategy } from "./view-models";
 
@@ -11,6 +12,7 @@ export const PRIORITIES: { id: Priority; label: string; hint: string }[] = [
   { id: "organic-matter", label: "Build organic matter", hint: "More roots and residue in the soil" },
   { id: "nitrogen", label: "Add nitrogen naturally", hint: "Legumes that fix nitrogen from the air" },
   { id: "erosion", label: "Stop soil washing away", hint: "Keep the ground covered" },
+  { id: "pests", label: "Fewer pests and diseases", hint: "Break the cycle with a different crop" },
   { id: "forage", label: "Feed for livestock", hint: "Crops you can graze or cut" },
   { id: "market", label: "Easy to sell", hint: "Crops you already have a market for" },
   { id: "small-change", label: "Keep changes small", hint: "Little new kit or know-how" },
@@ -96,6 +98,7 @@ export const hasProfile = (profile?: FarmProfile) =>
 export function planFit(strategy: Strategy, profile: FarmProfile | undefined, risk?: Risk): PlanFit {
   const notes: FitNote[] = [];
   const t = planTraits(strategy);
+  const current = plain(strategy.rotation[0]?.crop ?? "your crop");
   const priorities = profile?.priorities ?? [];
   const good = (text: string) => notes.push({ tone: "good", text });
   const check = (text: string) => notes.push({ tone: "check", text });
@@ -112,6 +115,12 @@ export function planFit(strategy: Strategy, profile: FarmProfile | undefined, ri
       good(`Adds nitrogen: the legumes in this plan (${join(t.legumes.map(species))}) take nitrogen from the air and leave some for the next crop.`);
     if (priority === "erosion" && t.coverCrops.length)
       good("Keeps the ground covered between crops, which cuts soil loss from wind and rain.");
+    if (priority === "pests") {
+      // A different main crop is not a host for most of the current crop's pests and diseases.
+      if (t.cashCrops.length) good(`Breaks the pest and disease cycle: ${list(t.cashCrops)} between your ${current}.`);
+      else if (strategy.kind === "baseline" && !strategy.current_crop_is_perennial)
+        check(`Same crop every year: ${current} pests and diseases can build up.`);
+    }
     if (priority === "forage" && t.forage.length)
       good(`Feed for livestock: ${join(t.forage.map(species))} can often be grazed or cut (check the variety).`);
     if (priority === "market") {
@@ -139,7 +148,7 @@ export function planFit(strategy: Strategy, profile: FarmProfile | undefined, ri
   if (profile?.water === "rain-only") {
     if (t.savesWater) good("Suits a field with no irrigation.");
     else if (strategy.kind === "baseline" && risk?.drivers.drying.triggered)
-      check("You have no irrigation, and summers here are getting drier.");
+      check(`You have no irrigation, and ${risk && summerOnlyDrying(risk) ? "summers here are" : "rain here is"} getting drier.`);
   }
   if (profile?.water === "full" && t.savesWater) good("Could cut your irrigation water in some years.");
 

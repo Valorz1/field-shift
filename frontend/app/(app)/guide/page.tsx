@@ -121,10 +121,18 @@ const TERMS: Term[] = [
       <>
         <strong>Cover crop:</strong> a crop grown to protect and feed the soil between main crops, not to sell.{" "}
         <strong>Legume:</strong> a plant such as beans, peas, clover or alfalfa whose roots hold bacteria that take
-        nitrogen from the air and leave some in the soil for the next crop.
+        nitrogen from the air and leave some in the soil for the next crop. <strong>Pest break:</strong> each crop has its
+        own pests and diseases, which build up when it grows on the same field year after year. A different crop in
+        between breaks the cycle. Pulses such as beans and peas need the longest break: AHDB advises at least five years
+        between them.
       </>
     ),
-    inApp: <>Yes. Every plan is a 3-year rotation, and the soil plan adds a cover crop.</>,
+    inApp: (
+      <>
+        Yes. Every plan is a 3-year rotation, the soil plan adds a cover crop, and the plans never put two pulses in the 3
+        years. Pick &ldquo;Fewer pests and diseases&rdquo; under About your farm to see which plans break the cycle.
+      </>
+    ),
     used: true,
   },
 ];

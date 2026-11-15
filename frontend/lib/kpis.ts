@@ -5,7 +5,7 @@ import {
   riskLevelText,
   riskReason,
   riskStatus,
-  soilMeaning,
+  soilComparison,
   soilPercents,
   usualYears,
   temperatureChange,
@@ -36,7 +36,7 @@ const soilKpi = (site: ClimateSite): KpiView => {
     value: String(soil.recent),
     unit: "% wet",
     source: "NASA POWER (MERRA-2 model)",
-    meaning: soilMeaning(soil),
+    meaning: soilComparison(soil),
     ...(soil.usual !== undefined && {
       compare: { usualLabel: usualYears(site), recentLabel: site.year, usual: soil.usual, recent: soil.recent, unit: "%", digits: 0 },
     }),
