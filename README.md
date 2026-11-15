@@ -2,7 +2,6 @@
 ![Live Demo](https://img.shields.io/badge/LIVE_DEMO-Visit_Rotara-163d32?style=for-the-badge&logo=vercel&logoColor=white) ![Pitch Deck](https://img.shields.io/badge/PITCH_DECK-View_Slides-ddb355?style=for-the-badge&logo=canva&logoColor=163d32) ![NASA Space Apps 2026](https://img.shields.io/badge/NASA-SPACE_APPS_2026-2f6b4f?style=for-the-badge)
 
 !Next.js !FastAPI !Python ![MIT License](https://img.shields.io/badge/License-MIT-ddb355?style=for-the-badge)
-
 **Turning NASA Earth data into smarter crop rotation decisions.**
 
 Built by **Team Valor Astra** for the **NASA Space Apps Challenge 2026**.
