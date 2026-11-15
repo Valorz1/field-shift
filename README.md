@@ -47,7 +47,7 @@ Make the decision yourself.
 |---|---|
 | Live application | [Launch Rotara](https://rotara-chi.vercel.app) |
 | Backend API | [Explore API documentation](https://field-shift-backends.onrender.com/docs) |
-| Demo presentation | `DEMO_SLIDES_URL` |
+| Demo presentation | [View the 7-slide demo](https://canva.link/um5s5uhjp8bd9gc) |
 
 ---
 
