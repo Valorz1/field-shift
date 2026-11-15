@@ -361,7 +361,35 @@ def build_strategies(
         _water_efficient(crop_key, crop, climate, risk, rules),
         _soil_restoration(crop_key, crop, climate, risk, rules),
     ]
+    strategies = [_with_perennial_notes(s, crop_key, crop, rules) for s in strategies]
     return [_with_frontend_fields(s, i) for i, s in enumerate(strategies, start=1)]
+
+
+# --------------------------------------------------------------------------
+# Perennial crops (rule PE-1; see docs/methodology.md, section 4)
+# --------------------------------------------------------------------------
+def _is_perennial(rules: dict, crop: str) -> bool:
+    perennials = set(rules.get("perennials", {}).get("crops", []))
+    return crop in perennials or _canonical(rules, crop) in perennials
+
+
+def _with_perennial_notes(strategy: dict[str, Any], crop_key: str, crop: str, rules: dict) -> dict[str, Any]:
+    """For a perennial current crop (alfalfa), say the table is not a yearly resowing."""
+    if not _is_perennial(rules, crop_key):
+        return {**strategy, "current_crop_is_perennial": False}
+    rule = rules["perennials"]["rule"]
+    return {
+        **strategy,
+        "risks": strategy["risks"] + [
+            f"{crop} is a perennial: one stand can stay productive for four to ten years or more, so each "
+            f"'{crop}' year in this table means keeping the stand, not sowing it again.",
+            f"Do not reseed {crop} straight after {crop}: autotoxicity, seedling disease and pests build up in "
+            "old stands; a break of at least 12 months has worked.",
+        ],
+        "gaps": strategy["gaps"] + [f"The age and plant density of the current {crop} stand were not checked."],
+        "evidence": strategy["evidence"] + [_rule_evidence(rules, rule)],
+        "current_crop_is_perennial": True,
+    }
 
 
 # --------------------------------------------------------------------------
